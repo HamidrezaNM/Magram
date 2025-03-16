@@ -1,0 +1,86 @@
+@font-face {
+  font-family: Roboto;
+  src: url(./assets/fonts/Roboto/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-weight: 500;
+  src: url(./assets/fonts/Roboto/Roboto-Medium.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  font-weight: bold;
+  src: url(./assets/fonts/Roboto/Roboto-Bold.ttf);
+}
+
+@font-face {
+  font-family: OpenSans;
+  src: url(./assets/fonts/OpenSans/OpenSans-Regular.ttf);
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-weight: 500;
+  src: url(./assets/fonts/OpenSans/OpenSans-Medium.ttf);
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-weight: 600;
+  src: url(./assets/fonts/OpenSans/OpenSans-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-weight: bold;
+  src: url(./assets/fonts/OpenSans/OpenSans-Bold.ttf);
+}
+
+@font-face {
+  font-family: Vazirmatn;
+  src: url(./assets/fonts/Vazirmatn/Vazirmatn-Regular.woff2);
+}
+
+@font-face {
+  font-family: Vazirmatn;
+  font-weight: 500;
+  src: url(./assets/fonts/Vazirmatn/Vazirmatn-Medium.woff2);
+}
+
+@font-face {
+  font-family: Vazirmatn;
+  font-weight: bold;
+  src: url(./assets/fonts/Vazirmatn/Vazirmatn-Bold.woff2);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
+}
+
+html {
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, Vazirmatn, OpenSans, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#root {
+  height: 100%;
+}

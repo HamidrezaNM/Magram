@@ -1,0 +1,427 @@
+.MiddleColumn .background {
+    /* display: none; */
+}
+
+.MiddleColumn .Content {
+    display: contents;
+}
+
+.MiddleColumn .TopBar {
+    display: flex;
+    flex-direction: column;
+}
+
+.TopBar .ChatInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background-color: var(--secondary);
+    color: var(--dyn-text-color);
+    margin-left: -16px;
+    padding-left: 24px;
+    cursor: pointer;
+    z-index: 1;
+    user-select: none;
+}
+
+.ChatInfo .info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0 12px;
+    flex: 1 auto;
+}
+
+.ChatInfo .BackArrow {
+    display: none;
+}
+
+.ChatInfo .info .body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ChatInfo .info .body .title {
+    font-family: Roboto, Vazirmatn;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.ChatInfo .info .body .subtitle {
+    font-size: 14px;
+}
+
+.ChatInfo .actions {
+    display: flex;
+}
+
+.MiddleColumn .TopBar .PinnedMessage {
+    display: flex;
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    height: 48px;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    opacity: 1;
+    cursor: pointer;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+    transition: all .3s ease;
+}
+
+.MiddleColumn .TopBar .PinnedMessage::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    border-radius: 12px;
+    transform: scale(.98);
+    opacity: 0;
+    background-color: var(--on-surface);
+    transition: all .3s ease;
+}
+
+.MiddleColumn .TopBar .PinnedMessage:hover::after {
+    opacity: 1;
+    transform: none;
+    border-radius: 0;
+}
+
+.PinnedMessage.animate {
+    transform: scaleY(0.95) rotateX(45deg);
+    height: 0 !important;
+    opacity: 0;
+    margin: -8px;
+    transform-origin: top;
+}
+
+.PinnedMessage .bars {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 48px;
+    gap: 2px;
+    padding: 8px 0;
+    overflow: hidden;
+}
+
+.PinnedMessage .bars.more::after {
+    content: '';
+    height: 48px;
+    position: absolute;
+    width: 2px;
+    top: 0;
+    background: linear-gradient(to bottom, var(--surface-color), transparent 10%, transparent 90%, var(--surface-color));
+}
+
+.PinnedMessage .bars span {
+    flex: 1;
+    border-radius: 8px;
+    width: 2px;
+    background-color: #fff4;
+    position: relative;
+    overflow: hidden;
+    min-height: 9.33px;
+    max-height: 32px;
+}
+
+.PinnedMessage .bars span::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bc);
+    transform: translateY(100%);
+    /* display: none; */
+}
+
+.PinnedMessage .bars span.active::after {
+    transform: none;
+    transition: all .3s ease;
+}
+
+.PinnedMessage .bars span.deactive::after {
+    transform: translateY(-100%);
+    transition: all .3s ease;
+}
+
+.PinnedMessage .title,
+.PinnedMessage .subtitle {
+    font-size: 14px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.PinnedMessage .title {
+    color: var(--bc);
+}
+
+.MiddleColumn .Messages {
+    flex: 1 1;
+    overflow-y: overlay;
+    overflow-x: hidden;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: end; */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.MiddleColumn .bottom {
+    min-height: 48px;
+    margin: 12px;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-color);
+    color: var(--dyn-text-color);
+    border-radius: 16px;
+    box-shadow: 0 0 3px #00000088;
+    align-items: center;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.MiddleColumn .bottom .Composer {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    color: var(--dyn-text-color);
+}
+
+.MiddleColumn .bottom .message-input {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.MiddleColumn .bottom .message-input .input,
+.InputField {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--dyn-text-color);
+    position: absolute;
+    background: transparent;
+    cursor: text;
+    z-index: 1;
+}
+
+.message-input .emoji {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0 1px -5px;
+    vertical-align: 0;
+    pointer-events: none;
+}
+
+.MiddleColumn .bottom .message-input .placeholder,
+.Input .placeholder {
+    font-size: 16px;
+    color: #888;
+    left: 0;
+    position: absolute;
+    /* padding: 0 16px; */
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.placeholder.hidden {
+    left: 16px !important;
+    opacity: 0 !important;
+}
+
+.MiddleColumn .bottom .icon {
+    width: 36px;
+    height: 36px;
+    margin: 0 7px;
+    font-size: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.MiddleColumn .bottom .attach-button {
+    position: absolute;
+    right: 0;
+}
+
+.MiddleColumn .bottom .attach-button .icon {
+    transform: rotate(-90deg);
+}
+
+.MiddleColumn .bottom .attach-button input[type="file"] {
+    position: absolute;
+    right: 4px;
+    width: 42px;
+    height: 42px;
+    opacity: 0;
+    z-index: 1;
+}
+
+.MiddleColumn .bottom .attach-button .icon.hidden {
+    /* transform: scale(.9) rotate(-90deg); */
+    margin-right: -42px;
+    opacity: 0;
+}
+
+/* .MiddleColumn .bottom .icon:hover {
+    background-color: var(--on-primary);
+} */
+
+/* .MiddleColumn .bottom .icon:active {
+    background-color: var(--active-primary);
+} */
+
+.MiddleColumn .bottom .send-button .icon.animate {
+    transform: scale(0.9);
+}
+
+.MiddleColumn .bottom .PreviewMessage {
+    display: flex;
+    height: 48px;
+    width: 100%;
+    align-items: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.MiddleColumn .bottom .PreviewMessage.animate {
+    height: 0;
+    transform: scale(0.95);
+}
+
+.MiddleColumn .bottom .PreviewMessage .body {
+    font-size: 14px;
+    line-height: 1.3;
+    flex: 1 auto;
+    width: 0;
+}
+
+.MiddleColumn .bottom .PreviewMessage .body .title {
+    color: var(--primary);
+}
+
+.MiddleColumn .bottom .PreviewMessage .body .subtitle {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.MiddleColumn .bottom .PreviewMessage .body .subtitle span {
+    display: ruby;
+}
+
+.MiddleColumn .bottom .Button {
+    text-transform: uppercase;
+    display: flex;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.MiddleColumn .bottom .Button:hover {
+    background-color: var(--surface-hover);
+}
+
+.sticky-date {
+    display: inline-flex;
+    justify-content: center;
+    margin: 4px 0;
+    user-select: none;
+}
+
+.sticky-date span {
+    padding: 0 8px;
+    line-height: 1.75;
+    background-color: var(--surface-color);
+    border-radius: 50px;
+}
+
+.bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    opacity: 1;
+    background-color: #00000010;
+    transition: opacity .3s ease;
+}
+
+.bg.animate {
+    opacity: 0;
+}
+
+.ContextMenuBG {
+    opacity: 0;
+}
+
+.loading {
+    margin: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.loading .item {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.loading .css-et6ef6-MuiSkeleton-root::after {
+    animation: animation-wiooy8 1.5s linear 0.5s infinite;
+    border-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent) 30;
+    border-width: 2px;
+    border-style: solid;
+    border-right: none;
+    border-left: none;
+    border-radius: 10px;
+}
+
+@keyframes animation-wiooy8 {
+    0% {
+        -webkit-transform: translateX(-100%);
+        -moz-transform: translateX(-100%);
+        -ms-transform: translateX(-100%);
+        transform: translateX(-100%);
+    }
+
+    30% {
+        -webkit-transform: translateX(100%);
+        -moz-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        transform: translateX(100%);
+    }
+
+    100% {
+        -webkit-transform: translateX(100%);
+        -moz-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        transform: translateX(100%);
+    }
+}

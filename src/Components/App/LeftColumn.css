@@ -1,0 +1,226 @@
+.LeftColumn .TopBar>div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 54px;
+    user-select: none;
+}
+
+.LeftColumn .TopBar>div>div>.icon {
+    margin: 0 16px;
+}
+
+.LeftColumn .TopBar .Meta>.icon,
+.LeftColumn .TopBar .Meta .Menu>.icon {
+    margin: 0;
+}
+
+.LeftColumn .TopBar .Meta {
+    display: flex;
+    margin: 0 16px;
+    min-width: 36px;
+    gap: 4px;
+}
+
+.LeftColumn .TopBar .Meta>button {
+    margin: 0;
+}
+
+.LeftColumn .TopBar .Meta button:last-child {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+.LeftColumn .TopBar button {
+    appearance: none;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    background-color: var(--primary-container);
+    text-align: center;
+    padding: 8px;
+    color: var(--dyn-text-color);
+    font-family: inherit;
+    text-transform: uppercase;
+    font-size: 14px;
+    transition: all .3s ease;
+    cursor: pointer;
+}
+
+.LeftColumn .TopBar button.disabled {
+    background-color: var(--primary-container) !important;
+    color: var(--dyn-text-color) !important;
+}
+
+.LeftColumn .Chats {
+    height: calc(100% - 54px);
+}
+
+.LeftColumn.Compact .Chats.scrollable {
+    scrollbar-width: none;
+}
+
+.ChatList {
+    display: flex;
+    flex-direction: column;
+}
+
+.Chat {
+    display: flex;
+    align-items: center;
+    gap: 0 12px;
+    padding: 8px;
+    margin: 2px 4px;
+    border-radius: 10px;
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    transition: all .3s ease;
+}
+
+.Chat.active {
+    background-color: var(--primary-active) !important;
+    color: var(--text-color);
+}
+
+.Chat:hover {
+    background-color: var(--on-primary);
+}
+
+.Chat:active {
+    background-color: var(--active-primary);
+}
+
+.Chat a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.Chat .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-basis: 100%;
+    gap: 6px;
+    width: 0;
+}
+
+.Chat .info {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.Chat .info .title {
+    font-family: Roboto, Vazirmatn;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.Chat .body .subtitle {
+    display: flex;
+    gap: 0 8px;
+}
+
+.Chat .body .last-message {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.Chat .info .message-details {
+    font-size: 14px;
+    align-self: flex-end;
+    align-items: center;
+    direction: ltr;
+    display: flex;
+    gap: 4px;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.Chat .info .message-details .message-seen {
+    margin: 0;
+    padding: 0;
+}
+
+.Chat .body .unread {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    background-color: var(--primary);
+    color: var(--text-color);
+    border-radius: 12px;
+}
+
+@keyframes menuToBack1 {
+    0% {
+        transform: rotate(180deg);
+    }
+
+    80% {
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(.8);
+    }
+}
+
+@keyframes menuToBack2 {
+    0% {
+        transform: rotate(270deg) scale(.8);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes backToMenu {
+    0% {
+        transform: rotate(270deg) scale(.8);
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes changeTitle {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(5px);
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.backBtn {
+    animation: 0.15s ease-out 0s 1 normal none running menuToBack2;
+}
+
+.TopBar .Search .icon {
+    transition: all .3s ease;
+}
+
+.fab.quickChatButton .DropdownMenu {
+    bottom: -8px;
+    right: 0;
+    margin: -1px;
+}
