@@ -4,13 +4,13 @@ import { calculateMediaDimensions } from "./MessageMedia";
 import Lottie from "react-lottie";
 import { client } from "../../../App";
 
-const AnimatedSticker = forwardRef(({ media, size, _width, _height, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
+const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
     const [anim, setAnim] = useState()
 
     const aspectRatio = height / width
-    const dimensions = calculateMediaDimensions(width, height, noAvatar)
+    // const dimensions = calculateMediaDimensions(width, height, noAvatar)
     const img = useRef()
     const isLowQualityLoaded = useRef(false)
     const request = useRef()
@@ -44,19 +44,15 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, noAvatar = f
             return
 
         (async () => {
-            const param = size ? { thumb: media.document.thumbs[0] } : {}
-            const buffer = await client.downloadMedia(media, {
-
-            })
-            var blob = new Blob([buffer]);
-            var url = window.URL.createObjectURL(blob)
-            let src = url
+            //     const param = size ? { thumb: media.document.thumbs[0] } : {}
+            const result = await downloadMedia(media, {}, null, false, true, null, true, isCustomEmoji)
+            let data = result.data
 
             const options = {
                 container: img.current,
                 loop: true,
                 autoplay: true,
-                animationData: blob,
+                animationData: data,
                 fileId: media.document.id.value,
                 width,
                 height
@@ -74,7 +70,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, noAvatar = f
                 //     });
                 // }
             });
-            setSrc(src)
+            // setSrc(data)
             // if (!result.thumbnail)
             //     setIsLoaded(true)
             // else
@@ -84,7 +80,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, noAvatar = f
 
     return <>
         {/* <img ref={img} width={width > 0 ? dimensions.width : ''} /> */}
-        <div className="RlottiePlayer" ref={img}></div>
+        <div className="RLottie" ref={img}></div>
     </>
 })
 

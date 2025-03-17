@@ -1,11 +1,9 @@
 import { CircularProgress, circularProgressClasses } from "@mui/material";
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Icon } from "../common";
-import { urlEndpoint } from "../Home";
 import Transition from "../Transition";
 import { handleMediaPreview } from "../../Stores/UI";
-import { client } from "../../../App";
 import { getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentSticker, isDocumentVideo } from "../../Helpers/messages";
 import { downloadMedia } from "../../Util/media";
 import AnimatedSticker from "./AnimatedSticker";
@@ -154,7 +152,6 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
 export default memo(MessageMedia)
 
 const Document = forwardRef(({ children, media, details, setProgress, isLoaded, setIsLoaded, setSrc }, ref) => {
-    // const url = `${urlEndpoint}${path}`
     const file = useRef()
     const request = useRef()
 
@@ -174,14 +171,11 @@ const Document = forwardRef(({ children, media, details, setProgress, isLoaded, 
             (async () => {
                 const result = await downloadMedia(media, {}, (e) => setProgress({ loaded: Number(e.value), total: details.size }))
 
-                var _src = result.url
+                var _src = result.data
                 file.current = _src;
                 setSrc(_src)
                 setIsLoaded(true)
             })()
-
-            // setProgress({ loaded: e.loaded, total: e.total })
-
         }
     }))
 
@@ -259,7 +253,6 @@ export const calculateMediaDimensions = (width, height, noAvatar = false) => {
 }
 
 export function getStickerDimensions(width, height) {
-    // For some reason this sticker has some weird `height` value
     // if (sticker.id === LIKE_STICKER_ID) {
     //   height = width;
     // }
@@ -331,7 +324,7 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
             const param = size ? { thumb: media.photo.sizes[0] } : {}
             const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: getPhotoDimensions(media.photo)?.sizes[4] }), size, true, 'image/jpg')
             if (img.current) {
-                let src = result.url
+                let src = result.data
                 img.current.src = src;
                 setSrc(src)
             }
@@ -397,8 +390,8 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
-            setSrc(result.url)
-            setContent(result.url)
+            setSrc(result.data)
+            setContent(result.data)
             if (!result.thumbnail) {
                 setIsLoaded(true)
             }
@@ -406,8 +399,6 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
                 isLowQualityLoaded.current = true
             }
         })()
-
-        // setProgress({ loaded: e.loaded, total: e.total })
     }, [media, size])
 
     return <>
@@ -476,8 +467,8 @@ const RoundVideo = forwardRef(({ children, media, details, size, noAvatar = fals
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
-            setSrc(result.url)
-            setContent(result.url)
+            setSrc(result.data)
+            setContent(result.data)
             if (!result.thumbnail) {
                 setIsLoaded(true)
             }
@@ -485,8 +476,6 @@ const RoundVideo = forwardRef(({ children, media, details, size, noAvatar = fals
                 isLowQualityLoaded.current = true
             }
         })()
-
-        // setProgress({ loaded: e.loaded, total: e.total })
     }, [media, size])
 
     return <>
@@ -551,7 +540,7 @@ const Sticker = forwardRef(({ children, media, size, _width, _height, noAvatar =
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, null, size, true)
             if (img.current) {
-                let src = result.url
+                let src = result.data
                 img.current.src = src;
                 setSrc(src)
             }

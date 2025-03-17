@@ -2,6 +2,7 @@ import { Api } from "telegram";
 import MentionLink from "../App/Message/MentionLink";
 import Link from "../App/Message/Link";
 import Spoiler from "../App/Message/Spoiler";
+import CustomEmoji from "../App/Message/CustomEmoji";
 
 export default function renderTextWithEntities(text, entities, allowClick = true, entitiesData) {
     if (!entities?.length) {
@@ -48,6 +49,8 @@ export default function renderTextWithEntities(text, entities, allowClick = true
                 return <Link url={entity.url ?? entityContent}>{entityContent}</Link>
             case 'MessageEntitySpoiler':
                 return <Spoiler allowClick={allowClick}>{entityContent}</Spoiler>
+            case 'MessageEntityCustomEmoji':
+                return <CustomEmoji documentId={entity.documentId.value} />
             default:
                 return entityContent
         }

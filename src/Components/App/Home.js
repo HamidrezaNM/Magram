@@ -226,9 +226,9 @@ function Home() {
         console.log(isWindowFocused.current)
         if (isWindowFocused.current) return
         flashTitleInterval.current = setInterval(() => {
-            document.title === 'My App'
+            document.title === 'Magram'
                 ? (document.title = newTitle)
-                : (document.title = 'My App');
+                : (document.title = 'Magram');
         }, 1000);
     }
 
@@ -286,29 +286,12 @@ function Home() {
                 setConnectionState(update.state === 1 ? 'connected' : 'Connecting...')
             }
         });
-
-        socket.on("connect", () => {
-            setConnectionState('connected')
-        });
-
-        socket.on("connect_error", () => {
-            setConnectionState('Connecting...')
-        });
-
-
-        socket.on("disconnect", () => {
-            setConnectionState('Waiting for network...')
-        })
-
-        socket.io.on("reconnect_attempt", () => {
-            setConnectionState('Connecting...')
-        });
     }, [])
 
     useEffect(() => {
         if (isWindowFocused.current && flashTitleInterval.current) {
             clearInterval(flashTitleInterval.current)
-            document.title = 'My App'
+            document.title = 'Magram'
         }
     }, [isWindowFocused.current])
 

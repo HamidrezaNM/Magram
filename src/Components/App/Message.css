@@ -367,6 +367,18 @@
     position: static;
 }
 
+.CustomEmoji {
+    display: inline-flex;
+    vertical-align: text-bottom;
+    align-items: center;
+    justify-content: center;
+}
+
+.CustomEmoji .RLottie {
+    width: 20px;
+    height: 20px;
+}
+
 .message-call {
     display: flex;
     align-items: center;

@@ -127,7 +127,7 @@ function Chat({ info, isActive }) {
                 </div>
             </div>
             <div className="subtitle">
-                <div className="last-message">{info.message ? <MessageText data={info.message} includeFrom={info.isGroup} /> : 'Loading...'}</div>
+                <div className="last-message" dir="auto">{info.message ? <MessageText data={info.message} includeFrom={info.isGroup} /> : 'Loading...'}</div>
                 {info.unreadCount ? info.unreadCount > 0 && <div className="unread">{info.unreadCount}</div> : null}
             </div>
         </div>

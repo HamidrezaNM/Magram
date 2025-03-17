@@ -66,7 +66,7 @@ function ChatInfo() {
     }
 
     useEffect(() => {
-        console.log('saldas ius typuhng')
+
     }, [activeChat.typingStatus])
 
     return <div className="ChatInfo">

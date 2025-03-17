@@ -6,7 +6,6 @@ import Chat, { ChatsLoading } from "./Chat";
 import { useDispatch, useSelector } from "react-redux";
 import { setChats } from "../Stores/Chats";
 import { setActiveChat } from "../Stores/UI";
-import { Api } from "telegram";
 
 function ChatList() {
     const Auth = useContext(AuthContext);
@@ -21,17 +20,6 @@ function ChatList() {
     console.log('ChatList Rerendered')
 
     useEffect(() => {
-        // socket.on('disconnect', () => {
-        //     socket.on('connect', () => {
-        //         if (Auth.authJWT) {
-        //             console.log('Reconnected')
-        //             setTimeout(() => {
-        //                 socket.emit('GetChats', { token: Auth.authJWT })
-        //             }, 1000);
-        //         }
-        //         socket.off('connect')
-        //     })
-        // })
         (async () => {
             try {
                 const getChats = await client.getDialogs()
@@ -41,13 +29,6 @@ function ChatList() {
                 console.log(error)
             }
         })()
-        // if (Auth.authJWT)
-        //     socket.emit('GetChats', { token: Auth.authJWT })
-        // socket.on('GetChats', (response) => {
-        //     if (response && response?.ok) {
-        //         dispatch(setChats(response.data))
-        //     }
-        // })
     }, [User, Auth.authJWT])
 
     return <div className="ChatList">

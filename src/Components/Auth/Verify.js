@@ -15,19 +15,23 @@ export default function Verify() {
         e.preventDefault()
 
         try {
-            const result = await client.invoke(
-                new Api.auth.SignIn({
-                    phoneNumber: Auth.authCountryCode + Auth.authPhoneNumber,
-                    phoneCodeHash: Auth.authPhoneCodeHash,
-                    phoneCode: phoneCode,
-                })
-            );
+            // TODO: Fix SignIn with Password
 
-            await client.sendMessage('me', { message: "You're successfully logged in!" });
+            // THIS IS BUGGY
 
-            const session = client.session.save()
-            console.log(session)
-            AuthComplete(Auth, session)
+            // const result = await client.invoke(
+            //     new Api.auth.SignIn({
+            //         phoneNumber: Auth.authCountryCode + Auth.authPhoneNumber,
+            //         phoneCodeHash: Auth.authPhoneCodeHash,
+            //         phoneCode: phoneCode,
+            //     })
+            // );
+
+            // await client.sendMessage('me', { message: "You're successfully logged in!" });
+
+            // const session = client.session.save()
+            // console.log(session)
+            // AuthComplete(Auth, session)
         } catch (error) {
             console.log(error)
             if (error.errorMessage === 'SESSION_PASSWORD_NEEDED') {

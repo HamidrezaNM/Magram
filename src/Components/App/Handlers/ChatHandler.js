@@ -9,7 +9,7 @@ import { generateChatWithPeer } from "../../Helpers/chats";
 function ChatHandler() {
 
     const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const chats = useSelector((state) => state.chats.value)
+    // const chats = useSelector((state) => state.chats.value)
 
     const dispatch = useDispatch()
 
