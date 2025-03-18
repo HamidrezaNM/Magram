@@ -1,8 +1,9 @@
+import { memo } from "react";
 import CustomEmoji from "../App/Message/CustomEmoji";
 import { getChatTitle } from "../Helpers/chats";
 import { getUserFullName } from "../Helpers/users";
 
-export default function FullNameTitle({ chat, isSavedMessages }) {
+function FullNameTitle({ chat, isSavedMessages }) {
     const isUser = chat.className === 'User';
     const title = isUser ? getUserFullName(chat) : getChatTitle(chat);
 
@@ -16,11 +17,12 @@ export default function FullNameTitle({ chat, isSavedMessages }) {
 
     const emojiStatus = () => {
         if (chat.emojiStatus) {
-            console.log(chat.emojiStatus)
             return <CustomEmoji documentId={chat.emojiStatus.documentId.value} />
         }
     }
 
 
-    return <span>{specialTitle() || title}{emojiStatus()}</span>
+    return <span>{specialTitle() || title} {emojiStatus()}</span>
 }
+
+export default memo(FullNameTitle)

@@ -25,7 +25,7 @@ function RLottieItem(reqId, jsString, width, height, fps) {
     reply('loaded', this.reqId, this.frameCount, this.fps);
 }
 
-RLottieItem.prototype.init = function(jsString) {
+RLottieItem.prototype.init = function (jsString) {
     try {
         this.handle = RLottieWorker.Api.init();
 
@@ -34,15 +34,15 @@ RLottieItem.prototype.init = function(jsString) {
         this.frameCount = RLottieWorker.Api.loadFromData(this.handle, this.stringOnWasmHeap);
 
         RLottieWorker.Api.resize(this.handle, this.width, this.height);
-    } catch(e) {
+    } catch (e) {
         console.error('init RLottieItem error:', e);
     }
 };
 
-RLottieItem.prototype.render = function(frameNo, segmentId, clamped) {
-    if(this.dead) return;
+RLottieItem.prototype.render = function (frameNo, segmentId, clamped) {
+    if (this.dead) return;
 
-    if(this.frameCount < frameNo || frameNo < 0) {
+    if (this.frameCount < frameNo || frameNo < 0) {
         return;
     }
 
@@ -52,27 +52,27 @@ RLottieItem.prototype.render = function(frameNo, segmentId, clamped) {
         const bufferPointer = RLottieWorker.Api.buffer(this.handle);
         const data = Module.HEAPU8.subarray(bufferPointer, bufferPointer + (this.width * this.height * 4));
 
-        if(!clamped) {
+        if (!clamped) {
             clamped = new Uint8ClampedArray(data);
         } else {
             clamped.set(data);
         }
 
         reply('frame', this.reqId, frameNo, clamped, segmentId);
-    } catch(e) {
+    } catch (e) {
         console.error('Render error:', e);
         this.dead = true;
     }
 };
 
-RLottieItem.prototype.destroy = function() {
+RLottieItem.prototype.destroy = function () {
     this.dead = true;
 
     RLottieWorker.Api.destroy(this.handle);
 };
 
 const items = {};
-const RLottieWorker = (function() {
+const RLottieWorker = (function () {
     const worker = {};
     worker.Api = {};
 
@@ -88,7 +88,7 @@ const RLottieWorker = (function() {
         };
     }
 
-    worker.init = function() {
+    worker.init = function () {
         initApi();
 
         reply('ready');
@@ -97,18 +97,18 @@ const RLottieWorker = (function() {
     return worker;
 }());
 
-Module.onRuntimeInitialized = function() {
+Module.onRuntimeInitialized = function () {
     RLottieWorker.init();
 };
 
 const queryableFunctions = {
-    loadFromData: function(reqId, url, width, height) {
-        getUrlContent(url, function(err, data) {
+    loadFromData: function (reqId, url, width, height) {
+        getUrlContent(url, function (err, data) {
             if (err) {
                 return console.warn('Can\'t fetch file ' + url, err);
             }
             try {
-                const json = pako.inflate(data, {to: 'string'});
+                const json = pako.inflate(data, { to: 'string' });
                 const json_parsed = JSON.parse(json);
                 // if (!json_parsed.tgs) {
                 //     throw new Error('Invalid file');
@@ -119,7 +119,7 @@ const queryableFunctions = {
             }
         });
     },
-    loadFromBlob: function(reqId, blob, width, height) {
+    loadFromBlob: function (reqId, blob, width, height) {
         const reader = new FileReader();
         reader.onload = async e => {
             try {
@@ -130,12 +130,12 @@ const queryableFunctions = {
                 // }
                 items[reqId] = new RLottieItem(reqId, json, width, height, json_parsed.fr);
             } catch (e) {
-                return console.warn('Invalid blob ' + reqId);
+                return console.warn('Invalid blob ' + reqId + ' ' + e);
             }
         };
         reader.readAsArrayBuffer(blob);
     },
-    loadFromJson: function(reqId, json, width, height) {
+    loadFromJson: function (reqId, json, width, height) {
         try {
             const json_parsed = JSON.parse(json);
             // if (!json_parsed.tgs) {
@@ -146,11 +146,11 @@ const queryableFunctions = {
             return console.warn('Invalid file ' + url);
         }
     },
-    destroy: function(reqId) {
+    destroy: function (reqId) {
         items[reqId].destroy();
         delete items[reqId];
     },
-    renderFrame: function(reqId, frameNo, segmentId, clamped) {
+    renderFrame: function (reqId, frameNo, segmentId, clamped) {
         items[reqId].render(frameNo, segmentId, clamped);
     }
 };
@@ -175,7 +175,7 @@ function defaultReply(message) {
  */
 var _isSafari = null;
 function isSafari(scope) {
-    if(_isSafari == null) {
+    if (_isSafari == null) {
         var userAgent = scope.navigator ? scope.navigator.userAgent : null;
         _isSafari = !!scope.safari ||
             !!(userAgent && (/\b(iPad|iPhone|iPod)\b/.test(userAgent) || (!!userAgent.match('Safari') && !userAgent.match('Chrome'))));
@@ -184,25 +184,25 @@ function isSafari(scope) {
 }
 
 function reply() {
-    if(arguments.length < 1) {
+    if (arguments.length < 1) {
         throw new TypeError('reply - not enough arguments');
     }
 
     var args = Array.prototype.slice.call(arguments, 1);
-    if(isSafari(self)) {
+    if (isSafari(self)) {
         postMessage({ 'queryMethodListener': arguments[0], 'queryMethodArguments': args });
     } else {
         let transfer = [];
-        for(let i = 0; i < args.length; i++) {
+        for (let i = 0; i < args.length; i++) {
             if (args[i] === undefined) {
                 continue;
             }
 
-            if(args[i] instanceof ArrayBuffer) {
+            if (args[i] instanceof ArrayBuffer) {
                 transfer.push(args[i]);
             }
 
-            if(args[i].buffer && args[i].buffer instanceof ArrayBuffer) {
+            if (args[i].buffer && args[i].buffer instanceof ArrayBuffer) {
                 transfer.push(args[i].buffer);
             }
         }
@@ -211,8 +211,8 @@ function reply() {
     }
 }
 
-onmessage = function(oEvent) {
-    if(oEvent.data instanceof Object && oEvent.data.hasOwnProperty('queryMethod') && oEvent.data.hasOwnProperty('queryMethodArguments')) {
+onmessage = function (oEvent) {
+    if (oEvent.data instanceof Object && oEvent.data.hasOwnProperty('queryMethod') && oEvent.data.hasOwnProperty('queryMethodArguments')) {
         queryableFunctions[oEvent.data.queryMethod].apply(self, oEvent.data.queryMethodArguments);
     } else {
         defaultReply(oEvent.data);

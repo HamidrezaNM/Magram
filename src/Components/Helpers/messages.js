@@ -3,11 +3,13 @@ import { getStickerDimensions } from "../App/Message/MessageMedia"
 const RoundVideoSize = 240
 
 export function getPhotoDimensions(photo) {
-    return photo.sizes[photo.sizes.length - 1]
+    if (!photo.sizes)
+        return
+    return photo.sizes[photo.sizes?.length - 1]
 }
 
 export function getDocumentFileName(document) {
-    return document.attributes.find(i => i.className === 'DocumentAttributeFilename')?.fileName
+    return document.attributes?.find(i => i.className === 'DocumentAttributeFilename')?.fileName
 }
 
 export function getDocumentVideoAttributes(document) {
@@ -44,7 +46,7 @@ export function isDocumentVideo(document) {
 }
 
 export function isDocumentRoundVideo(document) {
-    return document.mimeType && document.mimeType.split('/')[0] === 'video' && getDocumentVideoAttributes(document).roundMessage
+    return document.mimeType && document.mimeType.split('/')[0] === 'video' && getDocumentVideoAttributes(document)?.roundMessage
 }
 
 export function isDocumentGIF(document) {

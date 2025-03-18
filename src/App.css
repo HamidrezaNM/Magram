@@ -1099,12 +1099,8 @@ a:hover {
   transition: all .3s ease;
 }
 
-.MediaPreview .Content .Media {
-  /* height: 100%; */
-}
-
-.MediaPreview .Content .Media img {
-  /* height: 100%; */
+.MediaPreview .Content .Media>* {
+  max-width: 100%;
 }
 
 .MediaPreview.animate {

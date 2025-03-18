@@ -372,6 +372,8 @@
     vertical-align: text-bottom;
     align-items: center;
     justify-content: center;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .CustomEmoji .RLottie {

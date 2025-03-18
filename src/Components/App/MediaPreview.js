@@ -14,12 +14,12 @@ const MediaPreview = () => {
             case 'MessageMediaPhoto':
                 const dimensions = getPhotoDimensions(data.media.photo)
 
-                return <img src={data.mediaSrc} width={calculateMediaDimensions(dimensions.w, dimensions.h).width} />
+                return <img src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} />
             case 'MessageMediaDocument':
                 if (isDocumentVideo(data.media?.document)) {
                     const dimensions = getDocumentVideoAttributes(data.media.document)
 
-                    return <video src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h).width} autoPlay controls />
+                    return <video src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} autoPlay controls />
                 }
             default:
                 // if (data.media[0].videoCodec) {
@@ -55,9 +55,9 @@ const MediaPreview = () => {
         <div className="MediaPreview animate">
             <div className="Topbar">
                 <div className="SenderInfo">
-                    <div className="meta"><Profile entity={data.message.sender} name={data.message.sender.firstName ?? data.message.sender.title} id={data.message.senderId.value} /></div>
+                    <div className="meta"><Profile entity={data.message._sender} name={data.message._sender.firstName ?? data.message._sender.title} id={data.message._senderId.value} /></div>
                     <div className="body">
-                        <div className="title">{data.message.sender.firstName ?? data.message.sender.title}</div>
+                        <div className="title">{data.message._sender.firstName ?? data.message._sender.title}</div>
                         <div className="subtitle">Yesterday, 15:19</div>
                     </div>
                 </div>

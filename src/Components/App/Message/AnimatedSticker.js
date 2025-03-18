@@ -7,7 +7,8 @@ import { client } from "../../../App";
 const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
-    const [anim, setAnim] = useState()
+    const [data, setData] = useState()
+    const [isWebm, setIsWebm] = useState(false)
 
     const aspectRatio = height / width
     // const dimensions = calculateMediaDimensions(width, height, noAvatar)
@@ -48,28 +49,35 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
             const result = await downloadMedia(media, {}, null, false, true, null, true, isCustomEmoji)
             let data = result.data
 
-            const options = {
-                container: img.current,
-                loop: true,
-                autoplay: true,
-                animationData: data,
-                fileId: media.document.id.value,
-                width,
-                height
-            };
-            window.RLottie.loadAnimation(options, _anim => {
-                setAnim(_anim);
+            if (result.mimeType === 'video/webm') {
+                setIsWebm(true)
+                const src = window.URL.createObjectURL(data)
+                setData(src)
+            } else {
+                const options = {
+                    container: img.current,
+                    loop: true,
+                    autoplay: true,
+                    animationData: data,
+                    fileId: media.document.id.value,
+                    width,
+                    height
+                };
+                window.RLottie.loadAnimation(options, _anim => {
+                    // setAnim(_anim);
 
-                // if (window.RLottie.hasFirstFrame(this.anim)) {
-                // if (!eventListeners) return;
+                    // if (window.RLottie.hasFirstFrame(this.anim)) {
+                    // if (!eventListeners) return;
 
-                // eventListeners.forEach(({ eventName, callback }) => {
-                //     if (eventName === 'firstFrame') {
-                //         callback && callback();
-                //     }
-                //     });
-                // }
-            });
+                    // eventListeners.forEach(({ eventName, callback }) => {
+                    //     if (eventName === 'firstFrame') {
+                    //         callback && callback();
+                    //     }
+                    //     });
+                    // }
+                });
+            }
+
             // setSrc(data)
             // if (!result.thumbnail)
             //     setIsLoaded(true)
@@ -80,7 +88,9 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
 
     return <>
         {/* <img ref={img} width={width > 0 ? dimensions.width : ''} /> */}
-        <div className="RLottie" ref={img}></div>
+        {isWebm ? <video width={20} height={20} src={data} autoPlay loop /> :
+            <div className="RLottie" ref={img}></div>
+        }
     </>
 })
 

@@ -127,6 +127,7 @@
 .Chat .body .last-message {
     width: 100%;
     text-overflow: ellipsis;
+    text-align: left;
     overflow: hidden;
     display: inline-block;
     white-space: nowrap;

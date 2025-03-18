@@ -47,20 +47,17 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
         }
     }, [isLoaded, waitForSave])
 
-    useEffect(() => {
-        if (data.isUploading && media[0].type) {
-            media[0].fileType = media[0].type.split('/')[0]
+    // useEffect(() => {
+    //     if (data.isUploading && media) {
+    //         var fr = new FileReader();
 
-            var fr = new FileReader();
+    //         fr.readAsDataURL(media[0]);
 
-            fr.readAsDataURL(media[0]);
-
-            fr.onload = function (e) {
-                setUploading(this.result)
-            };
-        } else {
-        }
-    }, [media])
+    //         fr.onload = function (e) {
+    //             setUploading(this.result)
+    //         };
+    //     }
+    // }, [media])
 
     const downloadMedia = () => {
         if (isDownloading) {
@@ -114,7 +111,7 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
         const downloadButton = <Transition state={!isLoaded}>
             <div className="message-loading-progress" onClick={downloadMedia}>
                 <Icon name={(isDownloading || data.isUploading) ? "close" : "arrow_downward"} size={28} />
-                {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={48} value={progress ? (progress.loaded / progress.total) * 100 : 1} />}
+                {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
             </div>
         </Transition>
 
@@ -125,11 +122,11 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
                 if (isDocumentVideo(media.document)) {
                     const videoAttributes = getDocumentVideoAttributes(media.document)
 
-                    if (videoAttributes.roundMessage) {
+                    if (videoAttributes?.roundMessage) {
                         return <RoundVideo ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</RoundVideo>
                     }
 
-                    return <Video ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</Video>
+                    return <Video ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</Video>
                 }
                 if (isDocumentSticker(media.document)) {
                     const attributes = getDocumentImageAttributes(media.document)
@@ -138,7 +135,7 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
                         return <AnimatedSticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading} />
                     return <Sticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading}>{downloadButton}</Sticker>
                 }
-                return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
+                return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
             default:
                 break;
         }
@@ -305,18 +302,30 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
         }
     }))
 
-    useEffect(() => {
-        if (uploading) {
-            img.current.src = uploading
+    // useEffect(() => {
+    //     if (uploading) {
+    //         img.current.src = uploading
 
-            img.current.onload = () => {
-                setWidth(img.current.offsetWidth)
-                setHeight(img.current.offsetHeight)
-            }
+    //         img.current.onload = () => {
+    //             setWidth(img.current.offsetWidth)
+    //             setHeight(img.current.offsetHeight)
+    //         }
+    //     }
+    // }, [uploading])
+
+    useEffect(() => {
+        if (!media.photo?.id && media.photo?.fileReference) {
+            const buffer = media.photo.fileReference
+
+            var blob = new Blob([buffer]);
+            var data = window.URL.createObjectURL(blob)
+
+            img.current.src = data;
+            setSrc(data)
+
+            return
         }
-    }, [uploading])
 
-    useEffect(() => {
         if (isLowQualityLoaded.current && size === 16 || uploading || !media)
             return
 
@@ -342,6 +351,7 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
 })
 
 const Video = forwardRef(({ children, media, details, size, width, height, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+    const [thumb, setThumb] = useState()
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
 
@@ -383,6 +393,18 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
     }, [uploading])
 
     useEffect(() => {
+        if (!media.document?.id && media.document?.fileReference) {
+            const buffer = media.document.fileReference
+
+            var blob = new Blob([buffer]);
+            var data = window.URL.createObjectURL(blob)
+
+            setSrc(data)
+            setContent(data)
+
+            return
+        }
+
         if (isLowQualityLoaded.current && size === 16 || uploading || !media)
             return
 
@@ -391,19 +413,20 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
             setSrc(result.data)
-            setContent(result.data)
             if (!result.thumbnail) {
+                setContent(result.data)
                 setIsLoaded(true)
             }
             else {
+                setThumb(result.data)
                 isLowQualityLoaded.current = true
             }
         })()
     }, [media, size])
 
     return <>
-        {!isLoaded ?
-            <img ref={thumbnail} src={content} width={width > 0 ? dimensions.width : ''} className={'blurred'} />
+        {!content ?
+            <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} className={'blurred'} />
             :
             <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={isLoaded && autoplay} loop={autoplay} />
         }

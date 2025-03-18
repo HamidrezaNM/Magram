@@ -77,7 +77,7 @@ export const messagesSlice = createSlice({
         updateMessageMediaUploadProgress: (state, action) => {
             const message = state.value[action.payload.chatId].find(message => message.id === action.payload.id)
             if (message) {
-                message.progress = action.payload.media[0].progress
+                message.progress = action.payload.progress
             }
         },
         updateMessageMedia: (state, action) => {

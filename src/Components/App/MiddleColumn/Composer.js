@@ -14,6 +14,8 @@ import MessageText from "../MessageText";
 import { EmojiConvertor } from "emoji-js";
 import { Api } from "telegram";
 import { getChatType } from "../../Helpers/chats";
+import Attachment from "./Attachment";
+import { CustomFile } from "telegram/client/uploads";
 
 function Composer({ scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
@@ -240,54 +242,53 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
         }))
     }, [User, activeChat])
 
-    const onUploadMedia = (e) => {
-        const message = {
-            chatId: activeChat._id,
-            date: Date.now(),
-            forwardId: null,
-            from: User,
-            fromId: User._id,
-            id: Date.now(),
-            media: e.target.files,
-            message: htmlDecode(messageInputHandled),
-            reply: replyToMessage ? replyToMessage : 0,
-            seen: null,
+    const onUploadMedia = async (file, buffer, media) => {
+        const messageId = Date.now()
+        const messageText = messageInputHandled.replace(/&nbsp;/g, ' ').trim()
+        const chatId = activeChat.id.value
+
+        const fileSize = file.size
+
+        const _message = {
+            chatId: activeChat.id,
+            date: Date.now() / 1000,
+            _sender: User,
+            _senderId: User.id,
+            fromId: User.id,
+            out: true,
+            id: messageId,
+            message: messageText,
+            media,
             isUploading: true,
-            type: "media",
-            messageType: "message",
+            reply: replyToMessage ? replyToMessage : null,
         };
 
-        ikUploadRefTest.current.message = message
-        dispatch(messageAdded(message));
+        dispatch(messageAdded(_message));
         handleScrollToBottom()
-    }
 
-    const onUploadMediaProgress = (e) => {
-        var message = ikUploadRefTest.current.message;
-        message.media[0].progress = { loaded: e.loaded, total: e.total }
+        const progressCallback = (e) => {
+            var progress = { loaded: e * fileSize, total: fileSize }
 
-        dispatch(updateMessageMediaUploadProgress(message));
-    }
+            dispatch(updateMessageMediaUploadProgress({ id: messageId, chatId, progress }));
+        }
 
-    const onUploadMediaSuccess = (e) => {
-        var message = ikUploadRefTest.current.message
+        const sendFileParams = {
+            caption: messageText,
+            file: new CustomFile(file.name, fileSize, undefined, buffer),
+            replyTo: replyToMessage ? replyToMessage.id : null,
+            progressCallback
+        };
 
-        message = { ...message, media: [e] }
+        try {
+            const result = await client.sendFile(chatId, sendFileParams)
 
-        delete message.isUploading
+            dispatch(updateMessageMediaUploadProgress({ id: messageId, chatId, progress: { loaded: fileSize, total: fileSize } }));
+            dispatch(updateMessageId({ messageId, chatId, id: result.id }))
 
-        handleSendButtonAnimation()
-
-        socket.emit('SendMessage', { token: Auth.authJWT, message })
-        socket.on('SendMessage', (response) => {
-            if (response.ok) {
-                dispatch(updateMessageId({ messageId: message.id, chatId: message.chatId, _id: response.data }))
-                dispatch(updateLastMessage({ _id: message.chatId, message: { ...message, _id: response.data, seen: [] } }))
-                dispatch(updateMessageMedia(message))
-
-                socket.off('SendMessage')
-            }
-        })
+            handleSendButtonAnimation()
+        } catch (error) {
+            console.error('Upload Error', error)
+        }
     }
 
     useEffect(() => {
@@ -362,7 +363,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                         <span className="placeholder" ref={placeholderRef}>Message</span>
                     </> : <><Icon name="lock" /><span className="disabled">Text not allowed</span></>}
                     <div className="attach-button" ref={attachButton}>
-                        <IKUpload
+                        {/* <IKUpload
                             isPrivateFile={false}
                             useUniqueFileName={true}
                             validateFile={file => file.size < 20000000}
@@ -373,7 +374,8 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                             onUploadStart={onUploadMedia}
                             // style={{display: 'none'}} // hide the default input and use the custom upload button
                             ref={ikUploadRefTest}
-                        />
+                        /> */}
+                        <Attachment onUpload={onUploadMedia} />
                         <Icon name="attachment" size="28" />
                     </div>
                 </div>
