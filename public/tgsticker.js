@@ -12,7 +12,7 @@ window.RLottie = (function () {
 
     let startTime = +(new Date());
     function dT() {
-        return '[' + ((+(new Date()) - startTime)/ 1000.0) + '] ';
+        return '[' + ((+(new Date()) - startTime) / 1000.0) + '] ';
     }
 
     rlottie.Api = {};
@@ -44,7 +44,7 @@ window.RLottie = (function () {
                     return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
         return false;
     }
 
@@ -105,7 +105,7 @@ window.RLottie = (function () {
                 }
                 try {
                     clearTimeout(mainLoopTO);
-                } catch (e) {};
+                } catch (e) { };
                 mainLoopTO = false;
             } else {
                 if (isRAF) {
@@ -126,7 +126,7 @@ window.RLottie = (function () {
                 apiInitStarted = true;
                 let workersRemain = rlottie.WORKERS_LIMIT;
                 for (let workerNum = 0; workerNum < rlottie.WORKERS_LIMIT; workerNum++) {
-                    (function(workerNum) {
+                    (function (workerNum) {
                         const rlottieWorker = rlottieWorkers[workerNum] = new QueryableWorker('rlottie/rlottie-wasm.worker.js');
                         rlottieWorker.addListener('ready', function () {
                             console.log(dT(), 'worker #' + workerNum + ' ready');
@@ -179,14 +179,14 @@ window.RLottie = (function () {
         rlPlayer.fileId = fileId;
         rlPlayer.reqId = ++reqId;
         rlPlayer.el = el;
-        rlPlayer.width = Math.trunc(pic_width * curDeviceRatio);
-        rlPlayer.height = Math.trunc(pic_height * curDeviceRatio);
+        rlPlayer.width = pic_width;
+        rlPlayer.height = pic_width;
         rlPlayer.imageData = new ImageData(rlPlayer.width, rlPlayer.height);
         rlottie.players[reqId] = rlPlayer;
 
         rlPlayer.canvas = document.createElement('canvas');
-        rlPlayer.canvas.width = pic_width * curDeviceRatio;
-        rlPlayer.canvas.height = pic_height * curDeviceRatio;
+        rlPlayer.canvas.width = pic_width;
+        rlPlayer.canvas.height = pic_height;
         rlPlayer.el.innerHTML = null;
         rlPlayer.el.appendChild(rlPlayer.canvas);
         rlPlayer.context = rlPlayer.canvas.getContext('2d');
@@ -366,7 +366,7 @@ window.RLottie = (function () {
         } else if (isSafari) {
             rlPlayer.rWorker.sendQuery('renderFrame', reqId, frameNo, segmentId);
         } else {
-            if(!rlPlayer.clamped.length) { // fix detached
+            if (!rlPlayer.clamped.length) { // fix detached
                 rlPlayer.clamped = new Uint8ClampedArray(rlPlayer.width * rlPlayer.height * 4);
             }
             rlPlayer.rWorker.sendQuery('renderFrame', reqId, frameNo, segmentId, rlPlayer.clamped);
@@ -425,7 +425,7 @@ window.RLottie = (function () {
             nextFrameNo = 0;
         }
 
-        if (rlPlayer.frameQueue.needsMore())  {
+        if (rlPlayer.frameQueue.needsMore()) {
             requestFrame(reqId, nextFrameNo, segmentId);
         } else {
             rlPlayer.nextFrameNo = nextFrameNo;
@@ -458,7 +458,7 @@ window.RLottie = (function () {
         }
     }
 
-    rlottie.init = function(el, options) {
+    rlottie.init = function (el, options) {
         if (!rlottie.isSupported) {
             return false;
         }
@@ -509,7 +509,7 @@ window.RLottie = (function () {
         initApi();
     }
 
-    rlottie.destroyWorkers = function() {
+    rlottie.destroyWorkers = function () {
         destroyWorkers();
     }
 
@@ -524,16 +524,19 @@ window.RLottie = (function () {
         return loadAnimation(options, callback);
     }
 
-    rlottie.destroy = function(reqId) {
+    rlottie.destroy = function (reqId) {
         unloadAnimation(reqId);
+        if (Object.keys(rlottie.players).length <= 1) {
+            rlottie.destroyWorkers()
+        }
     }
 
-    rlottie.clear = function() {
+    rlottie.clear = function () {
         rlottie.frames = new Map();
         return true;
     }
 
-    rlottie.clearPlayers = function() {
+    rlottie.clearPlayers = function () {
         rlottie.players = Object.create(null);
         return true;
     }
@@ -612,7 +615,7 @@ class QueryableWorker {
         this.worker = new Worker(url);
         this.listeners = [];
 
-        this.defaultListener = defaultListener || function() { };
+        this.defaultListener = defaultListener || function () { };
         if (onError) {
             this.worker.onerror = onError;
         }
@@ -662,16 +665,16 @@ class QueryableWorker {
             });
         } else {
             const transfer = [];
-            for(let i = 0; i < args.length; i++) {
+            for (let i = 0; i < args.length; i++) {
                 if (args[i] === undefined) {
                     continue;
                 }
 
-                if(args[i] instanceof ArrayBuffer) {
+                if (args[i] instanceof ArrayBuffer) {
                     transfer.push(args[i]);
                 }
 
-                if(args[i].buffer && args[i].buffer instanceof ArrayBuffer) {
+                if (args[i].buffer && args[i].buffer instanceof ArrayBuffer) {
                     transfer.push(args[i].buffer);
                 }
             }

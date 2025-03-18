@@ -81,14 +81,23 @@ export function Auth() {
         localStorage.removeItem('messages')
 
         await client.connect()
-        const getMe = await client.getMe()
 
-        client.addEventHandler((update) => console.log(update));
+        try {
+            const getMe = await client.getMe()
 
-        console.log(getMe)
-        setUser(getMe)
+            client.addEventHandler((update) => console.log(update));
 
-        setAuthState("authorizationStateReady");
+            console.log(getMe)
+            setUser(getMe)
+
+            setAuthState("authorizationStateReady");
+        } catch (error) {
+            if (error.errorMessage === 'AUTH_KEY_UNREGISTERED') {
+                localStorage.removeItem('auth_key')
+                setAuthState("Welcome")
+            }
+        }
+
         // setUser
         //     if (localStorage.getItem("user_auth")) {
         //         setAuthKey(localStorage.getItem("auth_key"));

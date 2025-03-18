@@ -3,6 +3,8 @@ import { Icon, Profile } from "./common"
 import { memo } from "react"
 import { handleMediaPreviewClose } from "../Stores/UI"
 import { getDocumentVideoAttributes, getPhotoDimensions, isDocumentVideo } from "../Helpers/messages"
+import { formatTime } from "../Util/dateFormat"
+import { getDate } from "./Message"
 
 const MediaPreview = () => {
     const data = useSelector((state) => state.ui.value.mediaPreview)
@@ -58,7 +60,7 @@ const MediaPreview = () => {
                     <div className="meta"><Profile entity={data.message._sender} name={data.message._sender.firstName ?? data.message._sender.title} id={data.message._senderId.value} /></div>
                     <div className="body">
                         <div className="title">{data.message._sender.firstName ?? data.message._sender.title}</div>
-                        <div className="subtitle">Yesterday, 15:19</div>
+                        <div className="subtitle">{`${getDate(new Date(data.message.date * 1000))}, ${formatTime(new Date(data.message.date) * 1000)}`}</div>
                     </div>
                 </div>
                 <div className="Action">

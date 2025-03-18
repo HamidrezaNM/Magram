@@ -21,19 +21,22 @@ export default function Password() {
     const Password = async e => {
         e.preventDefault()
         try {
-            await client.signInWithPassword(
-                {
-                    apiId: 22692190,
-                    apiHash: 'd392a9a3f167823d8c42aaa77270c0be',
-                },
-                {
-                    password: password,
-                    onError: (err) => {
-                        console.log(err)
-                    },
-                }
-            );
-            await client.sendMessage('me', { message: "You're successfully logged in!" });
+            // TODO: Fix SignIn with Password
+
+            // THIS IS BUGGY
+            // await client.signInWithPassword(
+            //     {
+            //         apiId: 22692190,
+            //         apiHash: 'd392a9a3f167823d8c42aaa77270c0be',
+            //     },
+            //     {
+            //         password: password,
+            //         onError: (err) => {
+            //             console.log(err)
+            //         },
+            //     }
+            // );
+            // await client.sendMessage('me', { message: "You're successfully logged in!" });
 
             // await client.sendMessage('me', { message: "You're successfully logged in!" })
         } catch (error) {

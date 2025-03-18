@@ -27,7 +27,7 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
 
     useEffect(() => {
         if (mediaDimensions) {
-            messageMedia.current.style.height = mediaDimensions?.h > 0 ? calculateMediaDimensions(mediaDimensions?.w, mediaDimensions?.h, noAvatar).height + 'px' : ''
+            messageMedia.current.style.height = mediaDimensions?.height > 0 ? mediaDimensions.height + 'px' : ''
         }
     }, [])
 

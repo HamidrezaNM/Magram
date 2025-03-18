@@ -15,6 +15,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
     const img = useRef()
     const isLowQualityLoaded = useRef(false)
     const request = useRef()
+    const anim = useRef()
 
     const onClick = (e) => {
         const { x, y } = img.current.getBoundingClientRect()
@@ -31,12 +32,12 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
 
     useEffect(() => {
         if (uploading) {
-            img.current.src = uploading
+            // img.current.src = uploading
 
-            img.current.onload = () => {
-                setWidth(img.current.offsetWidth)
-                setHeight(img.current.offsetHeight)
-            }
+            // img.current.onload = () => {
+            //     setWidth(img.current.offsetWidth)
+            //     setHeight(img.current.offsetHeight)
+            // }
         }
     }, [uploading])
 
@@ -65,6 +66,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                 };
                 window.RLottie.loadAnimation(options, _anim => {
                     // setAnim(_anim);
+                    anim.current = _anim
 
                     // if (window.RLottie.hasFirstFrame(this.anim)) {
                     // if (!eventListeners) return;
@@ -84,6 +86,9 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
             // else
             //     isLowQualityLoaded.current = true
         })()
+        return () => {
+            window.RLottie.destroy(anim.current)
+        }
     }, [media, size])
 
     return <>

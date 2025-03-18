@@ -209,12 +209,10 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
         return false
     }
 
-    let mediaDimensions
     let mediaWidth
 
     if (data.media) {
-        mediaDimensions = getMediaDimensions(data.media)
-        mediaWidth = calculateMediaDimensions(mediaDimensions?.w, mediaDimensions?.h, noAvatar).width - 18.4
+        mediaWidth = getMediaDimensions(data.media, noAvatar)?.width - 18.4
     }
 
     return <>

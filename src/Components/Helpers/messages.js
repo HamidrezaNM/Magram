@@ -1,4 +1,4 @@
-import { getStickerDimensions } from "../App/Message/MessageMedia"
+import { calculateMediaDimensions, getStickerDimensions } from "../App/Message/MessageMedia"
 
 const RoundVideoSize = 240
 
@@ -20,18 +20,19 @@ export function getDocumentImageAttributes(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeImageSize')
 }
 
-export function getMediaDimensions(media) {
+export function getMediaDimensions(media, noAvatar = false) {
     switch (media.className) {
         case 'MessageMediaPhoto':
-            return getPhotoDimensions(media.photo)
+            let photoDimensions = getPhotoDimensions(media.photo)
+            return calculateMediaDimensions(photoDimensions?.w, photoDimensions?.h, noAvatar)
         case 'MessageMediaDocument':
             if (isDocumentSticker(media.document)) {
                 const attributes = getDocumentImageAttributes(media.document)
-                const dimensions = getStickerDimensions(attributes?.w, attributes?.h)
-                return { w: dimensions.width, h: dimensions.height }
+                return getStickerDimensions(attributes?.w, attributes?.h)
             }
-            if (isDocumentRoundVideo(media.document)) return { w: RoundVideoSize, h: RoundVideoSize }
-            return getDocumentVideoAttributes(media.document)
+            if (isDocumentRoundVideo(media.document)) return { width: RoundVideoSize, height: RoundVideoSize }
+            let documentDimensions = getDocumentVideoAttributes(media.document)
+            return calculateMediaDimensions(documentDimensions?.w, documentDimensions?.h, noAvatar)
         default:
             break;
     }

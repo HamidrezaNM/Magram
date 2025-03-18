@@ -24,6 +24,12 @@
     flex-direction: column;
 }
 
+.Auth.container>div>form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 .Auth.container button {
     appearance: none;
     border: none;
