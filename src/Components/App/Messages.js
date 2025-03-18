@@ -10,6 +10,7 @@ import { getMessageText } from "./MessageText";
 import { goToMessage } from "./Home";
 import { Api } from "telegram";
 import { readHistory } from "../Util/messages";
+import Transition from "./Transition";
 
 const Messages = forwardRef(({ MessagesRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -37,6 +38,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight + 3000, behavior: "instant" })
         }, 40)
         if (messages[activeChat.id.value]?.length !== data?.length) {
+            MessagesRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
             data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message._id })))
             requestAnimationFrame(() => {
@@ -55,10 +57,10 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     }
 
     useEffect(() => {
-        if (messages[activeChat?._id]?.length && autoScroll.current) {
+        if (messages[activeChat?.id?.value]?.length && autoScroll.current) {
             handleScrollToBottom()
         }
-    }, [messages[activeChat?._id]?.length]) // Scroll to Bottom on ReceiveMessage and SendMessage
+    }, [messages[activeChat?.id?.value]?.length]) // Scroll to Bottom on ReceiveMessage and SendMessage
 
     useEffect(() => {
         (async () => {
@@ -115,7 +117,22 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
             isLoading.current = false
         }
-    }, [activeChat, messages[activeChat?.id.value]]) // Scroll to Bottom on Load
+
+        if (activeChat && messages[activeChat?.id.value]?.length) {
+            const items = MessagesRef.current.querySelectorAll('.MessagesAnimating .Message')
+            const itemsLength = Object.keys(items).length
+
+            if (itemsLength) {
+                Object.values(items).reverse().forEach((item, index) => {
+                    setTimeout(() => item.classList.add('showAnim'), 20 * index)
+                })
+
+                setTimeout(() => {
+                    MessagesRef.current?.classList?.remove('MessagesAnimating')
+                }, itemsLength * 20);
+            }
+        }
+    }, [activeChat, messages[activeChat?.id.value], messagesRenderCount]) // Scroll to Bottom on Load
 
     useEffect(() => {
         if (_goToMessage) {
