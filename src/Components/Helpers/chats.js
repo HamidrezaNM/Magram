@@ -2,7 +2,7 @@ import { message } from "telegram/client";
 import { getUserStatus } from "../App/MiddleColumn/ChatInfo";
 
 export function getChatTitle(chat) {
-    return chat.title;
+    return chat?.title;
 }
 
 export function getPeerId(peerId) {

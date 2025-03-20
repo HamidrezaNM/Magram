@@ -1,7 +1,7 @@
 import { memo, useCallback, useContext, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getChatData } from "../Chat"
-import { handleCall, setActiveChat } from "../../Stores/UI"
+import { handleCall, handleThread, setActiveChat } from "../../Stores/UI"
 import { PageHandle } from "../Page"
 import { showUserProfile } from "../Pages/UserProfile"
 import { Icon, Profile } from "../common"
@@ -21,6 +21,7 @@ function ChatInfo() {
     const activeChat = useSelector((state) => state.ui.value.activeChat)
     const fullChat = useSelector((state) => state.ui.value.activeFullChat)
     const typingStatus = useSelector((state) => state.ui.value.activeChat.typingStatus)
+    const thread = useSelector((state) => state.ui.value.thread)
 
     const isSavedMessages = activeChat.id.value === User.id.value
     const chatType = getChatType(activeChat.entity)
@@ -71,12 +72,20 @@ function ChatInfo() {
 
     return <div className="ChatInfo">
         <div className="info" onClick={showChatProfile}>
-            <Icon name="arrow_back" className="BackArrow" onClick={() => dispatch(setActiveChat())} />
-            <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
-            <div className="body">
-                <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
-            </div>
+            {!thread ? <>
+                <Icon name="arrow_back" className="BackArrow" onClick={() => dispatch(setActiveChat())} />
+                <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
+                <div className="body">
+                    <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
+                    {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
+                </div>
+            </> :
+                <>
+                    <Icon name="arrow_back" className="BackArrow visible" onClick={() => dispatch(handleThread())} />
+                    <div className="body">
+                        <div className="title">{thread.replies.replies} Comments</div>
+                    </div>
+                </>}
         </div>
         <div className="actions">
             {activeChat.type === 'private' && activeChat.to && <Icon name="call" onClick={() => dispatch(handleCall(activeChat?.to))} />}

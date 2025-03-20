@@ -19,7 +19,7 @@ export function Profile({ entity, image, name, id, size = 48, isSavedMessages })
 
                     setPhoto(url)
                 } catch (error) {
-                    throw error;
+                    console.error(error)
                 }
             })()
         }

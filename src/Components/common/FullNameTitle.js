@@ -4,7 +4,7 @@ import { getChatTitle } from "../Helpers/chats";
 import { getUserFullName } from "../Helpers/users";
 
 function FullNameTitle({ chat, isSavedMessages }) {
-    const isUser = chat.className === 'User';
+    const isUser = chat?.className === 'User';
     const title = isUser ? getUserFullName(chat) : getChatTitle(chat);
 
     const specialTitle = () => {
@@ -16,7 +16,7 @@ function FullNameTitle({ chat, isSavedMessages }) {
     }
 
     const emojiStatus = () => {
-        if (chat.emojiStatus) {
+        if (chat?.emojiStatus) {
             return <CustomEmoji documentId={chat.emojiStatus.documentId.value} />
         }
     }

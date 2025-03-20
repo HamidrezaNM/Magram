@@ -31,7 +31,12 @@ export const messagesSlice = createSlice({
             state.value = action.payload
         },
         setMessages: (state, action) => {
-            state.value[action.payload.chatId] = action.payload.messages
+            if (action.payload.messages?.length) {
+                if (state.value[action.payload.chatId]?.length > 0) {
+                    state.value[action.payload.chatId] = [...state.value[action.payload.chatId], ...action.payload.messages]
+                } else
+                    state.value[action.payload.chatId] = action.payload.messages
+            }
         },
         removeMessage: (state, action) => {
             if (state.value[action.payload.chatId]) {

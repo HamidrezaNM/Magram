@@ -19,6 +19,7 @@ export const uiSlice = createSlice({
             userProfile: null,
             activeChat: null,
             activeFullChat: null,
+            thread: null,
             call: null,
             showCall: false,
             callLeftPanelClose: false,
@@ -103,6 +104,9 @@ export const uiSlice = createSlice({
         setActiveFullChat: (state, action) => {
             state.value.activeFullChat = action.payload
         },
+        handleThread: (state, action) => {
+            state.value.thread = action.payload
+        },
         handleCall: (state, action) => {
             if (action.payload) {
                 state.value.showCall = true
@@ -167,6 +171,7 @@ export const {
     setActiveChat,
     updateActiveChatPermissions,
     setActiveFullChat,
+    handleThread,
     handleCall,
     handleCloseCall,
     handleCallLeftPanelToggle,

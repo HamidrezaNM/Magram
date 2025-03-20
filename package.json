@@ -1,6 +1,6 @@
 {
   "name": "Magram",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "dependencies": {
     "@emoji-mart/data": "^1.1.2",

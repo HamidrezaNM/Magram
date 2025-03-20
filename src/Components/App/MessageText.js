@@ -3,6 +3,8 @@ import { EmojiConvertor } from "emoji-js";
 import { UserContext } from "../Auth/Auth";
 import { getMediaType } from "../Helpers/messages";
 import renderTextWithEntities from "../Helpers/renderTextWithEntities";
+import { formatTime } from "../Util/dateFormat";
+import { getDate } from "./Message";
 
 function MessageText({ data, isInChat = false, includeFrom = false }) {
     const [text, setText] = useState(data.message)
@@ -40,9 +42,11 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
         //         return `<a href="${href}" target="_blank">${x}</a>`;
         //     })
         // output = new DOMParser().parseFromString(output, "text/html").documentElement.textContent;
-        return renderTextWithEntities(data.message, data.entities, isInChat)
+        return renderTextWithEntities(data.message, data.entities, isInChat, includeFrom && (data._sender?.firstName ?? data._sender?.title))
     } else if (data.action) {
         switch (data.action.className) {
+            case 'MessageActionChannelCreate':
+                return 'Channel created'
             case 'MessageActionChatCreate':
                 return `${data._actionEntities[0]?.firstName} created the group`
             case 'MessageActionChatJoinedByLink':
@@ -60,6 +64,9 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
                 return `${data.sender?.firstName} removed ${data._actionEntities[0]?.firstName}`
             case 'MessageActionPinMessage':
                 return `${data.sender?.firstName ?? data.sender.title} pinned this message`
+            case 'MessageActionGroupCallScheduled':
+                let date = data.action.scheduleDate * 1000
+                return `Live stream scheduled on ${getDate(date, false, true)}, ${formatTime(date)}`
             default:
                 break;
         }

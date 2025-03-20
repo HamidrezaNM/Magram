@@ -17,7 +17,7 @@ import { getChatType } from "../../Helpers/chats";
 import Attachment from "./Attachment";
 import { CustomFile } from "telegram/client/uploads";
 
-function Composer({ scrollToBottom, handleScrollToBottom }) {
+function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
     const [messageInputHandled, setMessageInputHandled] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -27,7 +27,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
     const User = useContext(UserContext)
 
     const chats = useSelector((state) => state.chats.value)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    // const activeChat = useSelector((state) => state.ui.value.activeChat)
     const editMessage = useSelector((state) => state.ui.value.editMessage)
     const replyToMessage = useSelector((state) => state.ui.value.replyToMessage)
 
@@ -60,11 +60,11 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
             return true;
         }
 
-        const chatId = activeChat.id.value
+        const chatId = chat.id.value
         const messageId = Date.now()
 
         const _message = {
-            chatId: activeChat.id,
+            chatId: chat.id,
             date: Date.now() / 1000,
             forwardId: null,
             _sender: User,
@@ -97,7 +97,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
             const result = await client.sendMessage(chatId, message)
 
             dispatch(updateMessageId({ messageId, chatId, id: result.id }))
-            dispatch(updateLastMessage({ id: activeChat.id.value, message: { ..._message, id: result.id, seen: [] } }))
+            dispatch(updateLastMessage({ id: chat.id.value, message: { ..._message, id: result.id, seen: [] } }))
 
             if (!chats[chatId]) {
                 await result.getChat()
@@ -233,24 +233,24 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
     };
 
     const onJoinGroup = () => {
-        dispatch(setChat(activeChat))
+        dispatch(setChat(chat))
     }
 
     const handleJoinGroup = useCallback(() => {
         client.invoke(new Api.channels.JoinChannel({
-            channel: activeChat.entity.id.value
+            channel: chat.entity?.id.value
         }))
-    }, [User, activeChat])
+    }, [User, chat])
 
     const onUploadMedia = async (file, buffer, media) => {
         const messageId = Date.now()
         const messageText = messageInputHandled.replace(/&nbsp;/g, ' ').trim()
-        const chatId = activeChat.id.value
+        const chatId = chat.id.value
 
         const fileSize = file.size
 
         const _message = {
-            chatId: activeChat.id,
+            chatId: chat.id,
             date: Date.now() / 1000,
             _sender: User,
             _senderId: User.id,
@@ -293,7 +293,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
 
     useEffect(() => {
         if (isTyping) {
-            socket.emit('SendMessageAction', { token: Auth.authJWT, chatId: activeChat._id, action: 'typing' })
+            // socket.emit('SendMessageAction', { token: Auth.authJWT, chatId: chat._id, action: 'typing' })
 
             setTimeout(() => {
                 setIsTyping(false)
@@ -302,13 +302,17 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
 
     }, [isTyping])
 
+    const allowSendingText = () => {
+        return !(chat.entity?.defaultBannedRights?.sendMessages || chat.entity?.defaultBannedRights?.sendPlain || chat.entity?.bannedRights?.sendMessages || chat.entity?.bannedRights?.sendPlain)
+    }
+
     return <>
         {replyToMessage && (
             <div key={replyToMessage.id} className="PreviewMessage animate">
                 <Icon name="reply" className="meta" />
                 <div className="body">
                     <div className="title">Reply message</div>
-                    <div className="subtitle">
+                    <div className="subtitle" dir="auto">
                         <MessageText data={replyToMessage} includeFrom />
                     </div>
                 </div>
@@ -325,7 +329,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                 <Icon name="edit" className="meta" />
                 <div className="body">
                     <div className="title">Edit message</div>
-                    <div className="subtitle"><MessageText data={editMessage} /></div>
+                    <div className="subtitle" dir="auto"><MessageText data={editMessage} /></div>
                 </div>
                 <div
                     className="close icon"
@@ -338,9 +342,9 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                 </div>
             </div>
         )}
-        {activeChat?.entity?.left ? <>
+        {chat?.entity?.left && !isThread ? <>
             <div className="Button" onClick={handleJoinGroup}>Join</div>
-        </> : getChatType(activeChat?.entity) === 'Channel' ? <div className="Button" onClick={() => { }}>Mute</div> : <>
+        </> : getChatType(chat?.entity) === 'Channel' ? <div className="Button" onClick={() => { }}>Mute</div> : <>
             <div className="Composer">
                 <div className="emoji-button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                     <div className="icon">mood</div>
@@ -349,7 +353,7 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                     <Picker onEmojiSelect={(e) => { changeMessageInputHandler(messageInput + e.shortcodes) }} theme="dark" set="apple" previewPosition="none" data={EmojiData} />
                 </div>}
                 <div className="message-input" ref={messageInputEl}>
-                    {true || activeChat.permissions.sendText ? <>
+                    {allowSendingText() ? <>
                         <ContentEditable
                             dir="auto"
                             className="input"
@@ -363,18 +367,6 @@ function Composer({ scrollToBottom, handleScrollToBottom }) {
                         <span className="placeholder" ref={placeholderRef}>Message</span>
                     </> : <><Icon name="lock" /><span className="disabled">Text not allowed</span></>}
                     <div className="attach-button" ref={attachButton}>
-                        {/* <IKUpload
-                            isPrivateFile={false}
-                            useUniqueFileName={true}
-                            validateFile={file => file.size < 20000000}
-                            overwriteFile={true}
-                            onError={console.log}
-                            onSuccess={onUploadMediaSuccess}
-                            onUploadProgress={onUploadMediaProgress}
-                            onUploadStart={onUploadMedia}
-                            // style={{display: 'none'}} // hide the default input and use the custom upload button
-                            ref={ikUploadRefTest}
-                        /> */}
                         <Attachment onUpload={onUploadMedia} />
                         <Icon name="attachment" size="28" />
                     </div>

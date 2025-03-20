@@ -1,11 +1,12 @@
 import { memo } from "react";
+import Reaction from "./Reaction";
 
-function MessageReactions({ reactions, children }) {
+function MessageReactions({ messageId, chatId, reactions, children }) {
     const { topReactors, results } = reactions
 
     return <div className="MessageReactions">
         {results.map((item) =>
-            <div className="reaction"><span className="emoticon">{item.reaction.emoticon}</span> <span>{item.count}</span></div>
+            <Reaction messageId={messageId} chatId={chatId} emoticon={item.reaction.emoticon} count={item.count} isActive={item.flags} />
         )}
         {children}
     </div>

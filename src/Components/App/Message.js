@@ -8,7 +8,7 @@ import { socket } from "../../App";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Skeleton, Slide, Zoom } from "@mui/material";
 import { ChatContext } from "./ChatContext";
 import { useDispatch, useSelector } from "react-redux";
-import { handleCall, handleContextMenu, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleUnpinMessage } from "../Stores/UI";
+import { handleCall, handleContextMenu, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleUnpinMessage } from "../Stores/UI";
 import MessageContextMenu from "./MessageContextMenu";
 import { EmojiConvertor } from "emoji-js";
 import MessageText, { getMessageText } from "./MessageText";
@@ -22,8 +22,9 @@ import { deleteMessage } from "../Util/messages";
 import { getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
+import FullNameTitle from "../common/FullNameTitle";
 
-function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
+function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -59,7 +60,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
 
     useEffect(() => {
         (async () => {
-            if (data.replyTo) {
+            if (data.replyTo && !data.replyToMessage) {
                 const reply = await data.getReplyMessage()
                 data.replyToMessage = reply
                 setReplyToMessage(reply)
@@ -116,7 +117,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
     }, [data])
 
     const handleViewProfile = useCallback(() => {
-        showUserProfile(data.from, dispatch)
+        showUserProfile(data._sender, dispatch)
         handleContextMenuClose()
     }, [data])
 
@@ -145,7 +146,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
             return;
         e.preventDefault()
 
-        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media'))) {
+        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('a'))) {
             const items = (
                 <>
                     <MessageContextMenu
@@ -170,10 +171,10 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
             const items = (
                 <>
                     <MessageProfileMenu
-                        user={data.from}
+                        user={data._sender}
                         canCall={true}
                         onMessage={() => { }}
-                        onCall={() => { dispatch(handleCall(data.from)) }}
+                        onCall={() => { }}
                         onView={handleViewProfile}
                     />
                 </>
@@ -186,9 +187,30 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
         const meta = <MessageMeta edited={data.edited} seen={data.seen} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
-            return <MessageReactions reactions={data.reactions}>{meta}</MessageReactions>
+            return <MessageReactions messageId={data.id} chatId={data.chatId} reactions={data.reactions}>{meta}</MessageReactions>
         else
             return meta
+    }
+
+    const renderCommentSection = () => {
+        const recentRepliers = data.replies.recentRepliers ? data.replies.recentRepliers.reverse() : []
+
+        const repliersUsers = recentRepliers.map((item) => {
+            return data._entities.get(item.userId?.value.toString())
+        })
+
+        const onClick = () => {
+            dispatch(handleThread(data))
+        }
+
+        return <div className="Comments" onClick={onClick}>
+            <div className="RecentRepliers">
+                {repliersUsers.map((item) => {
+                    return item?.accessHash && <Profile size={24} entity={item} id={item.id?.value} name={item.firstName} />
+                })}
+            </div>
+            <span>{data.replies.replies} Comments</span>
+        </div>
     }
 
     var isSameFromPrevMsg = prevMsgFrom === data._senderId?.value
@@ -222,18 +244,18 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
                 <span>{getDate(data.date * 1000)}</span>
             </div>}
         <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={handleReply}>
-            {!isOutMessage.current && !isAction && getChatType(data._chat) === 'Group' && (
+            {(!isOutMessage.current && (isThread || !isAction && getChatType(data._chat) === 'Group')) && (
                 <div className={"message-from-profile" + (isSameFromNextMsg ? ' hidden' : '')}>
-                    <Profile entity={data.sender} name={data.sender?.firstName} id={data.senderId?.value} size={36} />
+                    <Profile entity={data.sender} name={data.sender?.firstName ?? data.sender?.title} id={data.sender?.id?.value} size={36} />
                 </div>
             )}
             <div className={"bubble" + (getChatType(data._chat) !== 'Group' ? ' noAvatar' : '')}>
                 <div className="body" style={{ width: mediaWidth ?? '' }}>
-                    {!isOutMessage.current && !isAction && getChatType(data._chat) === 'Group' && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._senderId?.value)}>{data._sender?.firstName}</div>}
-                    {data.replyTo && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
+                    {(!isOutMessage.current && (isThread || !isAction && getChatType(data._chat) === 'Group')) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender} /></div>}
+                    {data.replyTo && (!isThread || data.replyToMessage) && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
                         <div className="line"></div>
                         <div className="body">
-                            <div className="title">{data.replyToMessage?._sender?.firstName ?? data.replyToMessage?._sender?.title ?? 'Loading...'}</div>
+                            <div className="title">{data.replyToMessage?._sender ? <FullNameTitle chat={data.replyToMessage?._sender} /> : 'Loading...'}</div>
                             <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
                         </div>
                     </div>}
@@ -248,6 +270,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate }) {
                         {renderReactionAndMeta()}
                     </div>
                 </div>
+                {data.replies?.comments && renderCommentSection()}
             </div>
             <Dialog
                 open={openDeleteModal}
@@ -296,9 +319,11 @@ export const getDate = (date, weekday = true, short = false) => {
 
     if (_date.getFullYear() === now.getFullYear() || (_date.getMonth() > now.getMonth() && _date.getFullYear() + 1 === now.getFullYear())) {
         if (weekday && _date.getMonth() === now.getMonth()) {
-            if (_date.getDate() === now.getDate() || (_date.getDate() + 1 === now.getDate() && _date.getHours() + 6 >= now.getHours())) {
+            if (_date.getDate() === now.getDate()) {
                 return 'Today'
-            } else if (_date.getDate() >= now.getDate() - 7) {
+            } else if (_date.getDate() + 1 === now.getDate())
+                return 'Yesterday'
+            else if (_date.getDate() >= now.getDate() - 7) {
                 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 return weekday[_date.getDay()]
             }

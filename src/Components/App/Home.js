@@ -23,7 +23,7 @@ import ChatContextProvider, { ChatContext } from "./ChatContext";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "../Stores/store";
 import { handleCachedMessages, handleMessageError, messageAdded, setMessages, updateMessageId, updateMessageMediaUploadProgress, updateMessageSeen, updateMessageText } from "../Stores/Messages";
-import { handleBackground, handleCall, handleCloseCall, handleContextMenu, handleEditMessage, handlePage, handlePageClose, handlePinnedMessage, handleReplyToMessage, handleToggleDarkMode, handleTopbarTitleChange, handleUserProfile, setActiveChat, updateActiveChatPermissions } from "../Stores/UI";
+import { handleBackground, handleCall, handleCloseCall, handleContextMenu, handleEditMessage, handlePage, handlePageClose, handlePinnedMessage, handleReplyToMessage, handleThread, handleToggleDarkMode, handleTopbarTitleChange, handleUserProfile, setActiveChat, updateActiveChatPermissions } from "../Stores/UI";
 import { chatAdded, handleCachedChats, setChat, setChats, updateLastMessage, updateTypingStatus } from "../Stores/Chats";
 import EmojiData from '@emoji-mart/data/sets/14/apple.json'
 import Picker from '@emoji-mart/react'
@@ -51,6 +51,8 @@ import { NewMessage } from "telegram/events";
 import { Api } from "telegram";
 import { UpdateConnectionState } from "telegram/network";
 import { readHistory } from "../Util/messages";
+import Thread from "./MiddleColumn/Thread";
+import MiddleColumn from "./MiddleColumn";
 
 export const urlEndpoint = 'https://ik.imagekit.io/b4acyrnt3';
 export const publicKey = 'public_2eNXL57bxEZ/Rt0HN1o55o4WPD4=';
@@ -68,10 +70,7 @@ function Home() {
     const isWindowFocused = useRef(true);
     const homeRef = useRef();
     const LeftColumnRef = useRef();
-    const MiddleColumn = useRef();
-    const MessagesRef = useRef()
-    const BottomRef = useRef();
-    const scrollToBottom = useRef();
+    const MiddleColumnRef = useRef();
     const CallRef = useRef();
     const CallStream = useRef();
     const flashTitleInterval = useRef();
@@ -83,6 +82,7 @@ function Home() {
     const chats = useSelector((state) => state.chats.value)
 
     const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const thread = useSelector((state) => state.ui.value.thread)
     const page = useSelector((state) => state.ui.value.page)
     const showCall = useSelector((state) => state.ui.value.showCall)
     const callMinimal = useSelector((state) => state.ui.value.callMinimal)
@@ -91,23 +91,6 @@ function Home() {
     const background = useSelector((state) => state.ui.value.background)
     const mediaPreview = useSelector((state) => state.ui.value.mediaPreview)
     const darkMode = useSelector((state) => state.ui.value.darkMode)
-
-    const authenticator = async () => {
-        try {
-            const response = await fetch('https://myapp2.liara.run/auth');
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-            }
-
-            const data = await response.json();
-            const { signature, expire, token } = data;
-            return { signature, expire, token };
-        } catch (error) {
-            throw new Error(`Authentication request failed: ${error.message}`);
-        }
-    };
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -141,7 +124,7 @@ function Home() {
                 dispatch(setActiveChat())
             }
         }
-    }, [activeChat, window.location.hash])
+    }, [activeChat, thread, window.location.hash])
 
     const onNewMessage = async (event) => {
         const message = event.message
@@ -155,18 +138,20 @@ function Home() {
         if (chatId && !chats[chatId]) {
             await message.getChat()
 
-            const chat = {
-                id: { value: chatId },
-                entity: message.chat,
-                message,
-                title: message.chat.title ?? message.chat.firstName,
-                date: message.date,
-                isChannel: message.isChannel,
-                isGroup: message.isGroup,
-                isUser: message.isPrivate
-            }
+            if (message.chat && !message.chat.left) {
+                const chat = {
+                    id: { value: chatId },
+                    entity: message.chat,
+                    message,
+                    title: message.chat.title ?? message.chat.firstName,
+                    date: message.date,
+                    isChannel: message.isChannel,
+                    isGroup: message.isGroup,
+                    isUser: message.isPrivate
+                }
 
-            dispatch(chatAdded(chat))
+                dispatch(chatAdded(chat))
+            }
         }
 
 
@@ -217,10 +202,6 @@ function Home() {
             socket.off('IncomingCall', onIncomingCall)
         }
     }, [User, chats, isWindowFocused.current]) // onIncomingCall
-
-    const handleScrollToBottom = () => {
-        MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "smooth" })
-    }
 
     const flashTitle = (newTitle) => {
         console.log(isWindowFocused.current)
@@ -309,40 +290,23 @@ function Home() {
     console.log('Home Rerendered')
     return (
         <ThemeProvider theme={darkTheme}>
-            <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
+            <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint}>
                 <div className="Home animate" ref={homeRef}>
                     <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
                     <Transition state={showCall} action={() => dispatch(handleCall())}>
                         <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
                     </Transition>
-                    {/* <Transition state={showVoiceChat} action={() => dispatch(handleCall())}>
-                        <VoiceChat ref={VCRef} VCStream={VCStream} setVCState={setCallState} />
-                    </Transition> */}
                     <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
-                        <div className="background purple"></div>
-                        {activeChat && <div className="Content">
-                            <div className="TopBar">
-                                <ChatInfo key={activeChat.id.value} />
-                                <PinnedMessage />
-                            </div>
-                            <Messages MessagesRef={MessagesRef} />
-                            <div ref={scrollToBottom} className="scrollToBottom hidden" onClick={handleScrollToBottom}>
-                                <Icon name="arrow_downward" />
-                            </div>
-                            <div className="bottom" ref={BottomRef}>
-                                <Composer scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />
-                            </div>
-                        </div>}
+                        <MiddleColumn />
                     </div>
-                    {
-                        <Transition state={mediaPreview?.active} eachElement>
-                            <MediaPreview />
-                        </Transition>
-                    }
+
+                    <Transition state={mediaPreview?.active} eachElement>
+                        <MediaPreview />
+                    </Transition>
+
                     <ContextMenu />
-                    {
-                        background && <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>
-                    }
+                    {background &&
+                        <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
                 </div>
 
                 {/* Handlers */}

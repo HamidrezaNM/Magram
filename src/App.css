@@ -1128,6 +1128,10 @@ a:hover {
   width: 100%;
 }
 
+.visible {
+  display: initial !important;
+}
+
 .App .MuiSlider-root {
   margin: 0 24px;
   overflow: visible;

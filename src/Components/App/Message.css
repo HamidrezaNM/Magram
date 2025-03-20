@@ -30,6 +30,15 @@
     transform: scale(1);
 }
 
+.ThreadMessage .Message {
+    justify-content: center;
+}
+
+.ThreadMessage .Message,
+.Message.Action {
+    transform-origin: center;
+}
+
 .Message .message-from-profile {
     align-self: flex-end;
     margin-right: 8px;
@@ -44,7 +53,7 @@
     background-color: var(--surface-color);
     /* padding: 8px; */
     padding: 0.575rem;
-    margin: 4px 0;
+    margin: 2px 0;
     width: -moz-fit-content;
     width: fit-content;
     max-width: 30rem;
@@ -52,6 +61,7 @@
     height: fit-content;
     border-radius: 16px;
     display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
 }
@@ -73,6 +83,8 @@
 .Message .body .from {
     color: var(--primary);
     color: var(--accent-color);
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .Message .body .from.colors-blue,
@@ -99,6 +111,10 @@
     white-space: pre-wrap;
     unicode-bidi: plaintext;
     line-height: 1.4;
+}
+
+.Message.Action .message-text {
+    font-weight: 500;
 }
 
 .Message .message-details {
@@ -245,9 +261,12 @@
 
 .message-media>* {
     max-width: min(480px, 100%);
-    /* max-height: min(480px, 100%); */
     transition: all .3s ease;
     cursor: pointer;
+}
+
+.Message.transparent .message-media>* {
+    min-width: auto;
 }
 
 .message-media .blurred {
@@ -267,6 +286,7 @@
     font-size: 12px;
     color: #fff;
     background-color: #000a;
+    min-width: auto;
     margin: 8px;
     padding: 2px 8px;
     border-radius: 10px;
@@ -293,10 +313,12 @@
 }
 
 .MessageReactions .reaction {
-    padding: 5px 8px;
+    padding: 4px 8px;
+    /* 5px */
     background-color: var(--on-surface);
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 12px;
+    /* 14 */
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -309,8 +331,12 @@
     background-color: var(--active-primary);
 }
 
+.MessageReactions .reaction.active {
+    background-color: var(--primary);
+}
+
 .MessageReactions .reaction .emoticon {
-    font-size: 20px;
+    font-size: 18px;
     width: 20px;
     height: 20px;
     display: inline-flex;
@@ -392,6 +418,39 @@
 .CustomEmoji .RLottie {
     width: 20px;
     height: 20px;
+}
+
+.Message .Comments {
+    border-top: 1px solid var(--active-primary);
+    height: 42px;
+    display: flex;
+    align-items: center;
+    color: var(--primary);
+    font-size: 14px;
+    gap: 8px;
+    margin: -0.575rem;
+    margin-top: 0.425rem;
+    margin-left: 0;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ThreadMessage .Message .Comments {
+    display: none !important;
+}
+
+.Message .Comments .RecentRepliers {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.Message .Comments .RecentRepliers .profile {
+    border: 2px solid var(--primary-container);
+    margin-left: -10px;
+}
+
+.Message .Comments .RecentRepliers .profile:last-child {
+    margin: 0;
 }
 
 .message-call {

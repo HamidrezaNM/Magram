@@ -9,6 +9,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
     const [height, setHeight] = useState(_height)
     const [data, setData] = useState()
     const [isWebm, setIsWebm] = useState(false)
+    const [isWebp, setIsWebp] = useState(false)
 
     const aspectRatio = height / width
     // const dimensions = calculateMediaDimensions(width, height, noAvatar)
@@ -54,6 +55,10 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                 setIsWebm(true)
                 const src = window.URL.createObjectURL(data)
                 setData(src)
+            } else if (result.mimeType === 'image/webp') {
+                setIsWebp(true)
+                const src = window.URL.createObjectURL(data)
+                setData(src)
             } else {
                 const options = {
                     container: img.current,
@@ -92,9 +97,9 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
     }, [media, size])
 
     return <>
-        {/* <img ref={img} width={width > 0 ? dimensions.width : ''} /> */}
-        {isWebm ? <video width={20} height={20} src={data} autoPlay loop /> :
-            <div className="RLottie" ref={img}></div>
+        {isWebp ? <img width={20} height={20} src={data} /> :
+            isWebm ? <video width={20} height={20} src={data} autoPlay loop /> :
+                <div className="RLottie" ref={img}></div>
         }
     </>
 })

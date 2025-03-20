@@ -16,6 +16,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px;
+    height: 64px;
     background-color: var(--secondary);
     color: var(--dyn-text-color);
     margin-left: -16px;

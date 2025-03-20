@@ -37,7 +37,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         setTimeout(() => {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight + 3000, behavior: "instant" })
         }, 40)
-        if (messages[activeChat.id.value]?.length !== data?.length) {
+        if (messages[activeChat.id.value]?.length !== data?.total) {
             MessagesRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
             data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message._id })))
@@ -75,19 +75,29 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 }
                 dispatch(handlePinnedMessage())
 
-                // socket.emit('GetMessages', { token: Auth.authJWT, chatId: activeChat._id })
-                // socket.on('GetMessages', onGetMessages)
+                const messagesLength = messages[activeChat.id.value]?.length
+                let lastMessageId = null
+
+                if (messagesLength > 0) {
+                    lastMessageId = messages[activeChat.id.value][messagesLength - 1]?.id
+                }
 
                 const result = await client.getMessages(
                     activeChat.id.value,
-                    { limit: 100 }
+                    {
+                        limit: 100,
+                        minId: lastMessageId
+                    }
                 );
 
-                onGetMessages(result)
+                if (result.length)
+                    onGetMessages(result)
+                else {
+                    setIsLoaded(true)
+                    readHistory(activeChat.id.value, dispatch)
+                }
 
                 document.querySelector('.scrollToBottom').style.bottom = document.querySelector('.bottom').clientHeight + 8 + 'px'
-
-                // return () => socket.off('GetMessages', onGetMessages)
             }
         })()
     }, [activeChat?.id]) // Get Messages on activeChat Changed
