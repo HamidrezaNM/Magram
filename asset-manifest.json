@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/Magram/static/css/main.52e463e0.css",
+    "main.js": "/Magram/static/js/main.1e841136.js",
+    "static/js/453.190c0670.chunk.js": "/Magram/static/js/453.190c0670.chunk.js",
+    "static/media/MaterialSymbol.woff2": "/Magram/static/media/MaterialSymbol.998555ec4346a7366561.woff2",
+    "static/media/Roboto-Medium.ttf": "/Magram/static/media/Roboto-Medium.7c8d04cd831df3033c8a.ttf",
+    "static/media/Roboto-Regular.ttf": "/Magram/static/media/Roboto-Regular.fc2b5060f7accec5cf74.ttf",
+    "static/media/Roboto-Bold.ttf": "/Magram/static/media/Roboto-Bold.f80816a5455d171f948d.ttf",
+    "static/media/OpenSans-Medium.ttf": "/Magram/static/media/OpenSans-Medium.5b0a682fe3717764627e.ttf",
+    "static/media/OpenSans-Bold.ttf": "/Magram/static/media/OpenSans-Bold.45847e90261782dc01a6.ttf",
+    "static/media/OpenSans-Regular.ttf": "/Magram/static/media/OpenSans-Regular.9a6cfa5890d7f3eef585.ttf",
+    "static/media/OpenSans-SemiBold.ttf": "/Magram/static/media/OpenSans-SemiBold.dcf2e322dbaa037ca821.ttf",
+    "static/media/Vazirmatn-Medium.woff2": "/Magram/static/media/Vazirmatn-Medium.bc7d8f11b2c39fd0a880.woff2",
+    "static/media/Vazirmatn-Bold.woff2": "/Magram/static/media/Vazirmatn-Bold.0d6a47ce8c185a9436b2.woff2",
+    "static/media/Vazirmatn-Regular.woff2": "/Magram/static/media/Vazirmatn-Regular.58c84f666915410c0ba8.woff2",
+    "index.html": "/Magram/index.html",
+    "main.52e463e0.css.map": "/Magram/static/css/main.52e463e0.css.map",
+    "main.1e841136.js.map": "/Magram/static/js/main.1e841136.js.map",
+    "453.190c0670.chunk.js.map": "/Magram/static/js/453.190c0670.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.52e463e0.css",
+    "static/js/main.1e841136.js"
+  ]
+}
