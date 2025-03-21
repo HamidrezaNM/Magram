@@ -41,9 +41,9 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             MessagesRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
             data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message._id })))
-            requestAnimationFrame(() => {
+            setTimeout(() => {
                 MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
-            })
+            }, 300)
 
             readHistory(activeChat.id.value, dispatch)
         } else {

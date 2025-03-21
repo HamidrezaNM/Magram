@@ -25,6 +25,14 @@
     transform: scale(.9);
 }
 
+.Messages.animateFromTop .Message.Out {
+    transform-origin: right top;
+}
+
+.Messages.animateFromTop .Message.In {
+    transform-origin: left top;
+}
+
 .Messages.MessagesAnimating .Message.showAnim {
     opacity: 1;
     transform: scale(1);

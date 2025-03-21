@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthContext, UserContext } from "../../Auth/Auth";
+import { UserContext } from "../../Auth/Auth";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
 import { Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
@@ -18,14 +18,15 @@ import FullNameTitle from "../../common/FullNameTitle";
 import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { getChatSubtitle, getChatType } from "../../Helpers/chats";
+import { Api } from "telegram";
 
 
 export default function ChatProfile() {
     const [isLoaded, setIsLoaded] = useState(false)
-    const [openModal, setOpenModal] = useState(false)
+    const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const dispatch = useDispatch()
-    const Auth = useContext(AuthContext)
+    const User = useContext(UserContext)
 
     const page = useRef()
 
@@ -47,18 +48,47 @@ export default function ChatProfile() {
         })()
     }, [])
 
-    const onLeaveGroup = (response) => {
-        if (response.ok) {
-            dispatch(removeChat(activeChat.id.value))
-            setOpenModal(false)
-            PageClose(dispatch)
-        }
+    const onLeaveGroup = () => {
+        dispatch(removeChat(activeChat.id.value))
+        setOpenDeleteModal(false)
+        PageClose(dispatch)
     }
 
     const leaveGroup = () => {
-        socket.emit('LeaveGroup', { token: Auth.authJWT, chatId: activeChat._id })
-        socket.on('LeaveGroup', onLeaveGroup)
-        return () => socket.off('LeaveGroup', onLeaveGroup);
+        (async () => {
+            if (activeChat.isChannel) {
+                await client.invoke(new Api.channels.LeaveChannel({ channel: activeChat.entity }))
+                onLeaveGroup()
+                return true
+            }
+            if (activeChat.isGroup) {
+                await client.invoke(new Api.messages.DeleteChatUser({
+                    chatId: activeChat.id.value,
+                    userId: User.id.value,
+                    revokeHistory: false
+                }))
+                onLeaveGroup()
+                return true;
+            }
+            await client.invoke(new Api.messages.DeleteHistory({
+                peer: activeChat.entity,
+                revoke: false
+            }))
+            onLeaveGroup()
+            return true;
+        })()
+
+    }
+
+    const getDeleteText = () => {
+        switch (getChatType(activeChat.entity)) {
+            case 'Group':
+                return 'Leave Group'
+            case 'Channel':
+                return 'Leave Channel'
+            default:
+                return 'Delete Chat'
+        }
     }
 
     const getSubPageLayout = useCallback(() => {
@@ -86,7 +116,7 @@ export default function ChatProfile() {
                         {activeChat?.adminRights && <button onClick={() => { PageHandle(dispatch, 'Manage', 'Manage', true) }}>Manage</button>}
                         <Menu icon="more_vert">
                             <DropdownMenu className="top right withoutTitle">
-                                <MenuItem icon="logout" title="Leave Group" className="danger" onClick={() => setOpenModal(true)} />
+                                <MenuItem icon="logout" title="Leave Group" className="danger" onClick={() => setOpenDeleteModal(true)} />
                             </DropdownMenu>
                         </Menu>
                     </div>
@@ -125,8 +155,8 @@ export default function ChatProfile() {
             </div >
             <Transition state={subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition>
             <Dialog
-                open={openModal}
-                onClose={() => setOpenModal(false)}
+                open={openDeleteModal}
+                onClose={() => setOpenDeleteModal(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 PaperProps={{
@@ -143,18 +173,18 @@ export default function ChatProfile() {
                 }}
             >
                 <DialogTitle id="alert-dialog-title" className="flex">
-                    <Profile name={activeChat?.firstName} id={activeChat?.entity?.id.value} />
-                    {"Leave Group"}
+                    <Profile entity={activeChat.entity} name={activeChat?.title} id={activeChat?.entity?.id.value} />
+                    {getDeleteText()}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to leave {activeChat?.firstName}
+                        Are you sure you want to leave {activeChat?.title}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenModal(false)}>CANCEL</Button>
+                    <Button onClick={() => setOpenDeleteModal(false)}>CANCEL</Button>
                     <Button color="error" onClick={leaveGroup}>
-                        LEAVE GROUP
+                        {getDeleteText().toUpperCase()}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -146,7 +146,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
             return;
         e.preventDefault()
 
-        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('a'))) {
+        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('a'))) {
             const items = (
                 <>
                     <MessageContextMenu
@@ -193,6 +193,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
     }
 
     const renderCommentSection = () => {
+        if (data.replies.repliesPts === 0) return;
         const recentRepliers = data.replies.recentRepliers ? data.replies.recentRepliers.reverse() : []
 
         const repliersUsers = recentRepliers.map((item) => {

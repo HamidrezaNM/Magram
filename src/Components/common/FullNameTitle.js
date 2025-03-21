@@ -17,7 +17,7 @@ function FullNameTitle({ chat, isSavedMessages }) {
 
     const emojiStatus = () => {
         if (chat?.emojiStatus) {
-            return <CustomEmoji documentId={chat.emojiStatus.documentId.value} />
+            return <CustomEmoji documentId={chat.emojiStatus.documentId.value} autoPlay={window.Animations?.AnimatedStickers} />
         }
     }
 

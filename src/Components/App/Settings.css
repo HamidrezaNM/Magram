@@ -17,7 +17,10 @@
 }
 
 .Page .section:last-child,
-.Page .section~.section {
+.section.SettingsItems
+
+/* .Page .section~.section */
+    {
     border-radius: 16px 16px 0 0;
     flex: 1;
 }

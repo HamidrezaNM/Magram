@@ -14,6 +14,7 @@ import { client, socket } from "../../App";
 import FullNameTitle from "../common/FullNameTitle";
 import { Api } from "telegram";
 import { getChatType } from "../Helpers/chats";
+import buildClassName from "../Util/buildClassName";
 
 function Chat({ info, isActive }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -128,7 +129,7 @@ function Chat({ info, isActive }) {
             </div>
             <div className="subtitle">
                 <div className="last-message" dir="auto">{info.message ? <MessageText data={info.message} includeFrom={info.isGroup} /> : 'Loading...'}</div>
-                {info.unreadCount ? info.unreadCount > 0 && <div className="unread">{info.unreadCount}</div> : null}
+                {info.unreadCount ? info.unreadCount > 0 && <div className={buildClassName('unread', info.dialog?.notifySettings?.muteUntil && 'muted')}>{info.unreadCount}</div> : null}
             </div>
         </div>
     </div>

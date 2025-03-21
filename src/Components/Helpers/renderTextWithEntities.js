@@ -4,7 +4,7 @@ import Link from "../App/Message/Link";
 import Spoiler from "../App/Message/Spoiler";
 import CustomEmoji from "../App/Message/CustomEmoji";
 
-export default function renderTextWithEntities(text, entities, allowClick = true, includeFrom) {
+export default function renderTextWithEntities(text, entities, allowClick = true, includeFrom, isInChat = true) {
     if (!entities?.length) {
         if (includeFrom) {
             return includeFrom + ': ' + text
@@ -78,7 +78,7 @@ export default function renderTextWithEntities(text, entities, allowClick = true
             case 'MessageEntitySpoiler':
                 return <Spoiler allowClick={allowClick}>{entityContent}</Spoiler>
             case 'MessageEntityCustomEmoji':
-                return <CustomEmoji documentId={entity.documentId.value} />
+                return <CustomEmoji documentId={entity.documentId.value} autoPlay={isInChat && window.Animations?.AnimatedStickers} />
             default:
                 return entityContent
         }

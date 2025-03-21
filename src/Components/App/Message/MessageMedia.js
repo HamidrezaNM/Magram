@@ -132,7 +132,7 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
                     const attributes = getDocumentImageAttributes(media.document)
                     const dimensions = getStickerDimensions(attributes.w, attributes.h)
                     if (media.document.mimeType === 'application/x-tgsticker')
-                        return <AnimatedSticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading} />
+                        return <AnimatedSticker ref={image} media={media} size={size} autoPlay={window.Animations?.AnimatedSticker} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading} />
                     return <Sticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading}>{downloadButton}</Sticker>
                 }
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>

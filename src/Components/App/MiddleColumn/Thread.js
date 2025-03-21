@@ -36,7 +36,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
     const onGetMessages = (data) => {
         setIsLoaded(true)
         // if (messages[activeChat.id.value]?.length !== data?.length) {
-        ThreadRef.current.classList.add('MessagesAnimating')
+        ThreadRef.current.classList.add('MessagesAnimating', 'animateFromTop')
         dispatch(setMessages({ chatId, messages: data.reverse() }))
         data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message._id })))
 
@@ -135,7 +135,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
             const itemsLength = Object.keys(items).length
 
             if (itemsLength) {
-                Object.values(items).reverse().forEach((item, index) => {
+                Object.values(items).forEach((item, index) => {
                     setTimeout(() => item.classList.add('showAnim'), 20 * index)
                 })
 

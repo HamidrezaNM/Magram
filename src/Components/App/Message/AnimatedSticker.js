@@ -4,7 +4,7 @@ import { calculateMediaDimensions } from "./MessageMedia";
 import Lottie from "react-lottie";
 import { client } from "../../../App";
 
-const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
+const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, autoPlay = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
     const [data, setData] = useState()
@@ -32,18 +32,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
     }))
 
     useEffect(() => {
-        if (uploading) {
-            // img.current.src = uploading
-
-            // img.current.onload = () => {
-            //     setWidth(img.current.offsetWidth)
-            //     setHeight(img.current.offsetHeight)
-            // }
-        }
-    }, [uploading])
-
-    useEffect(() => {
-        if (isLowQualityLoaded.current && size === 16 || uploading || !media)
+        if (isLowQualityLoaded.current && size === 16 || !media)
             return
 
         (async () => {
@@ -63,7 +52,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                 const options = {
                     container: img.current,
                     loop: true,
-                    autoplay: true,
+                    autoplay: autoPlay,
                     animationData: data,
                     fileId: media.document.id.value,
                     width,
@@ -98,7 +87,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
 
     return <>
         {isWebp ? <img width={20} height={20} src={data} /> :
-            isWebm ? <video width={20} height={20} src={data} autoPlay loop /> :
+            isWebm ? <video width={20} height={20} src={data} autoPlay={autoPlay} loop /> :
                 <div className="RLottie" ref={img}></div>
         }
     </>

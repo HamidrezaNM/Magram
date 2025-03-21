@@ -42,7 +42,7 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
         //         return `<a href="${href}" target="_blank">${x}</a>`;
         //     })
         // output = new DOMParser().parseFromString(output, "text/html").documentElement.textContent;
-        return renderTextWithEntities(data.message, data.entities, isInChat, includeFrom && (data._sender?.firstName ?? data._sender?.title))
+        return renderTextWithEntities(data.message, data.entities, isInChat, includeFrom && (data._sender?.firstName ?? data._sender?.title), isInChat)
     } else if (data.action) {
         switch (data.action.className) {
             case 'MessageActionChannelCreate':
@@ -67,6 +67,8 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
             case 'MessageActionGroupCallScheduled':
                 let date = data.action.scheduleDate * 1000
                 return `Live stream scheduled on ${getDate(date, false, true)}, ${formatTime(date)}`
+            case 'MessageActionGroupCall':
+                return 'Live stream started'
             default:
                 break;
         }

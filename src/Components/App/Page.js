@@ -58,7 +58,7 @@ export function PageClose(dispatch, subPage = false) {
 }
 
 export function PageHandle(dispatch, page, title, subPage = false, data = null, PageHandle = null) {
-    document.querySelector('.TopBar .Menu .icon').style.animation = '0.3s ease-in-out 0s 1 normal none running menuToBack1'
+    if (document.querySelector('.TopBar .Menu .icon')) document.querySelector('.TopBar .Menu .icon').style.animation = '0.3s ease-in-out 0s 1 normal none running menuToBack1'
     document.querySelector('.TopBar .Title').style.animation = 'changeTitle .5s ease-in-out'
     document.querySelectorAll('.TopBar .Meta>*').forEach((element) => {
         element.style.transform = 'scale(.8)'
