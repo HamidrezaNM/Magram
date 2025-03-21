@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "./Auth";
+import { AuthComplete, AuthContext } from "./Auth";
 import { client, socket } from "../../App";
 
 export default function Password() {
@@ -10,38 +10,31 @@ export default function Password() {
 
     const Auth = useContext(AuthContext);
 
-    function userAuthParamCallback(param) {
-        return async function () {
-            return await new (resolve => {
-                resolve(param)
-            })()
-        }
-    }
-
     const Password = async e => {
         e.preventDefault()
         try {
-            // TODO: Fix SignIn with Password
+            setIsLoading(true)
+            await client.signInWithPassword(
+                {
+                    apiId: 22692190,
+                    apiHash: 'd392a9a3f167823d8c42aaa77270c0be',
+                },
+                {
+                    password: () => password,
+                    onError: (err) => {
+                        console.log('SignIn Failed', err)
+                        return true
+                    },
+                }
+            );
 
-            // THIS IS BUGGY
-            // await client.signInWithPassword(
-            //     {
-            //         apiId: 22692190,
-            //         apiHash: 'd392a9a3f167823d8c42aaa77270c0be',
-            //     },
-            //     {
-            //         password: password,
-            //         onError: (err) => {
-            //             console.log(err)
-            //         },
-            //     }
-            // );
-            // await client.sendMessage('me', { message: "You're successfully logged in!" });
+            await client.sendMessage('me', { message: "You're successfully logged in!" });
 
-            // await client.sendMessage('me', { message: "You're successfully logged in!" })
+            const session = client.session.save()
+
+            AuthComplete(Auth, session)
         } catch (error) {
             console.dir(error)
-            // Error handling logic
         }
     }
 
