@@ -109,6 +109,7 @@
   --color-peer-bg-active-6: #D955742b;
   --color-text: rgb(255, 255, 255);
   --color-white: #ffffff;
+  --hover-color: #272727;
 }
 
 :root {
@@ -1173,28 +1174,35 @@ a:hover {
 
 .peer-color-0 {
   --accent-color: var(--color-peer-0, var(--color-text));
+  --accent-bg: var(--color-peer-bg-0, var(--hover-color))
 }
 
 .peer-color-1 {
   --accent-color: var(--color-peer-1, var(--color-text));
+  --accent-bg: var(--color-peer-bg-1, var(--hover-color))
 }
 
 .peer-color-2 {
   --accent-color: var(--color-peer-2, var(--color-text));
+  --accent-bg: var(--color-peer-bg-2, var(--hover-color))
 }
 
 .peer-color-3 {
   --accent-color: var(--color-peer-3, var(--color-text));
+  --accent-bg: var(--color-peer-bg-3, var(--hover-color))
 }
 
 .peer-color-4 {
   --accent-color: var(--color-peer-4, var(--color-text));
+  --accent-bg: var(--color-peer-bg-4, var(--hover-color))
 }
 
 .peer-color-5 {
   --accent-color: var(--color-peer-5, var(--color-text));
+  --accent-bg: var(--color-peer-bg-5, var(--hover-color))
 }
 
 .peer-color-6 {
   --accent-color: var(--color-peer-6, var(--color-text));
+  --accent-bg: var(--color-peer-bg-6, var(--hover-color))
 }

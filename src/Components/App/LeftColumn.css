@@ -66,6 +66,17 @@
     flex-direction: column;
 }
 
+.ChatList.Animating .Chat {
+    opacity: 0;
+    transform: scale(.9);
+    transform-origin: top;
+}
+
+.ChatList.Animating .Chat.showAnim {
+    opacity: 1;
+    transform: scale(1);
+}
+
 .Chat {
     display: flex;
     align-items: center;

@@ -60,7 +60,7 @@ export const messagesSlice = createSlice({
         },
         updateMessageText: (state, action) => {
             if (state.value[action.payload.chatId]) {
-                const message = state.value[action.payload.chatId].find(message => message._id === action.payload._id)
+                const message = state.value[action.payload.chatId].find(message => message.id === action.payload.id)
                 if (message) {
                     message.message = action.payload.message
                     message.edited = true

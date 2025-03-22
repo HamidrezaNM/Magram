@@ -36,6 +36,9 @@ export default function Search() {
 
     useEffect(() => {
         setIsLoaded(true)
+        setTimeout(() => {
+            inputRef.current.querySelector('.InputField').focus()
+        }, 200);
     }, [])
 
     const changeInputHandler = useCallback(async e => {

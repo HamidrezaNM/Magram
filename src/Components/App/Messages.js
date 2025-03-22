@@ -40,14 +40,14 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         if (messages[activeChat.id.value]?.length !== data?.total) {
             MessagesRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
-            data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message._id })))
+            data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
             setTimeout(() => {
                 MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
             }, 300)
 
             readHistory(activeChat.id.value, dispatch)
         } else {
-            messages[activeChat.id.value]?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message, User._id), messageId: message.id })))
+            messages[activeChat.id.value]?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
         }
         // }
     }
@@ -94,6 +94,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     onGetMessages(result)
                 else {
                     setIsLoaded(true)
+                    messages[activeChat.id.value]?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
                     readHistory(activeChat.id.value, dispatch)
                 }
 

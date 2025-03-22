@@ -48,15 +48,15 @@ function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
         const messageText = messageInputHandled.replace(/&nbsp;/g, ' ').trim()
         if (editMessage) {
             // socket.emit('UpdateMessage', { token: Auth.authJWT, message: { _id: message._id, chatId: message.chatId, fromId: message.fromId, message: messageInputHandled } })
-            socket.emit('UpdateMessage', { token: Auth.authJWT, message: { _id: editMessage._id, chatId: editMessage.chatId, fromId: editMessage.fromId, message: messageText } })
-            socket.on('UpdateMessage', (response) => {
-                if (response.ok) {
-                    dispatch(handleEditMessage())
-                    dispatch(updateMessageText({ _id: editMessage._id, chatId: editMessage.chatId, message: messageText }))
-                    changeMessageInputHandler("");
-                    socket.off('UpdateMessage')
-                }
-            })
+            await client.invoke(new Api.messages.EditMessage({
+                id: editMessage.id,
+                message: messageText,
+                peer: editMessage.chatId.value
+            }))
+            dispatch(handleEditMessage())
+            dispatch(updateMessageText({ id: editMessage.id, chatId: editMessage.chatId?.value, message: messageText }))
+            changeMessageInputHandler("");
+
             return true;
         }
 

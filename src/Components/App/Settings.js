@@ -36,17 +36,12 @@ function Settings() {
 
     const subPage = useSelector((state) => state.ui.value.subPage)
 
-    const logOut = () => {
-        socket.emit('TerminateSession', { token: Auth.authJWT, session: Auth.authKey })
-        socket.on('TerminateSession', (response) => {
-            if (response.ok) {
-                localStorage.setItem("authState", 'Welcome');
-                localStorage.setItem("auth_key", '');
-                Auth.setAuthKey()
-                Auth.setAuthState("Welcome");
-                socket.off('TerminateSession')
-            }
-        })
+    const logOut = async () => {
+        await client.invoke(new Api.auth.LogOut())
+        localStorage.setItem("authState", 'Welcome');
+        localStorage.setItem("auth_key", '');
+        Auth.setAuthKey()
+        Auth.setAuthState("Welcome");
     }
 
     const handleUsernameAvailability = (text, color) => {

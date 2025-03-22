@@ -39,7 +39,7 @@ function PinnedMessage() {
                     {pinnedMessage.map((i, index) => <span key={index} className={(pinnedMessage.length - 1 - index === pinnedMessageIndex ? 'active' : '') + (pinnedMessage.length - 1 - index + 1 === pinnedMessageIndex ? 'deactive' : '')}></span>)}
                 </div>
             </div>
-            <div className="FlexColumn">
+            <div className="FlexColumn" style={{ gap: 2 }}>
                 <div className="title">{pinnedMessage[pinnedMessageIndex]?.title}</div>
                 <div className="subtitle" dir="auto">{pinnedMessage[pinnedMessageIndex]?.subtitle}</div>
             </div>

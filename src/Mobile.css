@@ -62,8 +62,8 @@
     }
 
     .Home .MenuItem {
-        padding: 2px 0;
-        min-height: 38px;
+        padding: 4px 0;
+        min-height: 46px;
     }
 
     .Message.Out .bubble {
@@ -76,6 +76,10 @@
 
     .Message.In .bubble.noAvatar {
         max-width: min(29rem, 100vw - 4.5rem);
+    }
+
+    .ContextMenu {
+        min-width: 12rem;
     }
 
     /* .message-media {

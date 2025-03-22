@@ -180,6 +180,8 @@
     border-radius: 8px;
     user-select: none;
     cursor: pointer;
+    overflow: hidden;
+    background-color: var(--accent-bg);
     transition: all 0.3s ease;
 }
 
@@ -192,27 +194,15 @@
 }
 
 .message-reply .body {
+    padding: 0 4px;
     overflow: hidden;
-}
-
-.message-reply.colors-blue .line {
-    background: var(--colors-text-blue);
-}
-
-.message-reply.colors-magenta .line {
-    background: var(--colors-text-magenta);
-}
-
-.message-reply.colors-green .line {
-    background: var(--colors-text-green);
 }
 
 .message-reply .line {
     background-color: var(--primary);
     background-color: var(--accent-color);
-    min-width: 2px;
+    min-width: 3px;
     height: 100%;
-    border-radius: 16px;
 }
 
 .message-reply .title {

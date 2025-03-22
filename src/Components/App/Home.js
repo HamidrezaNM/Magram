@@ -161,7 +161,7 @@ function Home() {
         dispatch(updateLastMessage({ id: chatId, message, unread: User.id.value !== message._senderId.value }))
         if (chatId == activeChat?.id.value)
             readHistory(activeChat.id.value, dispatch)
-        else if (!message.chat?.left) {
+        else if (!message.chat?.left && !chats[message.chat?.id?.value].dialog?.notifySettings?.muteUntil) {
             if (!isWindowFocused.current)
                 notify(chats[chatId]?.title ?? message.chat?.title ?? message.chat?.firstName, {
                     body: (message._sender?.firstName + ': ') + message.text
