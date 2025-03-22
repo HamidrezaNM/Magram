@@ -184,7 +184,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
     }, [data, isPinned.current])
 
     const renderReactionAndMeta = () => {
-        const meta = <MessageMeta edited={data.edited} seen={data.seen} time={msgTime} isOutMessage={isOutMessage} />
+        const meta = <MessageMeta edited={data.editDate} seen={data.seen} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
             return <MessageReactions messageId={data.id} chatId={data.chatId} reactions={data.reactions}>{meta}</MessageReactions>
@@ -226,7 +226,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
         if (data.media) {
             const mediaType = getMediaType(data.media)
 
-            if (mediaType === 'Sticker' || mediaType === 'RoundVideo')
+            if (mediaType === 'Sticker' || mediaType === 'RoundVideo' || ((mediaType === 'Video' || mediaType === 'Photo' || mediaType === 'GIF') && data.message == '' && (!data.reactions || !data.reactions.results.length)))
                 return true
         }
         return false

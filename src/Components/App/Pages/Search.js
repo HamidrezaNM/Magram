@@ -15,7 +15,7 @@ import { client, socket } from "../../../App";
 import { viewChat } from "../ChatList";
 import { getChatData } from "../Chat";
 import { Api } from "telegram";
-import { getChatSubtitle } from "../../Helpers/chats";
+import { generateChatWithPeer, getChatSubtitle } from "../../Helpers/chats";
 import { handleCoolDown } from "../../Util/coolDown";
 
 
@@ -99,7 +99,7 @@ export default function Search() {
                 </div>
                 <div className="Items">
                     {chats.length > 0 && Object.values(chats).map((item) => (
-                        <div key={item.id?.value} className="Item" onClick={() => { viewChat({ id: item.id, title: item.title ?? item.firstName, entity: item }, dispatch); PageClose(dispatch) }}>
+                        <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
                             <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
                             <div className="UserDetails">
                                 <div className="title">{item?.title ?? item.firstName}</div>

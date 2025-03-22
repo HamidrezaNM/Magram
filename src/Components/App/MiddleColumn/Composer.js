@@ -17,7 +17,7 @@ import { getChatType } from "../../Helpers/chats";
 import Attachment from "./Attachment";
 import { CustomFile } from "telegram/client/uploads";
 
-function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
+function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
     const [messageInputHandled, setMessageInputHandled] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -73,7 +73,8 @@ function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
             out: true,
             id: messageId,
             message: messageText,
-            reply: replyToMessage ? replyToMessage : null,
+            replyTo: replyToMessage ? replyToMessage.id : null,
+            replyToMessage: replyToMessage ?? null,
             seen: null,
             type: "text",
             messageType: "message",
@@ -81,7 +82,7 @@ function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
 
         const message = {
             message: messageText,
-            replyTo: replyToMessage ? replyToMessage.id : null,
+            replyTo: replyToMessage ? replyToMessage.id : thread ? thread.id : null,
         };
 
         // if (activeChat._id == 0 && activeChat.type == 'private')
@@ -342,7 +343,7 @@ function Composer({ chat, isThread, scrollToBottom, handleScrollToBottom }) {
                 </div>
             </div>
         )}
-        {chat?.entity?.left && !isThread ? <>
+        {chat?.entity?.left && !thread ? <>
             <div className="Button" onClick={handleJoinGroup}>Join</div>
         </> : getChatType(chat?.entity) === 'Channel' ? <div className="Button" onClick={() => { }}>Mute</div> : <>
             <div className="Composer">

@@ -82,6 +82,15 @@
         min-width: 12rem;
     }
 
+    .MediaPreview .Content .Media,
+    .MediaPreview .Content .Media>* {
+        width: 100%;
+    }
+
+    .PreviewBG {
+        background-color: #000000 !important;
+    }
+
     /* .message-media {
         width: calc(60vw + .575rem * 2) !important;
     } */

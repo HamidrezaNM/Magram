@@ -53,7 +53,7 @@ const MediaPreview = () => {
     }
 
     return <>
-        <div className="bg animate" style={{ backgroundColor: '#000000dd' }} onClick={() => dispatch(handleMediaPreviewClose())}></div>
+        <div className="bg animate PreviewBG" style={{ backgroundColor: '#000000dd' }} onClick={() => dispatch(handleMediaPreviewClose())}></div>
         <div className="MediaPreview animate">
             <div className="Topbar">
                 <div className="SenderInfo">

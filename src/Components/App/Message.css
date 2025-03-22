@@ -119,6 +119,7 @@
     white-space: pre-wrap;
     unicode-bidi: plaintext;
     line-height: 1.4;
+    margin: -0.2rem 0;
 }
 
 .Message.Action .message-text {
@@ -134,6 +135,7 @@
     margin-bottom: -7px;
     margin-left: auto;
     font-size: 12px;
+    font-weight: 500;
     color: #888;
     direction: ltr;
     display: flex;
@@ -143,12 +145,13 @@
 
 .Message.transparent .message-details {
     background-color: #0004;
-    padding: 3px 6px;
+    padding: 2px 6px;
+    color: var(--text-color);
     border-radius: 12px;
     line-height: 1;
     margin-bottom: 0;
     position: absolute;
-    bottom: 0;
+    bottom: 7px;
     right: 7px;
 }
 
@@ -173,10 +176,11 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    line-height: 1.2;
-    height: 36px;
+    line-height: 1.4;
+    height: 42px;
     width: 100%;
     padding: 2px 0;
+    margin: 2px 0;
     border-radius: 8px;
     user-select: none;
     cursor: pointer;
@@ -227,14 +231,14 @@
     margin: 0;
     padding: 0;
     font-size: 17px;
+    line-height: 0.75rem;
 }
 
 .message-media {
-    /* max-width: 420px;
-    max-height: 50vh; */
     overflow: hidden;
     margin: -0.575rem;
     margin-bottom: 0.285rem;
+    border-radius: 8px;
     position: relative;
     display: flex;
     align-items: center;
@@ -306,6 +310,7 @@
 .MessageReactions {
     display: flex;
     gap: 4px;
+    padding: 4px 0;
     flex-wrap: wrap;
     direction: ltr;
 }
@@ -325,12 +330,17 @@
     transition: all .3s ease;
 }
 
+.Message.transparent .MessageReactions .reaction {
+    color: var(--text-color);
+}
+
 .MessageReactions .reaction:hover {
     background-color: var(--active-primary);
 }
 
 .MessageReactions .reaction.active {
     background-color: var(--primary);
+    color: var(--text-color);
 }
 
 .MessageReactions .reaction .emoticon {

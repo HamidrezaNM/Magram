@@ -49,7 +49,7 @@ function ChatInfo() {
                 return 'bot'
             case 'Group':
                 const participantsCount = activeChat.entity?.participantsCount ?? fullChat?.participantsCount
-                const onlineCount = activeChat.entity?.onlineCount
+                const onlineCount = fullChat?.onlineCount
 
                 const participantsText = participantsCount ? (participantsCount > 1 ? participantsCount + ' members' : '1 member') : 'Updating...'
                 const onlineText = onlineCount && (onlineCount > 1 ? onlineCount + ' online' : '')

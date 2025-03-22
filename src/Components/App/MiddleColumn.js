@@ -52,7 +52,7 @@ function MiddleColumn({ }) {
                 <Icon name="arrow_downward" />
             </div>
             <div className="bottom" ref={BottomRef}>
-                {composerChat && <Composer chat={composerChat} isThread={!!thread} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
+                {composerChat && <Composer key={activeChat.id?.value} chat={thread ? composerChat : activeChat} thread={thread} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
             </div>
         </div>}
     </>
