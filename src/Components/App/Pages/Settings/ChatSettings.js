@@ -16,8 +16,8 @@ export default function SettingsChatSettings() {
 
     const User = useContext(UserContext)
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
-    const darkMode = useSelector((state) => state.ui.value.darkMode)
+    const subPage = useSelector((state) => state.ui.subPage)
+    const darkMode = useSelector((state) => state.ui.darkMode)
 
     const dispatch = useDispatch()
 

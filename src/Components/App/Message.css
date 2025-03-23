@@ -50,7 +50,7 @@
 .Message .message-from-profile {
     align-self: flex-end;
     margin-right: 8px;
-    min-width: 36px;
+    min-width: 42px;
 }
 
 .Message .message-from-profile.hidden .profile {
@@ -119,7 +119,7 @@
     white-space: pre-wrap;
     unicode-bidi: plaintext;
     line-height: 1.4;
-    margin: -0.2rem 0;
+    margin-bottom: -0.2rem;
 }
 
 .Message.Action .message-text {
@@ -403,7 +403,7 @@
     display: flex;
     flex-direction: column;
     direction: ltr;
-    gap: 12px;
+    gap: 6px;
 }
 
 .message-media .Document .details .subtitle {
@@ -428,6 +428,34 @@
     height: 20px;
 }
 
+.Code {
+    background-color: var(--on-primary);
+    border-radius: 8px;
+    white-space: normal;
+    margin: 0;
+    font-size: 14px;
+    padding: 4px 8px;
+    padding-left: 11px;
+    position: relative;
+    overflow: hidden;
+}
+
+.Code::before {
+    content: '';
+    background-color: #fff;
+    width: 3px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.Code pre {
+    white-space: pre-wrap;
+    margin: 0;
+}
+
 .Message .Comments {
     border-top: 1px solid var(--active-primary);
     height: 42px;
@@ -439,12 +467,19 @@
     margin: -0.575rem;
     margin-top: 0.425rem;
     margin-left: 0;
+    padding-right: 20px;
     font-weight: bold;
     cursor: pointer;
 }
 
 .ThreadMessage .Message .Comments {
     display: none !important;
+}
+
+.Message.transparent .Comments {
+    background-color: var(--on-primary);
+    border: 1px solid var(--on-primary);
+    border-radius: 8px;
 }
 
 .Message .Comments .RecentRepliers {

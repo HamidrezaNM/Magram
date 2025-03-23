@@ -7,21 +7,28 @@ import { showUserProfile } from "../Pages/UserProfile"
 import { Icon, Profile } from "../common"
 import { getDate } from "../Message"
 import { formatTime } from "../../Util/dateFormat"
-import { socket } from "../../../App"
+import { client, socket } from "../../../App"
 import FullNameTitle from "../../common/FullNameTitle"
 import { UserContext } from "../../Auth/Auth"
-import { getChatType } from "../../Helpers/chats"
+import { deleteChat, generateChatWithPeer, getChatType, getDeleteChatText } from "../../Helpers/chats"
+import MenuItem from "../../UI/MenuItem"
+import DropdownMenu from "../../UI/DropdownMenu"
+import Menu from "../../UI/Menu"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
+import { removeChat } from "../../Stores/Chats"
+import { viewChat } from "../ChatList"
 
 function ChatInfo() {
+    const [openDeleteChatModal, setOpenDeleteChatModal] = useState(false)
 
     const User = useContext(UserContext);
 
-    const page = useSelector((state) => state.ui.value.page)
-    const showPage = useSelector((state) => state.ui.value.showPage)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const fullChat = useSelector((state) => state.ui.value.activeFullChat)
-    const typingStatus = useSelector((state) => state.ui.value.activeChat.typingStatus)
-    const thread = useSelector((state) => state.ui.value.thread)
+    const page = useSelector((state) => state.ui.page)
+    const showPage = useSelector((state) => state.ui.showPage)
+    const activeChat = useSelector((state) => state.ui.activeChat)
+    const fullChat = useSelector((state) => state.ui.activeFullChat)
+    const typingStatus = useSelector((state) => state.ui.activeChat.typingStatus)
+    const thread = useSelector((state) => state.ui.thread)
 
     const isSavedMessages = activeChat.id.value === User.id.value
     const chatType = getChatType(activeChat.entity)
@@ -46,7 +53,7 @@ function ChatInfo() {
                 if (activeChat.id.value == '777000') return 'Service notifications'
                 return getUserStatus(activeChat.entity.status)
             case 'Bot':
-                return 'bot'
+                return activeChat.entity.botActiveUsers + ' monthly users' ?? 'bot'
             case 'Group':
                 const participantsCount = activeChat.entity?.participantsCount ?? fullChat?.participantsCount
                 const onlineCount = fullChat?.onlineCount
@@ -66,11 +73,27 @@ function ChatInfo() {
         }
     }
 
+    const onLeaveGroup = () => {
+        dispatch(removeChat(activeChat.id.value))
+        dispatch(setActiveChat())
+        setOpenDeleteChatModal(false)
+    }
+
+    const leaveGroup = async () => {
+        await deleteChat(activeChat, User.id.value)
+        onLeaveGroup()
+    }
+
+    const viewDiscussion = async () => {
+        const discussionChat = await client.getEntity(fullChat?.linkedChatId)
+        viewChat(generateChatWithPeer(discussionChat), dispatch)
+    }
+
     useEffect(() => {
 
     }, [activeChat.typingStatus])
 
-    return <div className="ChatInfo">
+    return <><div className="ChatInfo">
         <div className="info" onClick={showChatProfile}>
             {!thread ? <>
                 <Icon name="arrow_back" className="BackArrow" onClick={() => dispatch(setActiveChat())} />
@@ -89,11 +112,49 @@ function ChatInfo() {
         </div>
         <div className="actions">
             {activeChat.type === 'private' && activeChat.to && <Icon name="call" onClick={() => dispatch(handleCall(activeChat?.to))} />}
-            <div className="Menu">
-                <Icon name="more_vert" />
-            </div>
+            <Menu icon="more_vert">
+                <DropdownMenu className="top right withoutTitle">
+                    {chatType === 'Channel' && fullChat?.linkedChatId && <MenuItem icon="chat" title="View Discussion" onClick={viewDiscussion} />}
+                    <MenuItem icon="logout" title={getDeleteChatText(activeChat.entity)} className="danger" onClick={() => setOpenDeleteChatModal(true)} />
+                </DropdownMenu>
+            </Menu>
         </div>
     </div>
+        <Dialog
+            open={openDeleteChatModal}
+            onClose={() => setOpenDeleteChatModal(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            PaperProps={{
+                sx: {
+                    background: '#0008',
+                    backdropFilter: 'blur(25px)',
+                    borderRadius: '16px'
+                }
+            }}
+            sx={{
+                "& > .MuiBackdrop-root": {
+                    background: "rgba(0, 0, 0, 0.2)"
+                }
+            }}
+        >
+            <DialogTitle id="alert-dialog-title" className="flex">
+                <Profile entity={activeChat.entity} name={activeChat?.title} id={activeChat?.entity?.id.value} />
+                {getDeleteChatText(activeChat.entity)}
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to leave {activeChat?.title}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpenDeleteChatModal(false)}>CANCEL</Button>
+                <Button color="error" onClick={leaveGroup}>
+                    {getDeleteChatText(activeChat.entity).toUpperCase()}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    </>
 }
 
 export function getUserStatus(lastSeen, peer, short = true) {

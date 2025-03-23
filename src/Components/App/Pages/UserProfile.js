@@ -11,10 +11,13 @@ import Menu from "../../UI/Menu";
 import { handleCall, handlePage, handleTopbarTitleChange, handleUserProfile, setActiveChat } from "../../Stores/UI";
 import FullNameTitle from "../../common/FullNameTitle";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
+import { client } from "../../../App";
+import { Api } from "telegram";
 
 
 export default function UserProfile() {
     const [isLoaded, setIsLoaded] = useState(false)
+    const [fullUser, setFullUser] = useState()
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)
@@ -22,21 +25,23 @@ export default function UserProfile() {
 
     const page = useRef()
 
-    const userProfile = useSelector((state) => state.ui.value.userProfile)
+    const userProfile = useSelector((state) => state.ui.userProfile)
 
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
             PageHandle(dispatch, 'Settings', 'Settings')
             return;
         } else
-            setIsLoaded(true)
+            setIsLoaded(true);
+        (async () => {
+            setFullUser(((await client.invoke(new Api.users.GetFullUser({ id: userProfile.id }))).fullUser))
+        })()
     }, [])
 
     const userInfoSubtitle = () => {
-        if (userProfile.bot) return 'bot'
+        if (userProfile.bot) return userProfile.botActiveUsers ? userProfile.botActiveUsers + ' monthly users' : 'bot'
         if (userProfile.id.value == 777000) return 'Service notifications'
         return getUserStatus(userProfile.status, null, false)
-
     }
 
     // const getSubPageLayout = useCallback(() => {
@@ -87,7 +92,7 @@ export default function UserProfile() {
                 <div className="Items">
                     {userProfile.phone && <div className="Item"><Icon name="phone" /><span>+{userProfile.countryCode} {userProfile.phone}</span></div>}
                     {userProfile.username && <div className="Item"><Icon name="alternate_email" /><span>{userProfile.username}</span></div>}
-                    {userProfile.bio && <div className="Item"><Icon name="info" /><span>{userProfile.bio}</span></div>}
+                    {fullUser?.about && <div className="Item preWrap"><Icon name="info" /><span>{fullUser.about}</span></div>}
                 </div>
             </div>
             <div className="section">

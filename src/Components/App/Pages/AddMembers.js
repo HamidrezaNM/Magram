@@ -16,8 +16,8 @@ export default function AddMembers() {
     const User = useContext(UserContext)
     const Auth = useContext(AuthContext)
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const subPage = useSelector((state) => state.ui.subPage)
+    const activeChat = useSelector((state) => state.ui.activeChat)
 
     const [isLoaded, setIsLoaded] = useState(false)
 

@@ -3,6 +3,8 @@ import MentionLink from "../App/Message/MentionLink";
 import Link from "../App/Message/Link";
 import Spoiler from "../App/Message/Spoiler";
 import CustomEmoji from "../App/Message/CustomEmoji";
+import Pre from "../App/Message/Pre";
+import BotCommand from "../App/Message/BotCommand";
 
 export default function renderTextWithEntities(text, entities, allowClick = true, includeFrom, isInChat = true) {
     if (!entities?.length) {
@@ -79,6 +81,10 @@ export default function renderTextWithEntities(text, entities, allowClick = true
                 return <Spoiler allowClick={allowClick}>{entityContent}</Spoiler>
             case 'MessageEntityCustomEmoji':
                 return <CustomEmoji documentId={entity.documentId.value} autoPlay={isInChat && window.Animations?.AnimatedStickers} />
+            case 'MessageEntityPre':
+                return <Pre>{entityContent}</Pre>
+            case 'MessageEntityBotCommand':
+                return <BotCommand command={entityContent}>{entityContent}</BotCommand>
             default:
                 return entityContent
         }

@@ -54,15 +54,15 @@ import { readHistory } from "../Util/messages";
 import Thread from "./MiddleColumn/Thread";
 import MiddleColumn from "./MiddleColumn";
 
-export const urlEndpoint = 'https://ik.imagekit.io/b4acyrnt3';
-export const publicKey = 'public_2eNXL57bxEZ/Rt0HN1o55o4WPD4=';
+export const urlEndpoint = '';
+export const publicKey = '';
 
 function Home() {
     const [backgroundAngle, setBackgroundAngle] = useState(120);
     const [msgsScrollTop, setMsgsScrollTop] = useState(0);
     const [messageUploading, setMessageUploading] = useState();
     const [callState, setCallState] = useState({});
-    const [connectionState, setConnectionState] = useState('connected');
+    const [connectionState, setConnectionState] = useState('Authenticating...');
 
     const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
@@ -81,16 +81,16 @@ function Home() {
 
     const chats = useSelector((state) => state.chats.value)
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const thread = useSelector((state) => state.ui.value.thread)
-    const page = useSelector((state) => state.ui.value.page)
-    const showCall = useSelector((state) => state.ui.value.showCall)
-    const callMinimal = useSelector((state) => state.ui.value.callMinimal)
-    const callMaximized = useSelector((state) => state.ui.value.callMaximized)
-    const callLeftPanelClose = useSelector((state) => state.ui.value.callLeftPanelClose)
-    const background = useSelector((state) => state.ui.value.background)
-    const mediaPreview = useSelector((state) => state.ui.value.mediaPreview)
-    const darkMode = useSelector((state) => state.ui.value.darkMode)
+    const activeChat = useSelector((state) => state.ui.activeChat)
+    const thread = useSelector((state) => state.ui.thread)
+    const page = useSelector((state) => state.ui.page)
+    const showCall = useSelector((state) => state.ui.showCall)
+    const callMinimal = useSelector((state) => state.ui.callMinimal)
+    const callMaximized = useSelector((state) => state.ui.callMaximized)
+    const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
+    const background = useSelector((state) => state.ui.background)
+    const mediaPreview = useSelector((state) => state.ui.mediaPreview)
+    const darkMode = useSelector((state) => state.ui.darkMode)
 
     useEffect(() => {
         requestAnimationFrame(() => {

@@ -331,7 +331,8 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
 
         (async () => {
             const param = size ? { thumb: media.photo.sizes[0] } : {}
-            const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: getPhotoDimensions(media.photo)?.sizes[4] }), size, true, 'image/jpg')
+            const sizes = getPhotoDimensions(media.photo)?.sizes
+            const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: sizes[sizes?.length - 1] }), size, true, 'image/jpg')
             if (img.current) {
                 let src = result.data
                 img.current.src = src;

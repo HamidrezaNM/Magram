@@ -18,7 +18,7 @@ function SettingsVoiceVideo() {
 
     const dispatch = useDispatch()
 
-    const voiceOutputVolume = useSelector((state) => state.ui.value.voiceOutputVolume)
+    const voiceOutputVolume = useSelector((state) => state.ui.voiceOutputVolume)
 
     useEffect(() => {
         setIsLoaded(true)

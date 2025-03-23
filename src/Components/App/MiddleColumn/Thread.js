@@ -18,13 +18,13 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
     const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const thread = useSelector((state) => state.ui.value.thread)
+    const activeChat = useSelector((state) => state.ui.activeChat)
+    const thread = useSelector((state) => state.ui.thread)
 
     const chatId = `${thread.chatId.value}_${thread.id}`
 
     const messages = useSelector((state) => state.messages.value[chatId])
-    const _goToMessage = useSelector((state) => state.ui.value.goToMessage)
+    const _goToMessage = useSelector((state) => state.ui.goToMessage)
 
     const dispatch = useDispatch()
 

@@ -15,7 +15,7 @@ export default function Permissions() {
     const User = useContext(UserContext)
     const Auth = useContext(AuthContext)
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const activeChat = useSelector((state) => state.ui.activeChat)
 
     const [isLoaded, setIsLoaded] = useState(false)
     const [hasChanged, setHasChanged] = useState(false)

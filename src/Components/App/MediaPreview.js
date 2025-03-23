@@ -7,7 +7,7 @@ import { formatTime } from "../Util/dateFormat"
 import { getDate } from "./Message"
 
 const MediaPreview = () => {
-    const data = useSelector((state) => state.ui.value.mediaPreview)
+    const data = useSelector((state) => state.ui.mediaPreview)
 
     const dispatch = useDispatch()
 
@@ -57,9 +57,9 @@ const MediaPreview = () => {
         <div className="MediaPreview animate">
             <div className="Topbar">
                 <div className="SenderInfo">
-                    <div className="meta"><Profile entity={data.message._sender} name={data.message._sender.firstName ?? data.message._sender.title} id={data.message._senderId.value} /></div>
+                    <div className="meta"><Profile entity={data.message._sender} name={data.message._sender?.firstName ?? data.message._sender?.title ?? 'Anonymous'} id={data.message._senderId?.value} /></div>
                     <div className="body">
-                        <div className="title">{data.message._sender.firstName ?? data.message._sender.title}</div>
+                        <div className="title">{data.message._sender?.firstName ?? data.message._sender?.title ?? 'Anonymous'}</div>
                         <div className="subtitle">{`${getDate(new Date(data.message.date * 1000))}, ${formatTime(new Date(data.message.date) * 1000)}`}</div>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ import { handleGoToMessage } from "../../Stores/UI";
 function PinnedMessage() {
     const [pinnedMessageIndex, setPinnedMessageIndex] = useState(0);
 
-    const pinnedMessage = useSelector((state) => state.ui.value.pinnedMessage)
+    const pinnedMessage = useSelector((state) => state.ui.pinnedMessage)
 
     const pinnedMessageRef = useRef()
 

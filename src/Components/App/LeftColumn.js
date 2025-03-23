@@ -19,13 +19,13 @@ import { handleToggleDarkMode } from "../Stores/UI";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
-    const callLeftPanelClose = useSelector((state) => state.ui.value.callLeftPanelClose)
-    const pageHeader = useSelector((state) => state.ui.value.pageHeader)
-    const showPage = useSelector((state) => state.ui.value.showPage)
-    const page = useSelector((state) => state.ui.value.page)
-    const topbarTitle = useSelector((state) => state.ui.value.topbarTitle)
-    const callMinimal = useSelector((state) => state.ui.value.callMinimal)
-    const showCall = useSelector((state) => state.ui.value.showCall)
+    const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
+    const pageHeader = useSelector((state) => state.ui.pageHeader)
+    const showPage = useSelector((state) => state.ui.showPage)
+    const page = useSelector((state) => state.ui.page)
+    const topbarTitle = useSelector((state) => state.ui.topbarTitle)
+    const callMinimal = useSelector((state) => state.ui.callMinimal)
+    const showCall = useSelector((state) => state.ui.showCall)
 
     const User = useContext(UserContext)
 

@@ -15,7 +15,7 @@ import { client, socket } from "../../../App";
 import { viewChat } from "../ChatList";
 import { getChatData } from "../Chat";
 import { Api } from "telegram";
-import { generateChatWithPeer, getChatSubtitle } from "../../Helpers/chats";
+import { generateChatWithPeer, getChatIdFromPeer, getChatSubtitle } from "../../Helpers/chats";
 import { handleCoolDown } from "../../Util/coolDown";
 
 
@@ -32,7 +32,7 @@ export default function Search() {
     const inputRef = useRef()
     const placeholderRef = useRef()
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
+    const subPage = useSelector((state) => state.ui.subPage)
 
     useEffect(() => {
         setIsLoaded(true)

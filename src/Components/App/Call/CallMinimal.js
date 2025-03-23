@@ -16,7 +16,7 @@ export default function CallMinimal({ Call, CallStream, CallState }) {
 
     const dispatch = useDispatch()
 
-    const call = useSelector((state) => state.ui.value.call)
+    const call = useSelector((state) => state.ui.call)
 
     useEffect(() => {
         try {

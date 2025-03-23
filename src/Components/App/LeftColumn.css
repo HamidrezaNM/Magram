@@ -145,7 +145,7 @@
     text-overflow: ellipsis;
     text-align: left;
     overflow: hidden;
-    display: inline-block;
+    display: ruby;
     white-space: nowrap;
     color: var(--secondary-text);
     line-height: 1.2;

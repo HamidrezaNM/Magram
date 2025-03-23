@@ -17,9 +17,9 @@ function MiddleColumn({ }) {
     const BottomRef = useRef();
     const scrollToBottom = useRef();
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const activeChat = useSelector((state) => state.ui.activeChat)
     const chats = useSelector((state) => state.chats.value)
-    const thread = useSelector((state) => state.ui.value.thread)
+    const thread = useSelector((state) => state.ui.thread)
 
     const handleScrollToBottom = () => {
         MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "smooth" })

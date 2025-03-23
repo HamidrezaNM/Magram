@@ -29,6 +29,7 @@
     align-items: center;
     gap: 0 12px;
     flex: 1 auto;
+    overflow: hidden;
 }
 
 .ChatInfo .BackArrow {
@@ -39,12 +40,16 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    overflow: hidden;
 }
 
 .ChatInfo .info .body .title {
     font-family: Roboto, Vazirmatn;
     font-weight: bold;
     line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .ChatInfo .info .body .subtitle {
@@ -170,6 +175,14 @@
     flex-direction: column;
     /* justify-content: end; */
     transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.MiddleColumn .Messages.NoMessages {
+    justify-content: center;
+}
+
+.MiddleColumn .Messages.NoMessages .NoMessage {
+    justify-content: center;
 }
 
 .MiddleColumn .bottom {

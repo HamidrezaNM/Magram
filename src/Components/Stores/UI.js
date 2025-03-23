@@ -3,150 +3,152 @@ import { createSlice } from '@reduxjs/toolkit'
 export const uiSlice = createSlice({
     name: 'ui',
     initialState: {
-        value: {
-            contextMenu: null,
-            replyToMessage: null,
-            editMessage: null,
-            pinnedMessage: [],
-            goToMessage: null,
-            page: null,
-            showPage: false,
-            pageTitle: null,
-            topbarTitle: null,
-            pageHeader: null,
-            subPage: [],
-            subPageTitle: null,
-            userProfile: null,
-            activeChat: null,
-            activeFullChat: null,
-            thread: null,
-            call: null,
-            showCall: false,
-            callLeftPanelClose: false,
-            callMinimal: false,
-            callMaximized: false,
-            voiceOutputVolume: 50,
-            mediaPreview: null,
-            background: null,
-            darkMode: true
-        },
+        contextMenu: null,
+        replyToMessage: null,
+        editMessage: null,
+        pinnedMessage: [],
+        goToMessage: null,
+        sendBotCommand: null,
+        page: null,
+        showPage: false,
+        pageTitle: null,
+        topbarTitle: null,
+        pageHeader: null,
+        subPage: [],
+        subPageTitle: null,
+        userProfile: null,
+        activeChat: null,
+        activeFullChat: null,
+        thread: null,
+        call: null,
+        showCall: false,
+        callLeftPanelClose: false,
+        callMinimal: false,
+        callMaximized: false,
+        voiceOutputVolume: 50,
+        mediaPreview: null,
+        background: null,
+        darkMode: true
     },
     reducers: {
         handleContextMenu: (state, action) => {
-            state.value.contextMenu = action.payload
+            state.contextMenu = action.payload
         },
         handleReplyToMessage: (state, action) => {
-            state.value.replyToMessage = action.payload
+            state.replyToMessage = action.payload
         },
         handleEditMessage: (state, action) => {
-            state.value.editMessage = action.payload
+            state.editMessage = action.payload
         },
         handlePinnedMessage: (state, action) => {
-            state.value.pinnedMessage = action.payload
+            state.pinnedMessage = action.payload
         },
         handlePinMessage: (state, action) => {
-            if (!state.value.pinnedMessage) {
-                state.value.pinnedMessage = []
+            if (!state.pinnedMessage) {
+                state.pinnedMessage = []
             }
-            state.value.pinnedMessage.unshift(action.payload)
+            state.pinnedMessage.unshift(action.payload)
         },
         handleUnpinMessage: (state, action) => {
-            state.value.pinnedMessage = state.value.pinnedMessage.filter(item => item.messageId !== action.payload)
+            state.pinnedMessage = state.pinnedMessage.filter(item => item.messageId !== action.payload)
+        },
+        handleSendBotCommand: (state, action) => {
+            state.sendBotCommand = action.payload
         },
         handleGoToMessage: (state, action) => {
-            state.value.goToMessage = action.payload
+            state.goToMessage = action.payload
         },
         handlePage: (state, action) => {
-            state.value.page = action.payload
-            state.value.subPage = []
-            state.value.pageTitle = action.payload
-            state.value.showPage = true
-            state.value.callLeftPanelClose = false
+            state.page = action.payload
+            state.subPage = []
+            state.pageTitle = action.payload
+            state.showPage = true
+            state.callLeftPanelClose = false
         },
         handleTopbarTitleChange: (state, action) => {
-            state.value.topbarTitle = action.payload
+            state.topbarTitle = action.payload
         },
         handlePageClose: (state) => {
-            state.value.page = null
-            state.value.subPage = []
-            state.value.pageTitle = null
-            state.value.showPage = false
+            state.page = null
+            state.subPage = []
+            state.pageTitle = null
+            state.showPage = false
         },
         handlePageHeader: (state, action) => {
-            state.value.pageHeader = action.payload
+            state.pageHeader = action.payload
         },
         handlePageAndSubPage: (state, action) => {
-            state.value.page = action.payload.page
-            state.value.subPage = [{ page: action.payload.subPage }]
-            state.value.pageTitle = action.payload.page
-            state.value.showPage = true
-            state.value.callLeftPanelClose = false
-            state.value.subPageTitle = action.payload.subPage
+            state.page = action.payload.page
+            state.subPage = [{ page: action.payload.subPage }]
+            state.pageTitle = action.payload.page
+            state.showPage = true
+            state.callLeftPanelClose = false
+            state.subPageTitle = action.payload.subPage
         },
         handleSubPage: (state, action) => {
-            state.value.subPage.push(action.payload)
-            state.value.subPageTitle = action.payload
+            state.subPage.push(action.payload)
+            state.subPageTitle = action.payload
         },
         handleSubPageClose: (state) => {
-            state.value.subPage.splice(state.value.subPage.length - 1, 1)
-            state.value.subPageTitle = null
+            state.subPage.splice(state.subPage.length - 1, 1)
+            state.subPageTitle = null
         },
         handleUserProfile: (state, action) => {
-            state.value.userProfile = action.payload
+            state.userProfile = action.payload
         },
         setActiveChat: (state, action) => {
-            state.value.activeChat = action.payload
+            state.activeChat = action.payload
             console.log('active chat setted')
         },
         updateActiveChatPermissions: (state, action) => {
-            state.value.activeChat.permissions = action.payload
+            state.activeChat.permissions = action.payload
         },
         setActiveFullChat: (state, action) => {
-            state.value.activeFullChat = action.payload
+            state.activeFullChat = action.payload
         },
         handleThread: (state, action) => {
-            state.value.thread = action.payload
+            state.thread = action.payload
         },
         handleCall: (state, action) => {
             if (action.payload) {
-                state.value.showCall = true
+                state.showCall = true
             }
-            state.value.call = action.payload
+            state.call = action.payload
         },
         handleCloseCall: (state) => {
-            state.value.showCall = false
-            state.value.callLeftPanelClose = false
+            state.showCall = false
+            state.callLeftPanelClose = false
         },
         handleCallLeftPanelToggle: (state) => {
-            state.value.callLeftPanelClose = !state.value.callLeftPanelClose
-            state.value.page = null
-            state.value.subPage = []
-            state.value.pageTitle = null
-            state.value.topbarTitle = null
-            state.value.showPage = false
+            state.callLeftPanelClose = !state.callLeftPanelClose
+            state.page = null
+            state.subPage = []
+            state.pageTitle = null
+            state.topbarTitle = null
+            state.showPage = false
         },
         handleCallMinimalToggle: (state) => {
-            state.value.callMinimal = !state.value.callMinimal
-            state.value.callLeftPanelClose = false
+            state.callMinimal = !state.callMinimal
+            state.callLeftPanelClose = false
         },
         handleCallMaximizedToggle: (state) => {
-            state.value.callMaximized = !state.value.callMaximized
+            state.callMaximized = !state.callMaximized
         },
         handleVoiceOutputVolume: (state, action) => {
-            state.value.voiceOutputVolume = action.payload
+            state.voiceOutputVolume = action.payload
         },
         handleMediaPreview: (state, action) => {
-            state.value.mediaPreview = action.payload
-            state.value.mediaPreview.active = true;
+            state.mediaPreview = action.payload
+            state.mediaPreview.active = true;
         },
         handleMediaPreviewClose: (state) => {
-            state.value.mediaPreview.active = false;
+            state.mediaPreview.active = false;
         },
         handleBackground: (state, action) => {
-            state.value.background = action.payload
+            state.background = action.payload
         },
         handleToggleDarkMode: (state) => {
-            state.value.darkMode = !state.value.darkMode
+            state.darkMode = !state.darkMode
         }
     },
 })
@@ -159,6 +161,7 @@ export const {
     handlePinnedMessage,
     handlePinMessage,
     handleUnpinMessage,
+    handleSendBotCommand,
     handleGoToMessage,
     handlePage,
     handlePageClose,

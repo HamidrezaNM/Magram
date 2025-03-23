@@ -1,9 +1,12 @@
 import { memo, useContext, useEffect } from "react"
-import { setMessages, updateMessageSeen, updateMessageText } from "../../Stores/Messages"
+import { removeMessage, removeMessages, setMessages, updateMessage, updateMessageSeen, updateMessageText } from "../../Stores/Messages"
 import { updateLastMessage } from "../../Stores/Chats"
 import { useDispatch, useSelector } from "react-redux"
-import { socket } from "../../../App"
+import { client, socket } from "../../../App"
 import { UserContext } from "../../Auth/Auth"
+import { DeletedMessage } from "telegram/events/DeletedMessage"
+import { getChatIdFromPeer } from "../../Helpers/chats"
+import { Api } from "telegram"
 
 function MessagesHandler() {
     const chats = useSelector((state) => state.chats.value)
@@ -28,60 +31,44 @@ function MessagesHandler() {
         return () => window.removeEventListener("beforeunload", beforeunload);
     }, [chats, messages])
 
-    useEffect(() => {
-        const updateMessage = (data) => {
-            if (data.data) {
-                data = data.data
-            }
-            // if (User._id && User._id !== data.fromId) {
-            // let message = messages[messages.indexOf(data)]
-            // const updatedMessages = [...messages]
-            // let message = updatedMessages.find(x => x._id === data._id);
-            // message.message = data.message;
-            // message.edited = true;
-            dispatch(updateMessageText({ _id: data._id, chatId: data.chatId, message: data.message }))
-            if (chats[data.chatId].lastMessage._id === data._id) {
-                dispatch(updateLastMessage({ _id: data.chatId, message: { ...chats[data.chatId].lastMessage, message: data.message } }))
-            } else {
-            }
-            // }
+    const onUpdate = (update) => {
+        switch (update.className) {
+            case 'UpdateEditMessage':
+            case 'UpdateEditChannelMessage':
+                updateEditMessage(update.message)
+                break;
+            case 'UpdateDeleteChannelMessages':
+                onDeleteMessage(update)
+            default:
+                break;
         }
-        socket.on('UpdateMessage', updateMessage)
-        return () => socket.off('UpdateMessage', updateMessage);
-    }, [messages, chats]) // UpdateMessage
+    }
+
+    const updateEditMessage = (data) => {
+        dispatch(updateMessage({ id: data.id, chatId: data.chatId?.value, message: data }))
+        if (chats[data.chatId?.value].message.id === data.id) {
+            dispatch(updateLastMessage({ id: data.chatId?.value, message: { ...chats[data.chatId?.value].message, message: data.message } }))
+        }
+    }
 
     useEffect(() => {
-        const deleteMessage = (data) => {
-            if (data.data) data = data.data
-            if (messages[data.chatId]) {
-                dispatch(setMessages({
-                    chatId: data.chatId,
-                    messages: messages[data.chatId].filter(x =>
-                        x._id !== data._id
-                    )
-                }));
-            }
-            if (chats[data.chatId].lastMessage._id === data._id) {
-                dispatch(updateLastMessage({
-                    _id: data.chatId, message: {
-                        chatId: 1,
-                        date: Date.now() / 1000,
-                        forwardId: null,
-                        from: { id: 2, firstname: "" },
-                        fromId: 2,
-                        id: Date.now(),
-                        message: "Loading...",
-                        reply: 0,
-                        seen: null,
-                        type: "text",
-                        messageType: "message",
-                    }
-                }))
-            }
+        client.addEventHandler(onUpdate);
+        return () => {
+            client.removeEventHandler(onUpdate)
         }
-        socket.on('DeleteMessage', deleteMessage)
-        return () => socket.off('DeleteMessage', deleteMessage);
-    }, [messages, chats]) // DeleteMessage
+    }, [messages, chats]) // UpdateMessage
+
+    const onDeleteMessage = async (data) => {
+        const chatId = getChatIdFromPeer(new Api.PeerChannel({ channelId: data.channelId }))
+        dispatch(removeMessages({ chatId, messages: data.messages }))
+
+        if (chats[chatId].message?.id === data.messages[0]) {
+            const chatMessages = messages[chatId]
+            dispatch(updateLastMessage({
+                id: chatId, message: chatMessages[chatMessages.length - 2]
+            }))
+        }
+    }
 
     const handleUpdateMessageSeen = (to) => {
         dispatch(updateMessageSeen({ _id: to._id, chatId: to.chatId, fromId: to.userId }))

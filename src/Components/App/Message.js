@@ -23,8 +23,9 @@ import { getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
 import FullNameTitle from "../common/FullNameTitle";
+import buildClassName from "../Util/buildClassName";
 
-function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false }) {
+function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -36,7 +37,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
     const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
-    const isAdmin = useSelector((state) => state.ui.value.activeChat?.isAdmin) ?? false // TODO: Replace it to Permissions
+    const isAdmin = useSelector((state) => state.ui.activeChat?.isAdmin) ?? false // TODO: Replace it to Permissions
 
     const MessageEl = useRef()
     const messageText = useRef()
@@ -184,7 +185,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
     }, [data, isPinned.current])
 
     const renderReactionAndMeta = () => {
-        const meta = <MessageMeta edited={data.editDate} seen={data.seen} time={msgTime} isOutMessage={isOutMessage} />
+        const meta = <MessageMeta edited={data.editDate && !data.editHide} seen={seen} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
             return <MessageReactions messageId={data.id} chatId={data.chatId} reactions={data.reactions}>{meta}</MessageReactions>
@@ -220,7 +221,7 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
     var _msgDate = new Date(data.date * 1000)
     var _prevMsgDate = new Date(prevMsgDate * 1000)
 
-    const noAvatar = getChatType(data._chat) !== 'Group'
+    const noAvatar = isAction || !isThread && getChatType(data._chat) !== 'Group'
 
     const isTransparent = () => {
         if (data.media) {
@@ -245,18 +246,18 @@ function Message({ data, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false
                 <span>{getDate(data.date * 1000)}</span>
             </div>}
         <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={handleReply}>
-            {(!isOutMessage.current && (isThread || !isAction && getChatType(data._chat) === 'Group')) && (
+            {(!isOutMessage.current && !noAvatar) && (
                 <div className={"message-from-profile" + (isSameFromNextMsg ? ' hidden' : '')}>
-                    <Profile entity={data.sender} name={data.sender?.firstName ?? data.sender?.title} id={data.sender?.id?.value} size={36} />
+                    <Profile entity={data.sender} name={data.sender?.firstName ?? data.sender?.title ?? 'Anonymous'} id={data.sender?.id?.value} size={42} />
                 </div>
             )}
-            <div className={"bubble" + (getChatType(data._chat) !== 'Group' ? ' noAvatar' : '')}>
+            <div className={buildClassName("bubble", noAvatar && 'noAvatar')}>
                 <div className="body" style={{ width: mediaWidth ?? '' }}>
-                    {(!isOutMessage.current && (isThread || !isAction && getChatType(data._chat) === 'Group')) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender} /></div>}
+                    {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
                     {data.replyTo && (!isThread || data.replyToMessage) && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
                         <div className="line"></div>
                         <div className="body">
-                            <div className="title">{data.replyToMessage?._sender ? <FullNameTitle chat={data.replyToMessage?._sender} /> : 'Loading...'}</div>
+                            <div className="title">{data.replyToMessage ? <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} /> : 'Loading...'}</div>
                             <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
                         </div>
                     </div>}

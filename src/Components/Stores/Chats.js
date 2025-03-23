@@ -53,6 +53,12 @@ export const chatsSlice = createSlice({
                 state.value[action.payload.id] = { ...chat, participants: action.payload.participants }
             }
         },
+        updateChatRead: (state, action) => {
+            const chat = state.value[action.payload.chatId]
+            if (chat) {
+                state.value[action.payload.chatId] = { ...chat, dialog: { ...chat.dialog, readOutboxMaxId: action.payload.maxId } }
+            }
+        },
         updateLastMessage: (state, action) => {
             const chat = state.value[action.payload.id]
             if (chat) {
@@ -81,6 +87,19 @@ export const chatsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { chatAdded, handleCachedChats, setChats, setChat, removeChat, setFullChat, updateChatParticipants, updateLastMessage, updateChatUnreadCount, updateChatUserStatus, updateTypingStatus } = chatsSlice.actions
+export const {
+    chatAdded,
+    handleCachedChats,
+    setChats,
+    setChat,
+    removeChat,
+    setFullChat,
+    updateChatParticipants,
+    updateChatRead,
+    updateLastMessage,
+    updateChatUnreadCount,
+    updateChatUserStatus,
+    updateTypingStatus
+} = chatsSlice.actions
 
 export default chatsSlice.reducer

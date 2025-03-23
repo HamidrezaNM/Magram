@@ -91,6 +91,17 @@
         background-color: #000000 !important;
     }
 
+    .ChatInfo {
+        height: 54px !important;
+    }
+
+    .ChatInfo .profile,
+    .ChatInfo .profile img {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 21px !important;
+    }
+
     /* .message-media {
         width: calc(60vw + .575rem * 2) !important;
     } */

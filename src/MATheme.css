@@ -44,7 +44,8 @@
     --primary-hover-rgb: 0, 141, 207;
     --primary-active: #0080bb;
     --default: linear-gradient(120deg, #62cdff, #096bd1);
-    --purple: linear-gradient(120deg, #a256d3, #4900ad);
+    /* --purple: linear-gradient(120deg, #a256d3, #4900ad); */
+    --purple: linear-gradient(120deg, #5c38a3, #c12abe);
     --green: linear-gradient(120deg, #9adf5b, #008d87);
     --black: linear-gradient(120deg, #464646, #1a1a1a);
 }

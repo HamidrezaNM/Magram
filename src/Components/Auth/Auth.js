@@ -80,6 +80,8 @@ export function Auth() {
         localStorage.removeItem('chats')
         localStorage.removeItem('messages')
 
+        setAuthState("authorizationStateReady");
+
         await client.connect()
 
         try {

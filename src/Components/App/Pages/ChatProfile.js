@@ -17,7 +17,7 @@ import { getChatData } from "../Chat";
 import FullNameTitle from "../../common/FullNameTitle";
 import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
-import { getChatSubtitle, getChatType } from "../../Helpers/chats";
+import { deleteChat, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
 import { Api } from "telegram";
 
 
@@ -30,9 +30,9 @@ export default function ChatProfile() {
 
     const page = useRef()
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const fullChat = useSelector((state) => state.ui.value.activeFullChat)
+    const subPage = useSelector((state) => state.ui.subPage)
+    const activeChat = useSelector((state) => state.ui.activeChat)
+    const fullChat = useSelector((state) => state.ui.activeFullChat)
 
     useEffect(() => {
         setIsLoaded(true);
@@ -56,39 +56,10 @@ export default function ChatProfile() {
 
     const leaveGroup = () => {
         (async () => {
-            if (activeChat.isChannel) {
-                await client.invoke(new Api.channels.LeaveChannel({ channel: activeChat.entity }))
-                onLeaveGroup()
-                return true
-            }
-            if (activeChat.isGroup) {
-                await client.invoke(new Api.messages.DeleteChatUser({
-                    chatId: activeChat.id.value,
-                    userId: User.id.value,
-                    revokeHistory: false
-                }))
-                onLeaveGroup()
-                return true;
-            }
-            await client.invoke(new Api.messages.DeleteHistory({
-                peer: activeChat.entity,
-                revoke: false
-            }))
+            await deleteChat(activeChat, User.id.value)
             onLeaveGroup()
-            return true;
         })()
 
-    }
-
-    const getDeleteText = () => {
-        switch (getChatType(activeChat.entity)) {
-            case 'Group':
-                return 'Leave Group'
-            case 'Channel':
-                return 'Leave Channel'
-            default:
-                return 'Delete Chat'
-        }
     }
 
     const getSubPageLayout = useCallback(() => {
@@ -174,7 +145,7 @@ export default function ChatProfile() {
             >
                 <DialogTitle id="alert-dialog-title" className="flex">
                     <Profile entity={activeChat.entity} name={activeChat?.title} id={activeChat?.entity?.id.value} />
-                    {getDeleteText()}
+                    {getDeleteChatText(activeChat.entity)}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
@@ -184,7 +155,7 @@ export default function ChatProfile() {
                 <DialogActions>
                     <Button onClick={() => setOpenDeleteModal(false)}>CANCEL</Button>
                     <Button color="error" onClick={leaveGroup}>
-                        {getDeleteText().toUpperCase()}
+                        {getDeleteChatText(activeChat.entity).toUpperCase()}
                     </Button>
                 </DialogActions>
             </Dialog>

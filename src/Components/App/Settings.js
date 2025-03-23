@@ -34,7 +34,7 @@ function Settings() {
     const page = useRef()
     const usernameMenu = useRef()
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
+    const subPage = useSelector((state) => state.ui.subPage)
 
     const logOut = async () => {
         await client.invoke(new Api.auth.LogOut())

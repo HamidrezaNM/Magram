@@ -1,7 +1,7 @@
 import { forwardRef, memo, useContext, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useDispatch, useSelector } from "react-redux";
-import { setMessages } from "../Stores/Messages";
+import { setMessages, unshiftMessages } from "../Stores/Messages";
 import { handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage } from "../Stores/UI";
 import MessagesLoading from "../UI/MessagesLoading";
 import { client, socket } from "../../App";
@@ -11,6 +11,8 @@ import { goToMessage } from "./Home";
 import { Api } from "telegram";
 import { readHistory } from "../Util/messages";
 import Transition from "./Transition";
+import buildClassName from "../Util/buildClassName";
+import { getChatType } from "../Helpers/chats";
 
 const Messages = forwardRef(({ MessagesRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -19,9 +21,10 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
 
-    const messages = useSelector((state) => state.messages.value)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const _goToMessage = useSelector((state) => state.ui.value.goToMessage)
+    const activeChat = useSelector((state) => state.ui.activeChat)
+    const fullChat = useSelector((state) => state.ui.activeFullChat)
+    const messages = useSelector((state) => state.messages.value[activeChat.id.value])
+    const _goToMessage = useSelector((state) => state.ui.goToMessage)
 
     const dispatch = useDispatch()
 
@@ -37,7 +40,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         setTimeout(() => {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight + 3000, behavior: "instant" })
         }, 40)
-        if (messages[activeChat.id.value]?.length !== data?.total) {
+        if (messages?.length !== data?.total) {
             MessagesRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
             data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
@@ -47,7 +50,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
             readHistory(activeChat.id.value, dispatch)
         } else {
-            messages[activeChat.id.value]?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
+            messages?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
         }
         // }
     }
@@ -57,17 +60,17 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     }
 
     useEffect(() => {
-        if (messages[activeChat?.id?.value]?.length && autoScroll.current) {
+        if (messages?.length && autoScroll.current) {
             handleScrollToBottom()
         }
-    }, [messages[activeChat?.id?.value]?.length]) // Scroll to Bottom on ReceiveMessage and SendMessage
+    }, [messages?.length]) // Scroll to Bottom on ReceiveMessage and SendMessage
 
     useEffect(() => {
         (async () => {
             if (activeChat) {
                 setIsLoaded(false)
                 setMessagesRenderCount(20)
-                if (messages[activeChat.id.value]?.length > 0) {
+                if (messages?.length > 0) {
                     isLoading.current = false
                     requestAnimationFrame(() => {
                         MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
@@ -75,11 +78,11 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 }
                 dispatch(handlePinnedMessage())
 
-                const messagesLength = messages[activeChat.id.value]?.length
+                const messagesLength = messages?.length
                 let lastMessageId = null
 
                 if (messagesLength > 0) {
-                    lastMessageId = messages[activeChat.id.value][messagesLength - 1]?.id
+                    lastMessageId = messages[messagesLength - 1]?.id
                 }
 
                 const result = await client.getMessages(
@@ -94,7 +97,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     onGetMessages(result)
                 else {
                     setIsLoaded(true)
-                    messages[activeChat.id.value]?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
+                    messages?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
                     readHistory(activeChat.id.value, dispatch)
                 }
 
@@ -103,7 +106,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         })()
     }, [activeChat?.id]) // Get Messages on activeChat Changed
 
-    const onScrollMessages = () => {
+    const onScrollMessages = async () => {
         if (document.querySelector('.scrollToBottom')) {
             if (Math.abs(MessagesRef.current.scrollHeight - MessagesRef.current.clientHeight - MessagesRef.current.scrollTop) > 30
                 || 0 > MessagesRef.current.scrollTop) {
@@ -115,21 +118,44 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 autoScroll.current = true
             }
 
-            if (messages[activeChat?.id.value]?.length > messagesRenderCount && MessagesRef.current.scrollTop < 1) {
+            if (MessagesRef.current.scrollTop < 1) {
+                if (messages?.length <= messagesRenderCount) {
+                    setIsLoaded(true)
+                    // const messagesLength = messages?.length
+                    let maxMessageId = null
+
+                    // if (messagesLength > 0) {
+                    maxMessageId = messages[0]?.id
+                    // }
+
+                    const result = await client.getMessages(
+                        activeChat.id.value,
+                        {
+                            limit: 100,
+                            maxId: maxMessageId
+                        }
+                    );
+                    console.log(result)
+                    setIsLoaded(true)
+                    if (result?.length) {
+                        dispatch(unshiftMessages({ chatId: activeChat.id.value, messages: result.reverse() }))
+                    } else
+                        return
+                }
                 console.log('message render count increase')
                 MessagesRef.current.scroll({ left: 0, top: 1, behavior: "instant" })
-                setMessagesRenderCount(messages[activeChat?.id.value]?.length < messagesRenderCount * 2 ? messages[activeChat?.id.value]?.length : messagesRenderCount * 2)
+                setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
             }
         }
     }
 
     useEffect(() => {
-        if (activeChat && messages[activeChat?.id.value]?.length && isLoading.current) {
+        if (activeChat && messages?.length && isLoading.current) {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
             isLoading.current = false
         }
 
-        if (activeChat && messages[activeChat?.id.value]?.length) {
+        if (activeChat && messages?.length) {
             const items = MessagesRef.current.querySelectorAll('.MessagesAnimating .Message')
             const itemsLength = Object.keys(items).length
 
@@ -143,16 +169,16 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 }, itemsLength * 20);
             }
         }
-    }, [activeChat, messages[activeChat?.id.value], messagesRenderCount]) // Scroll to Bottom on Load
+    }, [activeChat, messages, messagesRenderCount]) // Scroll to Bottom on Load
 
     useEffect(() => {
         if (_goToMessage) {
-            const index = messages[activeChat?.id.value].indexOf(messages[activeChat?.id.value].filter((item) => item.id === _goToMessage)[0])
+            const index = messages.indexOf(messages.filter((item) => item.id === _goToMessage)[0])
 
-            if (messages[activeChat?.id.value].length - index < messagesRenderCount) {
+            if (messages.length - index < messagesRenderCount) {
                 goToMessage(_goToMessage)
             } else {
-                setMessagesRenderCount(messages[activeChat?.id.value].length - index)
+                setMessagesRenderCount(messages.length - index)
                 setTimeout(() => {
                     goToMessage(_goToMessage)
                 }, 40);
@@ -175,22 +201,31 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         return () => {
             document.removeEventListener("keyup", handleKeyUp);
         };
-    }, [handleKeyUp, messages[activeChat._id]]);
+    }, [handleKeyUp, messages]);
 
     console.log('Messages Rerender')
 
-    return <div className="Messages scrollable" ref={MessagesRef} onScroll={onScrollMessages}>
-        {messages[activeChat.id.value] ? <>
+    return <div className={buildClassName("Messages", "scrollable", (!messages?.length && isLoaded) && 'NoMessages')} ref={MessagesRef} onScroll={onScrollMessages}>
+        {messages || !isLoaded ? <>
             {!isLoaded && <div className="loading">
                 {<MessagesLoading />}
             </div>
             }
-            {messages[activeChat.id.value].slice(Math.max(messages[activeChat.id.value].length - messagesRenderCount, 0)).map((item, index) => (
-                <Message key={activeChat.id?.value + '_' + item?.id} data={item} prevMsgFrom={messages[activeChat.id.value][(messages[activeChat.id.value].length - messagesRenderCount > 0 ? messages[activeChat.id.value].length - messagesRenderCount : 0) + index - 1]?._senderId?.value} prevMsgDate={messages[activeChat.id.value][(messages[activeChat.id.value].length - messagesRenderCount > 0 ? messages[activeChat.id.value].length - messagesRenderCount : 0) + index - 1]?.date} nextMsgFrom={messages[activeChat.id.value][(messages[activeChat.id.value].length - messagesRenderCount > 0 ? messages[activeChat.id.value].length - messagesRenderCount : 0) + index + 1]?._senderId?.value} />
+            {messages && messages.slice(Math.max(messages.length - messagesRenderCount, 0)).map((item, index) => (
+                <Message key={activeChat.id?.value + '_' + item?.id} data={item} seen={activeChat?.dialog?.readOutboxMaxId >= item?.id} prevMsgFrom={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index - 1]?._senderId?.value} prevMsgDate={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index - 1]?.date} nextMsgFrom={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index + 1]?._senderId?.value} />
             ))}
         </> :
-            (<div className="loading">
-                {<MessagesLoading />}
+            (<div className="NoMessage Message">
+                <div className="bubble">
+                    <div className="message-text">
+                        {getChatType(activeChat?.entity) === 'Bot' ?
+                            <span>
+                                {fullChat?.botInfo?.description}
+                            </span>
+                            : <span>No messages here yet...</span>
+                        }
+                    </div>
+                </div>
             </div>)}
     </div>
 

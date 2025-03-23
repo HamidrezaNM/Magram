@@ -5,31 +5,34 @@ import { IKUpload } from "imagekitio-react";
 import { Icon } from "../common";
 import EmojiData from '@emoji-mart/data/sets/14/apple.json'
 import { useDispatch, useSelector } from "react-redux";
-import { handleMessageError, messageAdded, updateMessageId, updateMessageMedia, updateMessageMediaUploadProgress, updateMessageText } from "../../Stores/Messages";
+import { handleMessageError, messageAdded, updateMessage, updateMessageId, updateMessageMedia, updateMessageMediaUploadProgress, updateMessageText } from "../../Stores/Messages";
 import { client, socket } from "../../../App";
 import { chatAdded, setChat, updateLastMessage } from "../../Stores/Chats";
 import { AuthContext, UserContext } from "../../Auth/Auth";
-import { handleEditMessage, handleReplyToMessage } from "../../Stores/UI";
+import { handleEditMessage, handleReplyToMessage, handleSendBotCommand } from "../../Stores/UI";
 import MessageText from "../MessageText";
 import { EmojiConvertor } from "emoji-js";
 import { Api } from "telegram";
 import { getChatType } from "../../Helpers/chats";
 import Attachment from "./Attachment";
 import { CustomFile } from "telegram/client/uploads";
+import { returnBigInt } from "telegram/Helpers";
 
 function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
     const [messageInputHandled, setMessageInputHandled] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+    const [botStarted, setBotStarted] = useState(false);
 
     const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
 
     const chats = useSelector((state) => state.chats.value)
-    // const activeChat = useSelector((state) => state.ui.value.activeChat)
-    const editMessage = useSelector((state) => state.ui.value.editMessage)
-    const replyToMessage = useSelector((state) => state.ui.value.replyToMessage)
+    // const activeChat = useSelector((state) => state.ui.activeChat)
+    const editMessage = useSelector((state) => state.ui.editMessage)
+    const replyToMessage = useSelector((state) => state.ui.replyToMessage)
+    const sendBotCommand = useSelector((state) => state.ui.sendBotCommand)
 
     const ikUploadRefTest = useRef()
     const messageInputEl = useRef();
@@ -40,21 +43,20 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const dispatch = useDispatch()
     const emoji = new EmojiConvertor()
 
-    const sendMessage = useCallback(async (isMedia) => {
-        if (!messageInputHandled || messageInputHandled.trim().length === 0) {
+    const sendMessage = useCallback(async (text) => {
+        if (!text && (!messageInputHandled || messageInputHandled.trim().length === 0)) {
             console.log('message is empty', messageInputHandled)
             return false;
         }
-        const messageText = messageInputHandled.replace(/&nbsp;/g, ' ').trim()
+        const messageText = text?.trim() ?? messageInputHandled.replace(/&nbsp;/g, ' ').trim()
         if (editMessage) {
-            // socket.emit('UpdateMessage', { token: Auth.authJWT, message: { _id: message._id, chatId: message.chatId, fromId: message.fromId, message: messageInputHandled } })
             await client.invoke(new Api.messages.EditMessage({
                 id: editMessage.id,
                 message: messageText,
                 peer: editMessage.chatId.value
             }))
             dispatch(handleEditMessage())
-            dispatch(updateMessageText({ id: editMessage.id, chatId: editMessage.chatId?.value, message: messageText }))
+            dispatch(updateMessage({ id: editMessage.id, chatId: editMessage.chatId?.value, message: { ...editMessage, message: messageText, editDate: Date.now() } }))
             changeMessageInputHandler("");
 
             return true;
@@ -89,7 +91,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         //     message.toId = activeChat.toId
 
         dispatch(messageAdded(_message));
-        handleScrollToBottom()
+        setTimeout(() => {
+            handleScrollToBottom()
+        }, 40);
         if (replyToMessage) dispatch(handleReplyToMessage());
 
         handleSendButtonAnimation()
@@ -104,7 +108,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 await result.getChat()
 
                 const chat = {
-                    id: { value: chatId },
+                    id: returnBigInt(chatId),
                     entity: result.chat,
                     message: result,
                     title: result.chat.title ?? result.chat.firstName,
@@ -190,6 +194,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     }, [replyToMessage, editMessage]) // replyToMessage and editMessage transition
 
     const handleSendButtonAnimation = () => {
+        if (!sendButton.current) return;
         sendButton.current.firstElementChild.style =
             "transition:all .15s ease-out;";
         sendButton.current.firstElementChild.style.marginRight = "-42px";
@@ -293,6 +298,18 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     }
 
     useEffect(() => {
+        if (sendBotCommand) {
+            sendMessage(sendBotCommand)
+            dispatch(handleSendBotCommand())
+        }
+    }, [sendBotCommand])
+
+    const startBot = () => {
+        sendMessage('/start')
+        setBotStarted(true)
+    }
+
+    useEffect(() => {
         if (isTyping) {
             // socket.emit('SendMessageAction', { token: Auth.authJWT, chatId: chat._id, action: 'typing' })
 
@@ -305,6 +322,16 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
 
     const allowSendingText = () => {
         return !(chat.entity?.defaultBannedRights?.sendMessages || chat.entity?.defaultBannedRights?.sendPlain || chat.entity?.bannedRights?.sendMessages || chat.entity?.bannedRights?.sendPlain)
+    }
+
+    const renderComposerButton = () => {
+        if (chat?.entity?.left && !thread)
+            return <div className="Button" onClick={handleJoinGroup}>Join</div>
+        if (getChatType(chat?.entity) === 'Channel')
+            return <div className="Button" onClick={() => { }}>Mute</div>
+        if (getChatType(chat?.entity) === 'Bot' && chat.entity.botChatHistory && !botStarted)
+            return <div className="Button" onClick={startBot}>Start</div>
+        return undefined
     }
 
     return <>
@@ -343,9 +370,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 </div>
             </div>
         )}
-        {chat?.entity?.left && !thread ? <>
-            <div className="Button" onClick={handleJoinGroup}>Join</div>
-        </> : getChatType(chat?.entity) === 'Channel' ? <div className="Button" onClick={() => { }}>Mute</div> : <>
+        {renderComposerButton() ?? <>
             <div className="Composer">
                 <div className="emoji-button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                     <div className="icon">mood</div>

@@ -4,7 +4,7 @@ import { handleContextMenu } from "../../Stores/UI";
 
 function ContextMenu() {
 
-    const contextMenu = useSelector((state) => state.ui.value.contextMenu)
+    const contextMenu = useSelector((state) => state.ui.contextMenu)
 
     const dispatch = useDispatch()
 

@@ -48,7 +48,7 @@
 
 //     const dispatch = useDispatch()
 
-//     const ui = useSelector((state) => state.ui.value)
+//     const ui = useSelector((state) => state.ui)
 //     const chats = useSelector((state) => state.chats.value)
 
 //     useEffect(() => {

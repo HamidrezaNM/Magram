@@ -72,9 +72,10 @@
   --icon-hover: #0000000a;
   --icon-active: #0000000f;
   --default: linear-gradient(120deg, #62cdff, #096bd1);
-  --purple: linear-gradient(120deg, #a256d3, #4900ad);
+  /* --purple: linear-gradient(120deg, #a256d3, #4900ad); */
   --green: linear-gradient(120deg, #9adf5b, #008d87);
   --black: linear-gradient(120deg, #464646, #1a1a1a);
+  --purple: linear-gradient(300deg, #c12abe, #5c38a3);
   --colors-blue: linear-gradient(120deg, #3b7493, #00345e);
   --colors-magenta: linear-gradient(120deg, #933b8a, #3a005e);
   --colors-green: linear-gradient(120deg, #53933b, #005e14);
@@ -213,6 +214,17 @@
   position: absolute;
   height: 100%;
   z-index: -1;
+}
+
+.background::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url(./assets/ChatBGPattern.png);
+  position: absolute;
+  mix-blend-mode: plus-lighter;
+  background-repeat: repeat;
+  background-size: 510px;
 }
 
 .background {
@@ -587,6 +599,7 @@
   min-height: 34px;
   border-radius: 8px;
   padding-right: 10px;
+  white-space: pre;
   cursor: pointer;
   transition: all .15s ease;
 }
@@ -801,6 +814,7 @@
   white-space: pre-wrap;
   word-break: break-word;
   padding: 20px 0;
+  line-height: 1.4;
 }
 
 .Page .Item.preWrap .icon {
@@ -1121,7 +1135,7 @@ a:hover {
 .Spoiler {
   position: relative;
   color: transparent;
-  background-image: url(https://web.telegram.org/a/spoiler-dots-white.ab45f83c6ba729884808.png);
+  background-image: url(./assets/SpoilerDots.png);
   background-size: auto min(100%, 1.125rem);
 }
 
@@ -1154,6 +1168,12 @@ a:hover {
 
 .css-c0dc4c-MuiTypography-root-MuiDialogContentText-root {
   font-family: inherit !important;
+}
+
+.css-et6ef6-MuiSkeleton-root,
+.css-1atqaay-MuiSkeleton-root,
+.css-757fl2-MuiSkeleton-root {
+  background-color: var(--on-primary) !important;
 }
 
 .profile.colors-blue {

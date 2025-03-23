@@ -38,10 +38,25 @@ export const messagesSlice = createSlice({
                     state.value[action.payload.chatId] = action.payload.messages
             }
         },
+        unshiftMessages: (state, action) => {
+            if (action.payload.messages?.length) {
+                if (state.value[action.payload.chatId]?.length > 0) {
+                    state.value[action.payload.chatId] = [...action.payload.messages, ...state.value[action.payload.chatId]]
+                } else
+                    state.value[action.payload.chatId] = action.payload.messages
+            }
+        },
         removeMessage: (state, action) => {
             if (state.value[action.payload.chatId]) {
                 state.value[action.payload.chatId] = state.value[action.payload.chatId].filter(x =>
                     x.id != action.payload.messageId
+                )
+            }
+        },
+        removeMessages: (state, action) => {
+            if (state.value[action.payload.chatId]) {
+                state.value[action.payload.chatId] = state.value[action.payload.chatId].filter(x =>
+                    !action.payload.messages.includes(x.id)
                 )
             }
         },
@@ -58,13 +73,11 @@ export const messagesSlice = createSlice({
             if (message)
                 message = { ...message, seen: -1 }
         },
-        updateMessageText: (state, action) => {
+        updateMessage: (state, action) => {
             if (state.value[action.payload.chatId]) {
-                const message = state.value[action.payload.chatId].find(message => message.id === action.payload.id)
-                if (message) {
-                    message.message = action.payload.message
-                    message.edited = true
-                }
+                let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.id)
+                if (messageIndex)
+                    state.value[action.payload.chatId][messageIndex] = { ...action.payload.message }
             }
         },
         updateMessageSeen: (state, action) => {
@@ -97,6 +110,6 @@ export const messagesSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { messageAdded, handleCachedMessages, setMessages, removeMessage, updateMessageId, updateMessageText, updateMessageSeen, handleMessageError, updateMessageMediaUploadProgress, updateMessageMedia } = messagesSlice.actions
+export const { messageAdded, handleCachedMessages, setMessages, unshiftMessages, removeMessage, removeMessages, updateMessageId, updateMessage, updateMessageSeen, handleMessageError, updateMessageMediaUploadProgress, updateMessageMedia } = messagesSlice.actions
 
 export default messagesSlice.reducer

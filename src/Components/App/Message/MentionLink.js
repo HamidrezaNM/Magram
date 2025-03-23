@@ -4,6 +4,7 @@ import { setActiveChat } from "../../Stores/UI";
 import { client } from "../../../App";
 import { Api } from "telegram";
 import { generateChatWithPeer } from "../../Helpers/chats";
+import { viewChat } from "../ChatList";
 
 function MentionLink({ username, children, allowClick }) {
     const dispatch = useDispatch()
@@ -16,7 +17,7 @@ function MentionLink({ username, children, allowClick }) {
             peer = resolveUsername.users[0]
         else
             peer = resolveUsername.chats[0]
-        dispatch(setActiveChat(generateChatWithPeer(peer)))
+        viewChat(generateChatWithPeer(peer), dispatch)
     }
 
     return <a onClick={handleClick}>{children}</a>

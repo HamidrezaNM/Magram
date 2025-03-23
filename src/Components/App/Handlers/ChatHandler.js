@@ -2,13 +2,14 @@ import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
-import { chatAdded, setFullChat, updateChatUserStatus } from "../../Stores/Chats";
+import { chatAdded, setFullChat, updateChatRead, updateChatUserStatus } from "../../Stores/Chats";
 import { setActiveChat, setActiveFullChat } from "../../Stores/UI";
-import { generateChatWithPeer } from "../../Helpers/chats";
+import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
+import { returnBigInt } from "telegram/Helpers";
 
 function ChatHandler() {
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const activeChat = useSelector((state) => state.ui.activeChat)
     // const chats = useSelector((state) => state.chats.value)
 
     const dispatch = useDispatch()
@@ -24,11 +25,15 @@ function ChatHandler() {
             case 'UpdateChannel':
                 if (update._entities) {
                     const [chatId, peer] = update._entities.entries().next().value
-                    const chat = generateChatWithPeer(peer, { value: chatId })
+                    const chat = generateChatWithPeer(peer, returnBigInt(chatId))
 
                     console.log('channel updated', chat)
                     dispatch(chatAdded(chat))
                 }
+                break;
+            case 'UpdateReadHistoryOutbox':
+                dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
+                dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
                 break;
             default:
                 break;
@@ -56,9 +61,15 @@ function ChatHandler() {
                     } else {
                         dispatch(setActiveFullChat(activeChat.fullChat))
                     }
-                } else {
+                } else if (activeChat.isUser) {
+                    const fullUser = await client.invoke(
+                        new Api.users.GetFullUser({ id: activeChat?.id })
+                    )
+
+                    dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullUser.fullUser }))
+                    dispatch(setActiveFullChat(fullUser.fullUser))
+                } else
                     dispatch(setActiveFullChat())
-                }
             }
         })()
     }, [activeChat?.id])

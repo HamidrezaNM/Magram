@@ -21,7 +21,7 @@ function ChatList() {
 
     const chats = useSelector((state) => state.chats.value)
 
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const activeChat = useSelector((state) => state.ui.activeChat)
 
     const allChats = Object.values(chats).sort((a, b) => {
         if (a.message?.date > b.message?.date) {

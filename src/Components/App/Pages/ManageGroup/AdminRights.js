@@ -16,8 +16,8 @@ export default function AdminRights() {
     const User = useContext(UserContext)
     const Auth = useContext(AuthContext)
 
-    const subPage = useSelector((state) => state.ui.value.subPage)
-    const activeChat = useSelector((state) => state.ui.value.activeChat)
+    const subPage = useSelector((state) => state.ui.subPage)
+    const activeChat = useSelector((state) => state.ui.activeChat)
 
     const data = subPage[2]?.data ?? subPage[3]?.data
 

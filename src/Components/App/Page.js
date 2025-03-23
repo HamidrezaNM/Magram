@@ -29,8 +29,8 @@ export function ShowPage({ title, page }) {
 export function PageHeader({ children }) {
     const dispatch = useDispatch()
 
-    const showPage = useSelector((state) => state.ui.value.showPage)
-    const subPage = useSelector((state) => state.ui.value.subPage)
+    const showPage = useSelector((state) => state.ui.showPage)
+    const subPage = useSelector((state) => state.ui.subPage)
 
     useEffect(() => {
         dispatch(handlePageHeader(children))

@@ -13,7 +13,7 @@ import { removeChat, updateLastMessage } from "../Stores/Chats";
 import { client, socket } from "../../App";
 import FullNameTitle from "../common/FullNameTitle";
 import { Api } from "telegram";
-import { getChatType } from "../Helpers/chats";
+import { deleteChat, getChatType, getDeleteChatText } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 
 function Chat({ info, isActive }) {
@@ -63,39 +63,10 @@ function Chat({ info, isActive }) {
 
     const leaveGroup = () => {
         (async () => {
-            if (info.isChannel) {
-                await client.invoke(new Api.channels.LeaveChannel({ channel: info.entity }))
-                onLeaveGroup()
-                return true
-            }
-            if (info.isGroup) {
-                await client.invoke(new Api.messages.DeleteChatUser({
-                    chatId: info.id.value,
-                    userId: User.id.value,
-                    revokeHistory: false
-                }))
-                onLeaveGroup()
-                return true;
-            }
-            await client.invoke(new Api.messages.DeleteHistory({
-                peer: info.entity,
-                revoke: false
-            }))
+            await deleteChat(info, User.id.value)
             onLeaveGroup()
-            return true;
         })()
 
-    }
-
-    const getDeleteText = () => {
-        switch (getChatType(info.entity)) {
-            case 'Group':
-                return 'Leave Group'
-            case 'Channel':
-                return 'Leave Channel'
-            default:
-                return 'Delete Chat'
-        }
     }
 
     const chatMenu = e => {
@@ -121,9 +92,9 @@ function Chat({ info, isActive }) {
             <div className="info">
                 <div className="title"><FullNameTitle chat={info.entity} isSavedMessages={info.id.value === User.id.value} /></div>
                 <div className="message-details">
-                    {/* {isOutMessage && (
-                        // <MessageSeen data={info.message} />
-                    )} */}
+                    {info.message?.out && (
+                        <MessageSeen seen={info.dialog?.readOutboxMaxId >= info.message?.id} />
+                    )}
                     <div className="message-time">{getDateText(info.message?.date)}</div>
                 </div>
             </div>
@@ -153,7 +124,7 @@ function Chat({ info, isActive }) {
         >
             <DialogTitle id="alert-dialog-title" className="flex">
                 <Profile entity={info.entity} name={info?.title} id={info.entity?.id.value} />
-                {getDeleteText()}
+                {getDeleteChatText(info.entity)}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
@@ -163,7 +134,7 @@ function Chat({ info, isActive }) {
             <DialogActions>
                 <Button onClick={() => setOpenDeleteModal(false)}>CANCEL</Button>
                 <Button color="error" onClick={leaveGroup}>
-                    {getDeleteText().toUpperCase()}
+                    {getDeleteChatText(info.entity).toUpperCase()}
                 </Button>
             </DialogActions>
         </Dialog>

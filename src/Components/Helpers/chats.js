@@ -1,8 +1,15 @@
 import { message } from "telegram/client";
 import { getUserStatus } from "../App/MiddleColumn/ChatInfo";
+import { Api, utils } from "telegram";
+import { returnBigInt } from "telegram/Helpers";
+import { client } from "../../App";
 
 export function getChatTitle(chat) {
     return chat?.title;
+}
+
+export function getChatIdFromPeer(peer) {
+    return utils.getPeerId(peer)
 }
 
 export function getPeerId(peerId) {
@@ -63,16 +70,47 @@ export function getChatSubtitle(chat, type) {
     }
 }
 
+export const getDeleteChatText = (chat) => {
+    switch (getChatType(chat)) {
+        case 'Group':
+            return 'Leave Group'
+        case 'Channel':
+            return 'Leave Channel'
+        default:
+            return 'Delete Chat'
+    }
+}
+
+export const deleteChat = async (chat, userId) => {
+    if (chat.isChannel) {
+        await client.invoke(new Api.channels.LeaveChannel({ channel: chat.entity }))
+        return true
+    }
+    if (chat.isGroup) {
+        await client.invoke(new Api.messages.DeleteChatUser({
+            chatId: chat.id.value,
+            userId,
+            revokeHistory: false
+        }))
+        return true
+    }
+    await client.invoke(new Api.messages.DeleteHistory({
+        peer: chat.entity,
+        revoke: false
+    }))
+    return true
+}
+
 export function generateChatWithPeer(peer, chatId) {
     const peerType = getChatType(peer)
 
     return {
-        id: chatId ?? peer.id,
+        id: chatId ?? returnBigInt(getChatIdFromPeer(peer)),
         title: peer.title ?? peer.firstName,
         entity: peer,
         isChannel: peerType === 'Channel' || peerType === 'Group',
         isGroup: peerType === 'Group',
-        isUser: peerType === 'User',
+        isUser: peerType === 'User' || peerType === 'Bot',
         message: null,
         unreadCount: 0,
         isGeneratedByPeer: true
