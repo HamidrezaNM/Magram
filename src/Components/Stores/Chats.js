@@ -15,13 +15,6 @@ export const chatsSlice = createSlice({
         setChats: (state, action) => {
             state.value = {}
             action.payload.forEach(item => {
-                if (item.type === 'private' && !item.permissions)
-                    item.permissions =
-                    {
-                        sendText: true,
-                        sendMedia: true,
-                        pinMessages: true
-                    }
                 state.value[item.id.value] = item
             })
         },

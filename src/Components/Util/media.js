@@ -2,6 +2,8 @@ import { Api } from "telegram";
 import { client } from "../../App";
 import { getMediaType } from "../Helpers/messages";
 
+var cancelDownloadId;
+
 export async function downloadMedia(media, param, progressCallback, isThumbnail = false, loadWhenExist = true, type, returnBlob = false, isCustomEmoji = false) {
     const medias = await caches.open('ma-media')
 
@@ -37,18 +39,34 @@ export async function downloadMedia(media, param, progressCallback, isThumbnail 
             }
         }
 
-        const buffer = await client.downloadMedia(isCustomEmoji ? media.document : media, {
-            ...param, progressCallback: (e) => progressCallback && progressCallback(e)
-        })
+        cancelDownloadId = null;
 
-        var blob = new Blob([buffer], { type });
-        data = returnBlob ? blob : window.URL.createObjectURL(blob)
-        mimeType = mediaType === 'Photo' ? 'image/jpg' : media.document?.mimeType
+        try {
+            const buffer = await client.downloadMedia(isCustomEmoji ? media.document : media, {
+                ...param, progressCallback: (receivedBytes, totalBytes) => {
+                    if (cancelDownloadId == mediaId) {
+                        throw new Error("Download aborted");
+                    }
+                    progressCallback && progressCallback(receivedBytes, totalBytes)
+                },
+            })
 
-        await medias.put('/' + mediaType + mediaId + (isThumbnail ? '-thumb' : ''), new Response(blob, { headers: new Headers({ "Content-Type": mimeType ?? null }) }))
+            var blob = new Blob([buffer], { type });
+            data = returnBlob ? blob : window.URL.createObjectURL(blob)
+            mimeType = mediaType === 'Photo' ? 'image/jpg' : media.document?.mimeType
+
+            await medias.put('/' + mediaType + mediaId + (isThumbnail ? '-thumb' : ''), new Response(blob, { headers: new Headers({ "Content-Type": mimeType ?? null }) }))
+        } catch (error) {
+            console.log(error)
+            return false
+        }
     }
 
     return { data, thumbnail: resultIsThumb, mimeType };
+}
+
+export function abortDownload(mediaId) {
+    cancelDownloadId = mediaId
 }
 
 export async function downloadEmoji(documentId) {

@@ -29,21 +29,21 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const dispatch = useDispatch()
 
     const isLoading = useRef(false)
-    const autoScroll = useRef(false);
+    const autoScroll = useRef(true);
     const scrollToBottom = document.querySelector('.scrollToBottom')
     const BottomRef = document.querySelector('.bottom')
 
-    const onGetMessages = (data) => {
-        // if (response.ok) {
-        // socket.emit('UpdateMessageSeen', { token: Auth.authJWT, message: response.data[response.data.length - 1] })
+    const onGetMessages = async (data, overwrite = false) => {
         setIsLoaded(true)
         setTimeout(() => {
             MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight + 3000, behavior: "instant" })
         }, 40)
         if (messages?.length !== data?.total) {
             MessagesRef.current.classList.add('MessagesAnimating')
-            dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse() }))
-            data?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
+            dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse(), overwrite }))
+
+            handlePinnedMessages()
+
             setTimeout(() => {
                 MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
             }, 300)
@@ -52,7 +52,6 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         } else {
             messages?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
         }
-        // }
     }
 
     const handleScrollToBottom = () => {
@@ -93,11 +92,22 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     }
                 );
 
+                if (result.total > messagesLength && messagesLength < 100) {
+                    const all = await client.getMessages(
+                        activeChat.id.value,
+                        {
+                            limit: 100
+                        }
+                    );
+
+                    onGetMessages(all, true)
+                }
+
                 if (result.length)
                     onGetMessages(result)
                 else {
                     setIsLoaded(true)
-                    messages?.filter((item) => item.pinned).map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
+                    handlePinnedMessages()
                     readHistory(activeChat.id.value, dispatch)
                 }
 
@@ -118,7 +128,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 autoScroll.current = true
             }
 
-            if (MessagesRef.current.scrollTop < 1) {
+            if (isLoaded && messages?.length > 20 && MessagesRef.current.scrollTop < 1) {
                 if (messages?.length <= messagesRenderCount) {
                     setIsLoaded(true)
                     // const messagesLength = messages?.length
@@ -135,16 +145,17 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                             maxId: maxMessageId
                         }
                     );
-                    console.log(result)
+
                     setIsLoaded(true)
                     if (result?.length) {
                         dispatch(unshiftMessages({ chatId: activeChat.id.value, messages: result.reverse() }))
+                        setMessagesRenderCount(messages.length + result.length < messagesRenderCount * 2 ? messages.length + result.length : messagesRenderCount * 2)
                     } else
                         return
-                }
+                } else
+                    setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
                 console.log('message render count increase')
                 MessagesRef.current.scroll({ left: 0, top: 1, behavior: "instant" })
-                setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
             }
         }
     }
@@ -186,6 +197,17 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             dispatch(handleGoToMessage())
         }
     }, [_goToMessage])
+
+    const handlePinnedMessages = async () => {
+        const pinned = await client.getMessages(
+            activeChat.id.value,
+            {
+                filter: Api.InputMessagesFilterPinned
+            }
+        );
+
+        pinned.map((message) => dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(message), messageId: message.id })))
+    }
 
     const handleKeyUp = e => {
         if (e.keyCode === 38) {

@@ -32,7 +32,7 @@ export const messagesSlice = createSlice({
         },
         setMessages: (state, action) => {
             if (action.payload.messages?.length) {
-                if (state.value[action.payload.chatId]?.length > 0) {
+                if (state.value[action.payload.chatId]?.length > 0 && !action.payload.overwrite) {
                     state.value[action.payload.chatId] = [...state.value[action.payload.chatId], ...action.payload.messages]
                 } else
                     state.value[action.payload.chatId] = action.payload.messages
@@ -58,6 +58,12 @@ export const messagesSlice = createSlice({
                 state.value[action.payload.chatId] = state.value[action.payload.chatId].filter(x =>
                     !action.payload.messages.includes(x.id)
                 )
+            } else {
+                Object.keys(state.value).forEach((chat) => {
+                    state.value[chat] = state.value[chat].filter(x =>
+                        !action.payload.messages.includes(x.id)
+                    )
+                })
             }
         },
         updateMessageId: (state, action) => {

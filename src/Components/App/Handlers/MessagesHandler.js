@@ -38,6 +38,7 @@ function MessagesHandler() {
                 updateEditMessage(update.message)
                 break;
             case 'UpdateDeleteChannelMessages':
+            case 'UpdateDeleteMessages':
                 onDeleteMessage(update)
             default:
                 break;
@@ -59,15 +60,30 @@ function MessagesHandler() {
     }, [messages, chats]) // UpdateMessage
 
     const onDeleteMessage = async (data) => {
-        const chatId = getChatIdFromPeer(new Api.PeerChannel({ channelId: data.channelId }))
-        dispatch(removeMessages({ chatId, messages: data.messages }))
+        let chatId = data.channelId && getChatIdFromPeer(new Api.PeerChannel({ channelId: data.channelId }))
 
-        if (chats[chatId].message?.id === data.messages[0]) {
-            const chatMessages = messages[chatId]
-            dispatch(updateLastMessage({
-                id: chatId, message: chatMessages[chatMessages.length - 2]
-            }))
+        const updateChatLastMessage = (messageId) => {
+            if (chatId && chats[chatId].message?.id === messageId) {
+                const chatMessages = messages[chatId]
+                dispatch(updateLastMessage({
+                    id: chatId, message: chatMessages.length > 2 ? chatMessages[chatMessages.length - 2] : null
+                }))
+            }
         }
+
+        if (!chatId)
+            Object.keys(messages).forEach(chat => {
+                var message = messages[chat].find(x => data.messages.includes(x.id))
+
+                if (message) {
+                    chatId = chat
+                    updateChatLastMessage(message.id)
+                }
+            })
+        else
+            updateChatLastMessage(data.messages[0])
+
+        dispatch(removeMessages({ chatId, messages: data.messages }))
     }
 
     const handleUpdateMessageSeen = (to) => {

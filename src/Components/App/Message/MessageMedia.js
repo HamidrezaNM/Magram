@@ -5,8 +5,9 @@ import { Icon } from "../common";
 import Transition from "../Transition";
 import { handleMediaPreview } from "../../Stores/UI";
 import { getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentSticker, isDocumentVideo } from "../../Helpers/messages";
-import { downloadMedia } from "../../Util/media";
+import { abortDownload, downloadMedia } from "../../Util/media";
 import AnimatedSticker from "./AnimatedSticker";
+import Poll from "./Poll";
 
 const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
@@ -47,25 +48,12 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
         }
     }, [isLoaded, waitForSave])
 
-    // useEffect(() => {
-    //     if (data.isUploading && media) {
-    //         var fr = new FileReader();
-
-    //         fr.readAsDataURL(media[0]);
-
-    //         fr.onload = function (e) {
-    //             setUploading(this.result)
-    //         };
-    //     }
-    // }, [media])
-
     const downloadMedia = () => {
         if (isDownloading) {
             image.current.onAbort()
             setSize(16)
             setIsDownloading(false)
         } else {
-            // messageMedia.current.querySelector('img').transformation = {}
             setSize()
             setIsDownloading(true)
             try {
@@ -136,6 +124,8 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
                     return <Sticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading}>{downloadButton}</Sticker>
                 }
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
+            case 'MessageMediaPoll':
+                return <Poll media={media} messageId={data.id} chatId={data.chatId} />
             default:
                 break;
         }
@@ -150,12 +140,10 @@ export default memo(MessageMedia)
 
 const Document = forwardRef(({ children, media, details, setProgress, isLoaded, setIsLoaded, setSrc }, ref) => {
     const file = useRef()
-    const request = useRef()
 
     useImperativeHandle(ref, () => ({
         onAbort() {
-            console.log('Document aborted')
-            request.current.abort()
+            abortDownload(media.document?.id?.value)
         },
         onSave() {
             var link = document.createElement("a");
@@ -168,6 +156,7 @@ const Document = forwardRef(({ children, media, details, setProgress, isLoaded, 
             (async () => {
                 const result = await downloadMedia(media, {}, (e) => setProgress({ loaded: Number(e.value), total: details.size }))
 
+                if (!result) return
                 var _src = result.data
                 file.current = _src;
                 setSrc(_src)
@@ -291,8 +280,7 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
 
     useImperativeHandle(ref, () => ({
         onAbort() {
-            console.log('Image aborted')
-            request.current.abort()
+            abortDownload(media.photo.id.value)
         },
         onSave() {
             var link = document.createElement("a");
@@ -333,6 +321,7 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
             const param = size ? { thumb: media.photo.sizes[0] } : {}
             const sizes = getPhotoDimensions(media.photo)?.sizes
             const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: sizes[sizes?.length - 1] }), size, true, 'image/jpg')
+            if (!result) return
             if (img.current) {
                 let src = result.data
                 img.current.src = src;
@@ -371,8 +360,7 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
 
     useImperativeHandle(ref, () => ({
         onAbort() {
-            console.log('Image aborted')
-            request.current.abort()
+            abortDownload(media.document?.id?.value)
         },
         onSave() {
             var link = document.createElement("a");
@@ -413,6 +401,7 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
+            if (!result) return
             setSrc(result.data)
             if (!result.thumbnail) {
                 setContent(result.data)
@@ -461,8 +450,7 @@ const RoundVideo = forwardRef(({ children, media, details, size, noAvatar = fals
 
     useImperativeHandle(ref, () => ({
         onAbort() {
-            console.log('Image aborted')
-            request.current.abort()
+            abortDownload(media.document?.id?.value)
         },
         onSave() {
             var link = document.createElement("a");
@@ -490,7 +478,7 @@ const RoundVideo = forwardRef(({ children, media, details, size, noAvatar = fals
         (async () => {
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
-
+            if (!result) return
             setSrc(result.data)
             setContent(result.data)
             if (!result.thumbnail) {
@@ -563,6 +551,7 @@ const Sticker = forwardRef(({ children, media, size, _width, _height, noAvatar =
         (async () => {
             const param = size ? { thumb: media.document.thumbs[0] } : {}
             const result = await downloadMedia(media, param, null, size, true)
+            if (!result) return
             if (img.current) {
                 let src = result.data
                 img.current.src = src;

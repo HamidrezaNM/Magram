@@ -188,7 +188,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         const meta = <MessageMeta edited={data.editDate && !data.editHide} seen={seen} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
-            return <MessageReactions messageId={data.id} chatId={data.chatId} reactions={data.reactions}>{meta}</MessageReactions>
+            return <MessageReactions messageId={data.id} chatId={data._chatPeer} reactions={data.reactions}>{meta}</MessageReactions>
         else
             return meta
     }
