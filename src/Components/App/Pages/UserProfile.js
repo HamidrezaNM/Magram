@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../../Auth/Auth";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
@@ -13,11 +13,14 @@ import FullNameTitle from "../../common/FullNameTitle";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { client } from "../../../App";
 import { Api } from "telegram";
+import { generateChatWithPeer, getChatSubtitle } from "../../Helpers/chats";
+import { viewChat } from "../ChatList";
 
 
-export default function UserProfile() {
+function UserProfile() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [fullUser, setFullUser] = useState()
+    const [commonChats, setCommonChats] = useState()
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)
@@ -35,6 +38,10 @@ export default function UserProfile() {
             setIsLoaded(true);
         (async () => {
             setFullUser(((await client.invoke(new Api.users.GetFullUser({ id: userProfile.id }))).fullUser))
+
+            setCommonChats((await client.invoke(new Api.messages.GetCommonChats({
+                userId: userProfile.id
+            }))).chats)
         })()
     }, [])
 
@@ -63,6 +70,21 @@ export default function UserProfile() {
             isUser: true
         }))
     }, [])
+
+    const renderCommonChats = () => {
+
+        return <>
+            {commonChats?.length > 0 && commonChats.map((item) => (
+                <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                    <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
+                    <div className="UserDetails">
+                        <div className="title">{item?.title ?? item.firstName}</div>
+                        <div className="subtitle">{getChatSubtitle(item)}</div>
+                    </div>
+                </div>
+            ))}
+        </>
+    }
 
     return <>
         <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page}>
@@ -97,16 +119,19 @@ export default function UserProfile() {
             </div>
             <div className="section">
                 <div className="Tabs">
-                    <div className="Tab active"><span>Media</span></div>
+                    <div className="Tab active"><span>Groups</span></div>
+                    <div className="Tab"><span>Media</span></div>
                 </div>
                 <div className="Items">
-
+                    {renderCommonChats()}
                 </div>
             </div>
         </div>
         {/* <Transition state={ui.subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition> */}
     </>
 }
+
+export default memo(UserProfile)
 
 export const showUserProfile = (user, dispatch) => {
     dispatch(handleUserProfile(user))

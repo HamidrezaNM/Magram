@@ -4,22 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMessages, unshiftMessages } from "../Stores/Messages";
 import { handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage } from "../Stores/UI";
 import MessagesLoading from "../UI/MessagesLoading";
-import { client, socket } from "../../App";
-import { AuthContext, UserContext } from "../Auth/Auth";
+import { client } from "../../App";
 import { getMessageText } from "./MessageText";
 import { goToMessage } from "./Home";
 import { Api } from "telegram";
 import { readHistory } from "../Util/messages";
-import Transition from "./Transition";
 import buildClassName from "../Util/buildClassName";
 import { getChatType } from "../Helpers/chats";
 
 const Messages = forwardRef(({ MessagesRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [messagesRenderCount, setMessagesRenderCount] = useState(20)
-
-    const Auth = useContext(AuthContext)
-    const User = useContext(UserContext)
+    const [messageParts, setMessageParts] = useState([])
 
     const activeChat = useSelector((state) => state.ui.activeChat)
     const fullChat = useSelector((state) => state.ui.activeFullChat)
@@ -30,8 +26,9 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     const isLoading = useRef(false)
     const autoScroll = useRef(true);
-    const scrollToBottom = document.querySelector('.scrollToBottom')
-    const BottomRef = document.querySelector('.bottom')
+    const unreadMessages = useRef();
+
+    const messageStartIndex = messages?.length - messagesRenderCount > 0 ? messages?.length - messagesRenderCount : 0
 
     const onGetMessages = async (data, overwrite = false) => {
         setIsLoaded(true)
@@ -202,7 +199,8 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         const pinned = await client.getMessages(
             activeChat.id.value,
             {
-                filter: Api.InputMessagesFilterPinned
+                filter: Api.InputMessagesFilterPinned,
+                reverse: true
             }
         );
 
@@ -227,15 +225,37 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     console.log('Messages Rerender')
 
-    return <div className={buildClassName("Messages", "scrollable", (!messages?.length && isLoaded) && 'NoMessages')} ref={MessagesRef} onScroll={onScrollMessages}>
+    return <div className={buildClassName(
+        "Messages",
+        "scrollable",
+        (!messages?.length && isLoaded) && 'NoMessages'
+    )} ref={MessagesRef} onScroll={onScrollMessages}>
         {messages || !isLoaded ? <>
-            {!isLoaded && <div className="loading">
-                {<MessagesLoading />}
-            </div>
+            {
+                !isLoaded && <div className="loading">
+                    <MessagesLoading />
+                </div>
             }
-            {messages && messages.slice(Math.max(messages.length - messagesRenderCount, 0)).map((item, index) => (
-                <Message key={activeChat.id?.value + '_' + item?.id} data={item} seen={activeChat?.dialog?.readOutboxMaxId >= item?.id} prevMsgFrom={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index - 1]?._senderId?.value} prevMsgDate={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index - 1]?.date} nextMsgFrom={messages[(messages.length - messagesRenderCount > 0 ? messages.length - messagesRenderCount : 0) + index + 1]?._senderId?.value} />
-            ))}
+            {
+                messages && messages
+                    .slice(Math.max(messages.length - messagesRenderCount, 0))
+                    .map((item, index) => (
+                        <>
+                            <Message key={activeChat.id?.value + '_' + item?.id}
+                                data={item}
+                                seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
+                                prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
+                                prevMsgDate={messages[messageStartIndex + index - 1]?.date}
+                                nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
+                            />
+                            {
+                                item.id === activeChat?.dialog?.readInboxMaxId &&
+                                item.id !== activeChat?.dialog.topMessage &&
+                                <div ref={unreadMessages} className="UnreadMessages">Unread Messages</div>
+                            }
+                        </>
+                    ))
+            }
         </> :
             (<div className="NoMessage Message">
                 <div className="bubble">

@@ -68,6 +68,8 @@ export function getMediaType(media) {
             if (isDocumentRoundVideo(media.document)) return 'RoundVideo'
             if (isDocumentVideo(media.document)) return 'Video'
             if (isDocumentPhoto(media.document)) return 'Photo'
+        case 'MessageMediaPoll':
+            return 'Poll'
         default:
             return 'Media'
     }

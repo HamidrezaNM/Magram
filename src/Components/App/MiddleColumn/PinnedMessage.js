@@ -36,7 +36,9 @@ function PinnedMessage() {
         <div className="PinnedMessage animate" ref={pinnedMessageRef} onClick={handlePinnedMessageClick}>
             <div style={{ overflow: 'hidden', height: '48px', minWidth: 3 }}>
                 <div className={"bars" + (pinnedMessage.length > 4 ? ' more' : '')}>
-                    {pinnedMessage.map((i, index) => <span key={index} className={(pinnedMessage.length - 1 - index === pinnedMessageIndex ? 'active' : '') + (pinnedMessage.length - 1 - index + 1 === pinnedMessageIndex ? 'deactive' : '')}></span>)}
+                    {pinnedMessage.map((i, index) =>
+                        <span key={index} className={(pinnedMessage.length - 1 - index === pinnedMessageIndex ? 'active' : '') + (pinnedMessage.length - 1 - index + 1 === pinnedMessageIndex ? 'deactive' : '')}></span>
+                    )}
                 </div>
             </div>
             <div className="FlexColumn" style={{ gap: 2 }}>

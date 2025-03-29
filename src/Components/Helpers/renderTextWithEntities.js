@@ -83,6 +83,8 @@ export default function renderTextWithEntities(text, entities, allowClick = true
                 return <CustomEmoji documentId={entity.documentId.value} autoPlay={isInChat && window.Animations?.AnimatedStickers} />
             case 'MessageEntityPre':
                 return <Pre>{entityContent}</Pre>
+            case 'MessageEntityCode':
+                return <code>{entityContent}</code>
             case 'MessageEntityBotCommand':
                 return <BotCommand command={entityContent}>{entityContent}</BotCommand>
             default:

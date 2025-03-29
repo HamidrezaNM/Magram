@@ -58,6 +58,11 @@
     box-shadow: 3px 0px 12px -10px #000;
 }
 
+.MiddleColumn {
+    padding-left: 16px;
+    margin-left: -16px
+}
+
 .MiddleColumn .bottom {
     margin: 0;
     border-radius: 0;

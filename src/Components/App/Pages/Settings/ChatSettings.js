@@ -158,7 +158,7 @@ export default function SettingsChatSettings() {
                             _senderId: { value: 0 },
                             _chatPeer: { className: 'PeerUser' }
                         }} prevMsgFrom={0} prevMsgDate={1740077100} nextMsgFrom={0} />
-                        <Message key={1} data={{
+                        <Message key={1} seen={true} data={{
                             "flags": 0,
                             "out": true,
                             "mentioned": false,

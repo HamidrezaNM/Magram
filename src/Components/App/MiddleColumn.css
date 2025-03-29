@@ -16,8 +16,6 @@
     background-color: var(--secondary);
     color: var(--dyn-text-color);
     border-bottom: 1px solid var(--active-primary);
-    margin-left: -16px;
-    padding-left: 24px;
     cursor: pointer;
     z-index: 1;
     user-select: none;

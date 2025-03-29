@@ -6,7 +6,7 @@ function MessageReactions({ messageId, chatId, reactions, children }) {
 
     return <div className="MessageReactions">
         {results.map((item) =>
-            <Reaction messageId={messageId} chatId={chatId} emoticon={item.reaction.emoticon} isPaid={item.reaction.className === 'ReactionPaid'} count={item.count} isActive={item.flags} />
+            <Reaction key={'reaction-' + item.reaction.emoticon} messageId={messageId} chatId={chatId} emoticon={item.reaction.emoticon} emojiId={item.reaction.documentId} isPaid={item.reaction.className === 'ReactionPaid'} count={item.count} isActive={item.flags} />
         )}
         {children}
     </div>

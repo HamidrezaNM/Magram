@@ -1,6 +1,7 @@
 import { Avatar, Skeleton } from "@mui/material"
+import { memo } from "react";
 
-export default function MessagesLoading() {
+function MessagesLoading() {
     console.log('message loading rerendered')
     var divs = []
     var isOut = false;
@@ -17,3 +18,5 @@ export default function MessagesLoading() {
     }
     return <>{divs}</>
 }
+
+export default memo(MessagesLoading)

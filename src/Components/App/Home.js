@@ -158,6 +158,10 @@ function Home() {
         console.log(event)
         // if (!User._id || User._id === message.fromId && message.type !== 'call') return
         dispatch(messageAdded(message));
+        if (thread && (thread.id === message.replyTo?.replyToMsgId || thread.id === message.replyTo?.replyToTopId)) {
+            console.log('new comment')
+            dispatch(messageAdded({ ...message, chatId: thread.chatId?.value + '_' + thread.id }));
+        }
         dispatch(updateLastMessage({ id: chatId, message, unread: User.id.value !== message._senderId.value }))
         if (chatId == activeChat?.id.value)
             readHistory(activeChat.id.value, dispatch)
@@ -174,7 +178,7 @@ function Home() {
         return () => {
             client.removeEventHandler(onNewMessage, new NewMessage({}))
         }
-    }, [User, activeChat, chats, isWindowFocused.current]) // onNewMessage
+    }, [User, activeChat, chats, thread, isWindowFocused.current]) // onNewMessage
 
     const onMessageAction = (response) => {
         const chat = Object.values(chats).find((obj) => obj._id === response.chatId)
@@ -182,26 +186,12 @@ function Home() {
         dispatch(updateTypingStatus({ chatId: response.chatId, typingStatus: [...typingStatus, response.user.firstname] }))
     }
 
-    useEffect(() => {
-        socket.on('MessageAction', onMessageAction)
-        return () => {
-            socket.off('MessageAction', onMessageAction)
-        }
-    }, [User, chats]) // onReceiveMessage
-
     const onIncomingCall = (call) => {
         if (!User._id || User._id === call.fromId) return
         const to = Object.values(chats).find((obj) => obj.to?._id === call.fromId).to
         flashTitle(`Incoming Call - ${to.firstname}`)
         dispatch(handleCall({ ...call, ...to, incoming: true }));
     }
-
-    useEffect(() => {
-        socket.on('IncomingCall', onIncomingCall)
-        return () => {
-            socket.off('IncomingCall', onIncomingCall)
-        }
-    }, [User, chats, isWindowFocused.current]) // onIncomingCall
 
     const flashTitle = (newTitle) => {
         console.log(isWindowFocused.current)
@@ -222,10 +212,10 @@ function Home() {
             dispatch(updateActiveChatPermissions(response.permissions))
     }
 
-    useEffect(() => {
-        socket.on('UpdateGroupPermissions', handleUpdateGroupPermissions)
-        return () => socket.off('UpdateGroupPermissions', handleUpdateGroupPermissions)
-    }, [User, chats, activeChat])
+    // useEffect(() => {
+    //     socket.on('UpdateGroupPermissions', handleUpdateGroupPermissions)
+    //     return () => socket.off('UpdateGroupPermissions', handleUpdateGroupPermissions)
+    // }, [User, chats, activeChat])
 
     useEffect(() => {
         document.querySelector('.App').classList.toggle('Dark', darkMode)
@@ -275,17 +265,6 @@ function Home() {
             document.title = 'Magram'
         }
     }, [isWindowFocused.current])
-
-    useEffect(() => {
-        if (lastSeenInterval.current) clearInterval(lastSeenInterval.current)
-
-        if (isWindowFocused.current) {
-            socket.emit('UpdateLastSeen', { token: Auth.authJWT })
-            lastSeenInterval.current = setInterval(() => {
-                socket.emit('UpdateLastSeen', { token: Auth.authJWT })
-            }, 30000);
-        }
-    }, [Auth, isWindowFocused.current])
 
     console.log('Home Rerendered')
     return (

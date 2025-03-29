@@ -7,20 +7,9 @@ import { formatTime } from "../Util/dateFormat";
 import { getDate } from "./Message";
 
 function MessageText({ data, isInChat = false, includeFrom = false }) {
-    const [text, setText] = useState(data.message)
-
-    const spanRef = useRef();
-
     const User = useContext(UserContext)
 
-    useEffect(() => {
-        if (Object.keys(data).length !== 0) {
-            // setText()
-        }
-    }, [data.message])
-
     return <span>{getMessageText(data, User._id, isInChat, includeFrom)}</span>
-    // return <span ref={spanRef}>{text}</span>
 }
 
 export const getMessageText = (data, userId, isInChat = false, includeFrom = false) => {

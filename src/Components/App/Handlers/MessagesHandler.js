@@ -94,11 +94,6 @@ function MessagesHandler() {
         }
     }
 
-    useEffect(() => {
-        socket.on('UpdateMessageSeen', handleUpdateMessageSeen)
-        return () => socket.off('UpdateMessageSeen', handleUpdateMessageSeen)
-    }, [User, chats]) // UpdateMessageSeen
-
     return;
 }
 

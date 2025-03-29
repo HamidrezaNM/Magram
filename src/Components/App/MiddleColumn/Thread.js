@@ -65,9 +65,6 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
             // }
             dispatch(handlePinnedMessage())
 
-            // socket.emit('GetMessages', { token: Auth.authJWT, chatId: activeChat._id })
-            // socket.on('GetMessages', onGetMessages)
-
             const messagesLength = messages?.length
             let lastMessageId = undefined
 
@@ -81,6 +78,8 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
                 minId: lastMessageId,
                 limit: 100
             }));
+
+            console.log('thread', result)
 
             if (result.messages.length) {
                 let parsedMessages = result.messages
@@ -98,8 +97,6 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
             }
 
             document.querySelector('.scrollToBottom').style.bottom = document.querySelector('.bottom').clientHeight + 8 + 'px'
-
-            // return () => socket.off('GetMessages', onGetMessages)
         })()
     }, []) // Get Messages on activeChat Changed
 

@@ -16,32 +16,32 @@ export default function Register() {
         e.preventDefault()
 
         if (firstname !== "" && firstname !== null) {
-            let deviceData = await GetDeviceData(true);
+            // let deviceData = await GetDeviceData(true);
 
-            socket.emit('RegisterUser', {
-                phone: Auth.authPhoneNumber,
-                countryCode: Auth.authCountryCode,
-                verify: btoa(Auth.authPassword),
-                firstname: firstname,
-                lastname: lastname
-            }, { device: deviceData ?? 'Unknown' })
+            // socket.emit('RegisterUser', {
+            //     phone: Auth.authPhoneNumber,
+            //     countryCode: Auth.authCountryCode,
+            //     verify: btoa(Auth.authPassword),
+            //     firstname: firstname,
+            //     lastname: lastname
+            // }, { device: deviceData ?? 'Unknown' })
 
-            setIsLoading(true)
+            // setIsLoading(true)
 
-            socket.on('RegisterUser', (response) => {
-                setIsLoading(false)
-                if (response.ok) {
-                    localStorage.setItem("auth_key", response.data);
-                    localStorage.setItem("authState", "Authorized");
-                    Auth.setAuthKey(response.data);
-                    Auth.setDevice(deviceData)
-                    Auth.setAuthState('VerifySession')
-                } else {
-                    firstnameTextField.current.querySelector("label").innerHTML =
-                        "Something went wrong";
-                    firstnameTextField.current.classList.add("error");
-                }
-            })
+            // socket.on('RegisterUser', (response) => {
+            //     setIsLoading(false)
+            //     if (response.ok) {
+            //         localStorage.setItem("auth_key", response.data);
+            //         localStorage.setItem("authState", "Authorized");
+            //         Auth.setAuthKey(response.data);
+            //         Auth.setDevice(deviceData)
+            //         Auth.setAuthState('VerifySession')
+            //     } else {
+            //         firstnameTextField.current.querySelector("label").innerHTML =
+            //             "Something went wrong";
+            //         firstnameTextField.current.classList.add("error");
+            //     }
+            // })
         } else {
             firstnameTextField.current.querySelector("label").innerHTML =
                 "This field is required";

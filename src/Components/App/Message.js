@@ -49,7 +49,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     const isAction = data.action !== undefined
     const msgTime = new Date(data.date * 1000);
 
-    console.log('Message Rerendered', isOutMessage.current)
+    console.log('Message Rerendered')
 
     useEffect(() => {
         MessageEl.current.removeEventListener('contextmenu', messageMenu)
@@ -93,19 +93,19 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     }, [data.media])
 
     const handlePin = useCallback(() => {
-        socket.emit('PinMessage', { token: Auth.authJWT, message: data, pin: !isPinned.current ?? true })
-        socket.on('PinMessage', (response) => {
-            if (response.ok) {
-                if (!isPinned.current) {
-                    isPinned.current = true
-                    dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(data, User._id), messageId: data._id }))
-                } else {
-                    isPinned.current = false
-                    dispatch(handleUnpinMessage(data._id))
-                }
-                socket.off('PinMessage')
-            }
-        })
+        // socket.emit('PinMessage', { token: Auth.authJWT, message: data, pin: !isPinned.current ?? true })
+        // socket.on('PinMessage', (response) => {
+        //     if (response.ok) {
+        //         if (!isPinned.current) {
+        //             isPinned.current = true
+        //             dispatch(handlePinMessage({ title: 'Pinned Message', subtitle: getMessageText(data, User._id), messageId: data._id }))
+        //         } else {
+        //             isPinned.current = false
+        //             dispatch(handleUnpinMessage(data._id))
+        //         }
+        //         socket.off('PinMessage')
+        //     }
+        // })
         handleContextMenuClose()
     }, [data, isPinned.current])
 
@@ -185,7 +185,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     }, [data, isPinned.current])
 
     const renderReactionAndMeta = () => {
-        const meta = <MessageMeta edited={data.editDate && !data.editHide} seen={seen} time={msgTime} isOutMessage={isOutMessage} />
+        const meta = <MessageMeta edited={data.editDate && !data.editHide} views={data.views} postAuthor={data.postAuthor} seen={seen} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
             return <MessageReactions messageId={data.id} chatId={data._chatPeer} reactions={data.reactions}>{meta}</MessageReactions>

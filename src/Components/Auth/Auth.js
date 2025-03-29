@@ -6,11 +6,9 @@ import Verify, { GetDeviceData } from "./Verify";
 import Register from "./Register";
 import Password from "./Password";
 import Home from "../App/Home";
-import { client, socket } from "../../App";
-import ChatContextProvider from "../App/ChatContext";
+import { client } from "../../App";
 import { Provider } from "react-redux";
 import store from "../Stores/store";
-import { LogLevel } from "telegram/extensions/Logger";
 
 export const AuthContext = createContext();
 export const UserContext = createContext();
@@ -33,7 +31,7 @@ function getScreen({ authState }) {
 }
 
 export function Auth() {
-    const [user, setUser] = useState({ id: 1, firstname: "Test Man" });
+    const [user, setUser] = useState({ id: 1, firstName: "Not logged in" });
     const [authState, setAuthState] = useState("");
     const [authKey, setAuthKey] = useState("");
     const [authPhoneNumber, setAuthPhoneNumber] = useState("");
@@ -66,7 +64,7 @@ export function Auth() {
     }, []);
 
     useEffect(() => {
-        if (!authKey && !localStorage.getItem("auth_key") && authState === 'authorizationStateReady') VerifySession()
+        if (authState === 'authorizationStateWaitVerify' || !authKey && !localStorage.getItem("auth_key") && authState === 'authorizationStateReady') VerifySession()
     }, [authState])
 
     const VerifySession = async () => {
@@ -163,7 +161,7 @@ export function Auth() {
 export async function AuthComplete(Auth, data) {
     let deviceData = await GetDeviceData(true);
 
-    Auth.setAuthState('authorizationStateReady')
+    Auth.setAuthState('authorizationStateWaitVerify')
     Auth.setAuthKey(data)
     Auth.setDevice(deviceData)
     localStorage.setItem("auth_key", data);
