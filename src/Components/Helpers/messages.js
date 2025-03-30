@@ -16,6 +16,10 @@ export function getDocumentVideoAttributes(document) {
     return document?.attributes?.find(i => i.className === 'DocumentAttributeVideo')
 }
 
+export function getDocumentAudioAttributes(document) {
+    return document?.attributes?.find(i => i.className === 'DocumentAttributeAudio')
+}
+
 export function getDocumentImageAttributes(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeImageSize')
 }
@@ -39,7 +43,7 @@ export function getMediaDimensions(media, noAvatar = false) {
 }
 
 export function isDocumentPhoto(document) {
-    return document.mimeType && document.mimeType.split('/')[0] === 'image'
+    return document && document.mimeType && document.mimeType.split('/')[0] === 'image'
 }
 
 export function isDocumentVideo(document) {
@@ -58,6 +62,10 @@ export function isDocumentSticker(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeSticker')
 }
 
+export function isDocumentVoice(document) {
+    return document.attributes?.find(i => i.className === 'DocumentAttributeAudio')?.voice
+}
+
 export function getMediaType(media) {
     switch (media.className) {
         case 'MessageMediaPhoto':
@@ -68,6 +76,7 @@ export function getMediaType(media) {
             if (isDocumentRoundVideo(media.document)) return 'RoundVideo'
             if (isDocumentVideo(media.document)) return 'Video'
             if (isDocumentPhoto(media.document)) return 'Photo'
+            if (isDocumentVoice(media.document)) return 'Voice'
         case 'MessageMediaPoll':
             return 'Poll'
         default:

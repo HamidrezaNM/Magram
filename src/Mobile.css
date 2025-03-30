@@ -102,7 +102,7 @@
         font-size: 21px !important;
     }
 
-    /* .message-media {
-        width: calc(60vw + .575rem * 2) !important;
-    } */
+    .message-media .Poll {
+        min-width: min(29rem, 100vw - 7rem);
+    }
 }

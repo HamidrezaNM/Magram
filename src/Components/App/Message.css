@@ -58,14 +58,23 @@
 }
 
 .Message .bubble {
-    background-color: var(--surface-color);
-    /* padding: 8px; */
-    padding: 0.575rem;
     margin: 2px 0;
-    width: -moz-fit-content;
     width: fit-content;
     max-width: 30rem;
-    height: -moz-fit-content;
+    height: fit-content;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    gap: 4px;
+}
+
+.Message .bubble .bubble-content {
+    background-color: var(--surface-color);
+    padding: 0.575rem;
+    width: fit-content;
+    max-width: 30rem;
     height: fit-content;
     border-radius: 16px;
     display: flex;
@@ -74,7 +83,7 @@
     overflow: hidden;
 }
 
-.Message.transparent .bubble {
+.Message.transparent .bubble .bubble-content {
     background: none !important;
 }
 
@@ -257,16 +266,13 @@
     margin-bottom: -0.575rem;
 }
 
-/* .Message.In .message-media {
-    margin-top: 0.285rem;
-} */
+.message-media.NoCaption {
+    margin-bottom: -0.575rem;
+}
 
-/* .message-media img {
-    width: 100%;
-    height: 100%;
-    min-width: 12vw;
-    min-height: 10vh;
-} */
+.message-media.NoCaption .Document {
+    padding-bottom: 0;
+}
 
 .message-media>* {
     max-width: min(480px, 100%);
@@ -615,6 +621,70 @@
     background-color: var(--surface-color);
     padding: 4px;
     font-size: 16px;
+}
+
+.Message .InlineButtons {
+    display: flex;
+    flex: 1;
+}
+
+.Message .InlineButtons .rows {
+    flex-direction: column;
+}
+
+.Message .InlineButtons .rows,
+.Message .InlineButtons .row {
+    display: flex;
+    flex: 1;
+    gap: 4px;
+}
+
+.Message .InlineButtons .Button {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+    background-color: var(--on-primary);
+    color: var(--text-color);
+    font-weight: 500;
+    border-radius: 8px;
+    line-height: 1.4;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    transition: all .3s ease;
+}
+
+.Message .InlineButtons .Button:hover {
+    background-color: var(--active-primary);
+}
+
+.Message .InlineButtons .Button:active {
+    transform: scale(.95);
+}
+
+.Message .InlineButtons .Button::after {
+    content: '';
+    position: absolute;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background-image: linear-gradient(90deg, transparent, #ffffff30, transparent);
+    background-position-x: 200%;
+    background-size: 200%;
+    border: 1px solid #ffffff10;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+
+.Message .InlineButtons .Button.Loading::after {
+    opacity: 1;
+    animation: ItemLoading 1s linear infinite;
 }
 
 .message-call {

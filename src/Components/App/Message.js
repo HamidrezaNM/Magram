@@ -17,13 +17,14 @@ import MessageMedia, { calculateMediaDimensions } from "./Message/MessageMedia";
 import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
-import { getMediaDimensions, getMediaType } from "../Helpers/messages";
+import { getMediaDimensions, getMediaType, isDocumentPhoto } from "../Helpers/messages";
 import { deleteMessage } from "../Util/messages";
 import { getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
 import FullNameTitle from "../common/FullNameTitle";
 import buildClassName from "../Util/buildClassName";
+import InlineButtons from "./Message/InlineButtons";
 
 function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -147,7 +148,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
             return;
         e.preventDefault()
 
-        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('a'))) {
+        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a'))) {
             const items = (
                 <>
                     <MessageContextMenu
@@ -215,6 +216,12 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         </div>
     }
 
+    const renderInlineButtons = () => {
+        if (!data.replyMarkup || data.replyMarkup.className !== 'ReplyInlineMarkup') return;
+
+        return <InlineButtons message={data} />
+    }
+
     var isSameFromPrevMsg = prevMsgFrom === data._senderId?.value
     var isSameFromNextMsg = nextMsgFrom === data._senderId?.value
 
@@ -227,7 +234,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         if (data.media) {
             const mediaType = getMediaType(data.media)
 
-            if (mediaType === 'Sticker' || mediaType === 'RoundVideo' || ((mediaType === 'Video' || mediaType === 'Photo' || mediaType === 'GIF') && data.message == '' && (!data.reactions || !data.reactions.results.length)))
+            if (mediaType === 'Sticker' || mediaType === 'RoundVideo' || ((mediaType === 'Video' || mediaType === 'Photo' || mediaType === 'GIF') && !isDocumentPhoto(data.media.document) && data.message == '' && (!data.reactions || !data.reactions.results.length)))
                 return true
         }
         return false
@@ -245,34 +252,37 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
             _msgDate.getDate() !== _prevMsgDate.getDate()) && <div className="sticky-date">
                 <span>{getDate(data.date * 1000)}</span>
             </div>}
-        <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={handleReply}>
+        <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={e => { if (!e.target.closest('.bubble')) handleReply() }}>
             {(!isOutMessage.current && !noAvatar) && (
                 <div className={"message-from-profile" + (isSameFromNextMsg ? ' hidden' : '')}>
                     <Profile entity={data.sender} name={data.sender?.firstName ?? data.sender?.title ?? 'Anonymous'} id={data.sender?.id?.value} size={42} />
                 </div>
             )}
             <div className={buildClassName("bubble", noAvatar && 'noAvatar')}>
-                <div className="body" style={{ width: mediaWidth ?? '' }}>
-                    {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
-                    {data.replyTo && (!isThread || data.replyToMessage) && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
-                        <div className="line"></div>
-                        <div className="body">
-                            <div className="title">{data.replyToMessage ? <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} /> : 'Loading...'}</div>
-                            <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
+                <div className="bubble-content">
+                    <div className="body" style={{ width: mediaWidth ?? '' }}>
+                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
+                        {data.replyTo && (!isThread || data.replyToMessage) && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
+                            <div className="line"></div>
+                            <div className="body">
+                                <div className="title">{data.replyToMessage ? <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} /> : 'Loading...'}</div>
+                                <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
+                            </div>
+                        </div>}
+                        <div className="message-text" dir="auto">
+                            {data.media &&
+                                <MessageMedia media={data.media} data={data} className={!data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption'} noAvatar={noAvatar} ref={messageMedia} />
+                            }
+                            {data.type === 'call' &&
+                                <MessageCall data={data} />
+                            }
+                            <MessageText data={data} isInChat="true" />
+                            {renderReactionAndMeta()}
                         </div>
-                    </div>}
-                    <div className="message-text" dir="auto">
-                        {data.media &&
-                            <MessageMedia media={data.media} data={data} noAvatar={noAvatar} ref={messageMedia} />
-                        }
-                        {data.type === 'call' &&
-                            <MessageCall data={data} />
-                        }
-                        <MessageText data={data} isInChat="true" />
-                        {renderReactionAndMeta()}
                     </div>
+                    {data.replies?.comments && renderCommentSection()}
                 </div>
-                {data.replies?.comments && renderCommentSection()}
+                {renderInlineButtons()}
             </div>
             <Dialog
                 open={openDeleteModal}

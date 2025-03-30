@@ -4,12 +4,14 @@ import { useDispatch } from "react-redux";
 import { Icon } from "../common";
 import Transition from "../Transition";
 import { handleMediaPreview } from "../../Stores/UI";
-import { getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentSticker, isDocumentVideo } from "../../Helpers/messages";
+import { getDocumentAudioAttributes, getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentSticker, isDocumentVideo, isDocumentVoice } from "../../Helpers/messages";
 import { abortDownload, downloadMedia } from "../../Util/media";
 import AnimatedSticker from "./AnimatedSticker";
 import Poll from "./Poll";
+import Audio from "./Audio";
+import buildClassName from "../../Util/buildClassName";
 
-const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
+const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
     const [progress, setProgress] = useState()
     const [isLoaded, setIsLoaded] = useState(false)
@@ -69,17 +71,18 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
             return;
         }
 
-        if (type.current !== 'document') {
+        if (media.className === 'MessageMediaPhoto' || isDocumentVideo(media.document)) {
             const mediaSrc = src
 
             dispatch(handleMediaPreview({ message: data, media, mediaSrc }))
-        } else {
-            var link = document.createElement("a");
-            link.download = extractFileName(media[0].name);
-            link.href = src;
-            link.target = '_blank'
-            link.click();
         }
+        //  else {
+        //     var link = document.createElement("a");
+        //     link.download = extractFileName(media[0].name);
+        //     link.href = src;
+        //     link.target = '_blank'
+        //     link.click();
+        // }
     }
 
     useImperativeHandle(ref, () => ({
@@ -123,6 +126,10 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
                         return <AnimatedSticker ref={image} media={media} size={size} autoPlay={window.Animations?.AnimatedSticker} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading} />
                     return <Sticker ref={image} media={media} size={size} _width={dimensions?.width} _height={dimensions?.height} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading}>{downloadButton}</Sticker>
                 }
+                if (isDocumentVoice(media.document)) {
+                    const audioAttributes = getDocumentAudioAttributes(media.document)
+                    return <Audio ref={image} media={media} details={{ duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
+                }
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
             case 'MessageMediaPoll':
                 return <Poll media={media} messageId={data.id} chatId={data.chatId} />
@@ -131,7 +138,7 @@ const MessageMedia = forwardRef(({ media, data, noAvatar = false }, ref) => {
         }
     }
 
-    return <div className="message-media" ref={messageMedia} onClick={previewMedia}>
+    return <div className={buildClassName("message-media", className)} ref={messageMedia} onClick={previewMedia}>
         {getMediaLayout()}
     </div>
 })
@@ -179,7 +186,7 @@ const MOBILE_SCREEN_MESSAGE_EXTRA_WIDTH_REM = 7;
 const MESSAGE_MAX_WIDTH_REM = 29;
 const MESSAGE_OWN_MAX_WIDTH_REM = 30;
 const REM = 16
-const isMobile = window.innerWidth < 480
+export const isMobile = window.innerWidth < 480
 const STICKER_SIZE_INLINE_MOBILE_FACTOR = 11
 const STICKER_SIZE_INLINE_DESKTOP_FACTOR = 13
 
@@ -569,7 +576,7 @@ const Sticker = forwardRef(({ children, media, size, _width, _height, noAvatar =
     </>
 })
 
-function fancyTimeFormat(duration) {
+export function fancyTimeFormat(duration) {
     const hrs = ~~(duration / 3600);
     const mins = ~~((duration % 3600) / 60);
     const secs = ~~duration % 60;
@@ -586,7 +593,7 @@ function fancyTimeFormat(duration) {
     return ret;
 }
 
-function formatBytes(bytes, decimals = 2) {
+export function formatBytes(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
 
     const k = 1000

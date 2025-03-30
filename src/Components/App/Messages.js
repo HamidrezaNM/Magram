@@ -259,13 +259,15 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         </> :
             (<div className="NoMessage Message">
                 <div className="bubble">
-                    <div className="message-text">
-                        {getChatType(activeChat?.entity) === 'Bot' ?
-                            <span>
-                                {fullChat?.botInfo?.description}
-                            </span>
-                            : <span>No messages here yet...</span>
-                        }
+                    <div className="bubble-content">
+                        <div className="message-text">
+                            {getChatType(activeChat?.entity) === 'Bot' ?
+                                <span>
+                                    {fullChat?.botInfo?.description}
+                                </span>
+                                : <span>No messages here yet...</span>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>)}

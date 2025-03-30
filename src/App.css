@@ -352,6 +352,8 @@
     top: 0;
     bottom: 0;
     right: 0;
+    padding: 0 !important;
+    margin: 0 !important;
     transform: translate3d(26.5rem, 0, 0);
     z-index: 3;
     transition: all .3s ease;
@@ -1151,6 +1153,31 @@ a:hover {
 
 .visible {
   display: initial !important;
+}
+
+.IconFill {
+  font-variation-settings: 'FILL' 1;
+}
+
+.Loading .border-top,
+.Loading .border-bottom {
+  position: absolute;
+  border-radius: 8px;
+  background-image: linear-gradient(90deg, transparent, #ffffff25, transparent);
+  background-size: 200%;
+  animation: ItemLoading 1s linear infinite;
+}
+
+.Loading .border-top {
+  top: 0;
+  height: 1px;
+  width: 100%;
+}
+
+.Loading .border-bottom {
+  bottom: 0;
+  height: 1px;
+  width: 100%;
 }
 
 .App .MuiSlider-root {
