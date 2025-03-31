@@ -88,7 +88,7 @@ export const deleteChat = async (chat, userId) => {
     }
     if (chat.isGroup) {
         await client.invoke(new Api.messages.DeleteChatUser({
-            chatId: chat.id.value,
+            chatId: chat.entity.id.value,
             userId,
             revokeHistory: false
         }))
@@ -108,7 +108,7 @@ export function generateChatWithPeer(peer, chatId) {
         id: chatId ?? returnBigInt(getChatIdFromPeer(peer)),
         title: peer.title ?? peer.firstName,
         entity: peer,
-        isChannel: peerType === 'Channel' || peerType === 'Group',
+        isChannel: peerType === 'Channel' || (peerType === 'Group' && peer.megagroup),
         isGroup: peerType === 'Group',
         isUser: peerType === 'User' || peerType === 'Bot',
         message: null,

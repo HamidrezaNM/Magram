@@ -2,15 +2,14 @@ import { memo, useContext } from "react"
 import { UserContext } from "../../Auth/Auth"
 
 function MessageSeen({ seen }) {
-    const User = useContext(UserContext)
     return <div className={"message-seen icon" + (seen === -1 ? ' danger' : '')}>
-        {seen
+        {seen === true
             ? "done_all"
             : seen === false
                 ? "done"
-                : (!seen)
+                : (seen === -1)
                     ? 'error'
-                    : "done" // "schedule"
+                    : "schedule" // "schedule"
         }
     </div>
 }

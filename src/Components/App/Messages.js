@@ -136,7 +136,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     // }
 
                     const result = await client.getMessages(
-                        activeChat.id.value,
+                        activeChat.id,
                         {
                             limit: 100,
                             maxId: maxMessageId

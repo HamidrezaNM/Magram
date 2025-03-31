@@ -27,6 +27,8 @@ export const uiSlice = createSlice({
         callMaximized: false,
         voiceOutputVolume: 50,
         mediaPreview: null,
+        toasts: [],
+        dialogs: [],
         background: null,
         darkMode: true
     },
@@ -144,6 +146,12 @@ export const uiSlice = createSlice({
         handleMediaPreviewClose: (state) => {
             state.mediaPreview.active = false;
         },
+        handleToast: (state, action) => {
+            state.toasts.push({ icon: action.payload.icon, title: action.payload.title })
+        },
+        handleDialog: (state, action) => {
+            state.dialogs.push(action.payload)
+        },
         handleBackground: (state, action) => {
             state.background = action.payload
         },
@@ -183,6 +191,8 @@ export const {
     handleVoiceOutputVolume,
     handleMediaPreview,
     handleMediaPreviewClose,
+    handleToast,
+    handleDialog,
     handleBackground,
     handleToggleDarkMode
 } = uiSlice.actions

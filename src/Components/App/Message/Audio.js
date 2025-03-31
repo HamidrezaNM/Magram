@@ -82,9 +82,10 @@ const Audio = forwardRef(({ children, media, details, size, noAvatar = false, up
     return <>
         <div className="Document">
             {children}
-            {isLoaded && <div className="message-loading-progress" onClick={() => isPlaying ? audio.current.pause() : audio.current.play()}>
-                <Icon name={isPlaying ? "pause" : "play_arrow"} size={28} className="IconFill" />
-            </div>
+            {isLoaded &&
+                <div className="message-loading-progress" onClick={() => isPlaying ? audio.current.pause() : audio.current.play()}>
+                    <Icon name={isPlaying ? "pause" : "play_arrow"} size={28} className="IconFill" />
+                </div>
             }
             <audio ref={audio} src={content} loop={autoplay} onTimeUpdate={e => setPlayProgress(e.target.currentTime / e.target.duration)} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
             <div className="details">

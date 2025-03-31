@@ -53,6 +53,8 @@ import { UpdateConnectionState } from "telegram/network";
 import { readHistory } from "../Util/messages";
 import Thread from "./MiddleColumn/Thread";
 import MiddleColumn from "./MiddleColumn";
+import Toasts from "../UI/Toasts";
+import Dialogs from "../UI/Dialogs";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -128,12 +130,9 @@ function Home() {
 
     const onNewMessage = async (event) => {
         const message = event.message
-
         const chatId = message.chatId
 
         message._sender = await message.getSender()
-
-        console.log(chatId, chats)
 
         if (chatId && !chats[chatId]) {
             await message.getChat()
@@ -284,6 +283,8 @@ function Home() {
                     </Transition>
 
                     <ContextMenu />
+                    <Toasts />
+                    <Dialogs />
                     {background &&
                         <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
                 </div>

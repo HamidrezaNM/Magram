@@ -53,7 +53,7 @@ function ChatInfo() {
                 if (activeChat.id.value == '777000') return 'Service notifications'
                 return getUserStatus(activeChat.entity.status)
             case 'Bot':
-                return activeChat.entity.botActiveUsers + ' monthly users' ?? 'bot'
+                return activeChat.entity.botActiveUsers ? activeChat.entity.botActiveUsers + ' monthly users' : 'bot'
             case 'Group':
                 const participantsCount = activeChat.entity?.participantsCount ?? fullChat?.participantsCount
                 const onlineCount = fullChat?.onlineCount

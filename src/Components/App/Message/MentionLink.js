@@ -1,22 +1,23 @@
 import { memo } from "react";
 import { useDispatch } from "react-redux";
-import { setActiveChat } from "../../Stores/UI";
-import { client } from "../../../App";
-import { Api } from "telegram";
 import { generateChatWithPeer } from "../../Helpers/chats";
 import { viewChat } from "../ChatList";
+import { resolveUsername } from "../../Util/username";
+import { handleToast } from "../../Stores/UI";
 
 function MentionLink({ username, children, allowClick }) {
     const dispatch = useDispatch()
 
     const handleClick = async () => {
         if (!allowClick) return;
-        let peer
-        const resolveUsername = await client.invoke(new Api.contacts.ResolveUsername({ username: username.substring(1) }))
-        if (resolveUsername.peer.className == 'PeerUser')
-            peer = resolveUsername.users[0]
-        else
-            peer = resolveUsername.chats[0]
+
+        const peer = await resolveUsername(username.substring(1))
+
+        if (peer === 'USERNAME_NOT_OCCUPIED') {
+            dispatch(handleToast({ icon: 'error', title: 'Username not found' }))
+            return
+        }
+
         viewChat(generateChatWithPeer(peer), dispatch)
     }
 

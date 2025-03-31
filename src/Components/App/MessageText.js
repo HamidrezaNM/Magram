@@ -41,6 +41,8 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
             case 'MessageActionChatJoinedByLink':
             case 'MessageActionChannelMigrateFrom':
                 return 'You joined the group via invite link'
+            case 'MessageActionChatJoinedByRequest':
+                return `${data.sender?.firstName} was accepted into the group`
             case 'MessageActionChatAddUser':
                 if (data.senderId?.value == data.action.users[0]?.value) {
                     return `${data.sender?.firstName} joined the group`

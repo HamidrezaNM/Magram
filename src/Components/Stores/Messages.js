@@ -67,17 +67,18 @@ export const messagesSlice = createSlice({
             }
         },
         updateMessageId: (state, action) => {
-            const message = state.value[action.payload.chatId].find(message => message.id === action.payload.messageId)
-            if (message) {
-                // message = { ...message, id: action.payload.id }
-                message.id = action.payload.id
-                message.seen = []
+            if (state.value[action.payload.chatId]) {
+                let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
+                if (messageIndex)
+                    state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], id: action.payload.id, sended: true }
             }
         },
         handleMessageError: (state, action) => {
-            const message = state.value[action.payload.chatId].find(message => message.id == action.payload.messageId)
-            if (message)
-                message = { ...message, seen: -1 }
+            // if (state.value[action.payload.chatId]) {
+            let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
+            // if (messageIndex)
+            state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], sended: -1 }
+            // }
         },
         updateMessage: (state, action) => {
             if (state.value[action.payload.chatId]) {

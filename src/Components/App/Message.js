@@ -186,7 +186,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     }, [data, isPinned.current])
 
     const renderReactionAndMeta = () => {
-        const meta = <MessageMeta edited={data.editDate && !data.editHide} views={data.views} postAuthor={data.postAuthor} seen={seen} time={msgTime} isOutMessage={isOutMessage} />
+        const meta = <MessageMeta edited={data.editDate && !data.editHide} views={data.views} postAuthor={data.postAuthor} seen={data.sended === undefined || data.sended === true ? seen : data.sended} time={msgTime} isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
             return <MessageReactions messageId={data.id} chatId={data._chatPeer} reactions={data.reactions}>{meta}</MessageReactions>

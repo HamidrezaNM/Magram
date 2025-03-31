@@ -1064,6 +1064,50 @@ a:hover {
   transform: translateX(26px);
 }
 
+.Toasts {
+  display: flex;
+  width: fit-content;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 120px;
+  left: 0;
+  right: 0;
+  z-index: 9;
+}
+
+.Toast {
+  background-color: #000d;
+  width: fit-content;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 16px;
+  gap: 12px;
+  height: auto;
+  overflow: hidden;
+  interpolate-size: allow-keywords;
+  transition: all .3s ease, opacity .1s ease;
+}
+
+.Toast.animate {
+  margin-bottom: -48px;
+  opacity: 0;
+  transform: scale(0.95)
+}
+
+.Toast.hideAnim {
+  /* margin-bottom: 0;
+  transform: translateY(-18px); */
+}
+
+.Toast .icon {
+  padding: 0;
+  margin: 0;
+}
+
 .FlexColumn {
   display: flex;
   flex-direction: column;

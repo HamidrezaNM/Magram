@@ -86,7 +86,7 @@ function ChatList() {
                 </div>
             </div>
         </div>}
-        {allChats.filter(chat => chat.archived === showArchives).map((item) => (
+        {allChats.filter(chat => !!chat.archived === showArchives).map((item) => (
             !item.entity?.migratedTo && <Chat key={item.id?.value} info={item} isActive={activeChat?.id.value == item.id.value} />
         ))}
         {Object.keys(chats).length === 0 &&

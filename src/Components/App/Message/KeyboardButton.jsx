@@ -3,9 +3,13 @@ import buildClassName from "../../Util/buildClassName";
 import { client } from "../../../App";
 import { Api } from "telegram";
 import LoadingButtonBorder from "../../common/LoadingButtonBorder";
+import { openUrl } from "../../Util/url";
+import { useDispatch } from "react-redux";
 
 function KeyboardButton({ button, messageId, peerId }) {
     const [isLoading, setIsLoading] = useState(false)
+
+    const dispatch = useDispatch()
 
     const onButtonClick = async (button) => {
         setIsLoading(true)
@@ -17,6 +21,9 @@ function KeyboardButton({ button, messageId, peerId }) {
                         msgId: messageId,
                         peer: peerId
                     }))
+                    break;
+                case 'KeyboardButtonUrl':
+                    await openUrl(button.url, dispatch)
                     break;
             }
         } catch (error) {

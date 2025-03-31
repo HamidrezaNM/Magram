@@ -29,6 +29,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const User = useContext(UserContext)
 
     const chats = useSelector((state) => state.chats.value)
+    const activeFullChat = useSelector((state) => state.ui.activeFullChat)
     // const activeChat = useSelector((state) => state.ui.activeChat)
     const editMessage = useSelector((state) => state.ui.editMessage)
     const replyToMessage = useSelector((state) => state.ui.replyToMessage)
@@ -77,7 +78,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             message: messageText,
             replyTo: replyToMessage ? replyToMessage.id : null,
             replyToMessage: replyToMessage ?? null,
-            seen: null,
+            sended: null,
             type: "text",
             messageType: "message",
         }
@@ -102,9 +103,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             const result = await client.sendMessage(chatId, message)
 
             dispatch(updateMessageId({ messageId, chatId, id: result.id }))
-            dispatch(updateLastMessage({ id: chat.id.value, message: { ..._message, id: result.id, seen: [] } }))
 
             if (!chats[chatId]) {
+                console.log('Chat not exists')
                 await result.getChat()
 
                 const chat = {
@@ -121,8 +122,11 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 dispatch(chatAdded(chat))
             }
 
+            dispatch(updateLastMessage({ id: chat.id.value, message: { ..._message, id: result.id } }))
+
         } catch (error) {
-            dispatch(handleMessageError({ messageId: message.id, chatId }))
+            console.error(error)
+            dispatch(handleMessageError({ messageId: _message.id, chatId }))
         }
     }, [messageInputHandled]);
 
@@ -304,6 +308,14 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         }
     }, [sendBotCommand])
 
+    const restartBot = async () => {
+        await client.invoke(new Api.contacts.Unblock({
+            id: chat.entity.id
+        }))
+        sendMessage('/start')
+        setBotStarted(true)
+    }
+
     const startBot = () => {
         sendMessage('/start')
         setBotStarted(true)
@@ -329,8 +341,11 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             return <div className="Button" onClick={handleJoinGroup}>Join</div>
         if (getChatType(chat?.entity) === 'Channel')
             return <div className="Button" onClick={() => { }}>Mute</div>
-        if (getChatType(chat?.entity) === 'Bot' && chat.entity.botChatHistory && !botStarted)
-            return <div className="Button" onClick={startBot}>Start</div>
+        if (getChatType(chat?.entity) === 'Bot' && !botStarted)
+            if (activeFullChat?.blocked)
+                return <div className="Button" onClick={restartBot}>Restart</div>
+            else if (!chat.message)
+                return <div className="Button" onClick={startBot}>Start</div>
         return undefined
     }
 

@@ -133,6 +133,8 @@
     font-family: Roboto, Vazirmatn;
     font-weight: bold;
     line-height: 1.2;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .Chat .body .subtitle {
