@@ -2,7 +2,10 @@ on:
   push:
     branches:
       - "main" # change to the branch you wish to deploy from
-
+      
+env:
+  CI: ""
+  
 permissions:
   contents: read
   pages: write
