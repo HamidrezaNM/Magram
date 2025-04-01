@@ -22,6 +22,7 @@ import { handleCoolDown } from "../../Util/coolDown";
 export default function Search() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [input, setInput] = useState('')
+    const [topPeers, setTopPeers] = useState([])
     const [chats, setChats] = useState([])
 
     const Auth = useContext(AuthContext)
@@ -39,6 +40,22 @@ export default function Search() {
         setTimeout(() => {
             inputRef.current.querySelector('.InputField').focus()
         }, 200);
+
+        (async () => {
+            const result = await client.invoke(new Api.contacts.GetTopPeers({
+                correspondents: true,
+                botsApp: false,
+                botsInline: false,
+                botsPm: false,
+                channels: false,
+                forwardChats: false,
+                forwardUsers: false,
+                groups: false,
+                limit: 5
+            }))
+
+            setTopPeers(result.users)
+        })()
     }, [])
 
     const changeInputHandler = useCallback(async e => {
@@ -92,6 +109,14 @@ export default function Search() {
                     />
                     <span className="placeholder" style={{ paddingLeft: 28 }} ref={placeholderRef}>Search</span>
                 </div>
+                <div className="topPeers">
+                    {topPeers.length > 0 && Object.values(topPeers).map((item) => (
+                        !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                            <Profile entity={item} size={48} name={item?.title} id={item.id?.value} />
+                            <div className="title">{item?.title ?? item.firstName}</div>
+                        </div>
+                    ))}
+                </div>
             </div>
             <div className="section">
                 <div className="Tabs">
@@ -99,7 +124,7 @@ export default function Search() {
                 </div>
                 <div className="Items">
                     {chats.length > 0 && Object.values(chats).map((item) => (
-                        <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                        !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
                             <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
                             <div className="UserDetails">
                                 <div className="title">{item?.title ?? item.firstName}</div>

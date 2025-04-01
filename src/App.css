@@ -1088,6 +1088,7 @@ a:hover {
   gap: 12px;
   height: auto;
   overflow: hidden;
+  user-select: none;
   interpolate-size: allow-keywords;
   transition: all .3s ease, opacity .1s ease;
 }

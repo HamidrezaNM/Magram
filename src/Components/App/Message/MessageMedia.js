@@ -133,6 +133,8 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
             case 'MessageMediaPoll':
                 return <Poll media={media} messageId={data.id} chatId={data.chatId} />
+            case 'MessageMediaInvoice':
+                return <span style={{ margin: '0.575rem' }}>{media.description}</span>
             default:
                 break;
         }

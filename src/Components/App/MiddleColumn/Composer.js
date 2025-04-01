@@ -395,14 +395,20 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                         <div className="commands">
                             <Menu icon="menu">
                                 <DropdownMenu>
-                                    {activeFullChat.botInfo.commands.map(
-                                        item =>
-                                            <MenuItem
-                                                title={'/' + item.command}
-                                                subtitle={item.description}
-                                                onClick={() => sendMessage('/' + item.command)}
-                                            />
-                                    )}
+                                    <div className="scrollable" style={{
+                                        width: '100%',
+                                        maxHeight: '320px',
+                                        minWidth: '320px'
+                                    }}>
+                                        {activeFullChat.botInfo.commands.map(
+                                            item =>
+                                                <MenuItem
+                                                    title={'/' + item.command}
+                                                    subtitle={item.description}
+                                                    onClick={() => sendMessage('/' + item.command)}
+                                                />
+                                        )}
+                                    </div>
                                     <hr />
                                     <MenuItem style={{ height: 33, minHeight: 'auto', paddingLeft: 32 }} title="COMMANDS" onClick={() => { }} />
                                 </DropdownMenu>

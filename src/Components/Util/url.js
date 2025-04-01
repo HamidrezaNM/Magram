@@ -9,6 +9,8 @@ import { resolveUsername } from "./username";
 export async function openUrl(url, dispatch) {
     const deepLink = parseDeepLink(url)
 
+    if (!deepLink) return window.open(url, '_blank', 'noopener');
+
     switch (deepLink?.type) {
         case 'publicUsernameOrBotLink':
             const peer = await resolveUsername(deepLink.username)
@@ -50,6 +52,7 @@ export async function openUrl(url, dispatch) {
             dispatch(handleToast({ icon: 'error', title: "Proxy doesn't supported" }))
             break
         default:
+            dispatch(handleToast({ icon: 'error', title: 'This link is not currently supported.' }))
             break;
     }
 }
