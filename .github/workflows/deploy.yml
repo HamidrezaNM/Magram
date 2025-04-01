@@ -5,6 +5,8 @@ on:
       
 env:
   CI: ""
+  REACT_APP_API_ID: ${{ secrets.REACT_APP_API_ID }}
+  REACT_APP_API_HASH: ${{ secrets.REACT_APP_API_HASH }}
   
 permissions:
   contents: read
