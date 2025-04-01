@@ -36,21 +36,24 @@ const Menu = forwardRef(({ icon, animateWidth = true, animateHeight = true, minH
             menu.current.querySelectorAll('.MenuItem').forEach(item => item.onclick = handleCloseMenu)
         }
 
-        // menu.current.querySelector('.DropdownMenu').classList.add('animate')
-        // setTimeout(() => {
-        //     menu.current.querySelector('.DropdownMenu').classList.remove('animate')
-        // }, 5);
+        menu.current.querySelector('.DropdownMenu').classList.add('animate')
+        setTimeout(() => {
+            menu.current.querySelector('.DropdownMenu').classList.remove('animate')
+        }, 5);
         if (animateWidth) {
             menu.current.querySelector('.DropdownMenu').style.minWidth = 36 + 'px';
             menu.current.querySelector('.DropdownMenu').style.width = 36 + 'px';
         }
-        if (animateHeight) menu.current.querySelector('.DropdownMenu').style.minHeight = (minHeight ?? 36) + 'px';
+        if (animateHeight) menu.current.querySelector('.DropdownMenu').style.height = minHeight + 'px';
 
         requestAnimationFrame(() => {
             setTimeout(() => {
                 if (animateWidth) menu.current.querySelector('.DropdownMenu').style.width = w + 'px'
-                if (animateHeight) menu.current.querySelector('.DropdownMenu').style.minHeight = h + 'px'
+                if (animateHeight) menu.current.querySelector('.DropdownMenu').style.height = h + 'px'
             }, 40);
+            setTimeout(() => {
+                if (animateHeight) menu.current.querySelector('.DropdownMenu').style.height = ''
+            }, 200);
         });
     }
 

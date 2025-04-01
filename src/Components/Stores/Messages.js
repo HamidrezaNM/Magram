@@ -99,6 +99,13 @@ export const messagesSlice = createSlice({
                 })
             }
         },
+        updateMessagePoll: (state, action) => {
+            if (state.value[action.payload.chatId]) {
+                let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
+                if (messageIndex)
+                    state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], id: action.payload.id, media: { ...state.value[action.payload.chatId][messageIndex].media, ...action.payload.media } }
+            }
+        },
         updateMessageMediaUploadProgress: (state, action) => {
             const message = state.value[action.payload.chatId].find(message => message.id === action.payload.id)
             if (message) {
@@ -117,6 +124,19 @@ export const messagesSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { messageAdded, handleCachedMessages, setMessages, unshiftMessages, removeMessage, removeMessages, updateMessageId, updateMessage, updateMessageSeen, handleMessageError, updateMessageMediaUploadProgress, updateMessageMedia } = messagesSlice.actions
+export const { messageAdded,
+    handleCachedMessages,
+    setMessages,
+    unshiftMessages,
+    removeMessage,
+    removeMessages,
+    updateMessageId,
+    updateMessage,
+    updateMessageSeen,
+    updateMessagePoll,
+    handleMessageError,
+    updateMessageMediaUploadProgress,
+    updateMessageMedia
+} = messagesSlice.actions
 
 export default messagesSlice.reducer

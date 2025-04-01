@@ -20,7 +20,7 @@ function Poll({ media, messageId, chatId }) {
         setResults(result.updates[0].results)
     }
 
-    return <div className={buildClassName("Poll", results?.results && 'Results')}>
+    return <div className={buildClassName("Poll", results?.results && results.totalVoters > 0 && 'Results')}>
         <div className="question">
             {media.poll?.question?.text}
         </div>
@@ -30,9 +30,9 @@ function Poll({ media, messageId, chatId }) {
                 {media.poll.answers.map((item, index) =>
                     <label className={buildClassName("Radio", results?.results && results?.results[index].chosen && 'active')}>
                         <input type="radio" onClick={e => onVote(e, item)} value={index} name={"Poll-" + messageId} />
-                        {results?.results && <div className="PollVoters">{Math.round(results?.results[index].voters / results.totalVoters * 100)}%</div>}
+                        {results?.results && results.totalVoters > 0 && <div className="PollVoters">{Math.round(results?.results[index].voters / results.totalVoters * 100)}%</div>}
                         <div className="RadioMain">{renderTextWithEntities(item.text.text, item.text.entities, false)}</div>
-                        {results?.results && <div className="line" style={{ width: `calc(${results.results[index].voters / highestVoters} * (100% - 32px))` }}></div>}
+                        {results?.results && results.totalVoters > 0 && <div className="line" style={{ width: `calc(${results.results[index].voters / highestVoters} * (100% - 32px))` }}></div>}
                         {results?.results && results?.results[index].chosen && <Icon size={14} name="done" />}
                     </label>
                 )}

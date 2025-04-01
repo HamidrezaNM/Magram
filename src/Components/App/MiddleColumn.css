@@ -197,7 +197,7 @@
     -webkit-user-select: none;
     user-select: none;
     transition: all 0.3s ease;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .MiddleColumn .bottom .Composer {
@@ -206,6 +206,10 @@
     display: flex;
     align-items: center;
     color: var(--dyn-text-color);
+}
+
+.MiddleColumn .bottom .Composer .commands .DropdownMenu {
+    bottom: -7px;
 }
 
 .MiddleColumn .bottom .message-input {

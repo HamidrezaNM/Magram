@@ -27,7 +27,7 @@ function ChatInfo() {
     const showPage = useSelector((state) => state.ui.showPage)
     const activeChat = useSelector((state) => state.ui.activeChat)
     const fullChat = useSelector((state) => state.ui.activeFullChat)
-    const typingStatus = useSelector((state) => state.ui.activeChat.typingStatus)
+    const typingStatus = useSelector((state) => state.chats.value[activeChat.id.value]?.typing)
     const thread = useSelector((state) => state.ui.thread)
 
     const isSavedMessages = activeChat.id.value === User.id.value
@@ -46,6 +46,8 @@ function ChatInfo() {
 
     const chatInfoSubtitle = () => {
         if (typingStatus && typingStatus.length > 0) {
+            if (chatType === 'User' || chatType === 'Bot')
+                return 'typing...'
             return typingStatus.join(', ') + ' is typing...'
         }
         switch (chatType) {

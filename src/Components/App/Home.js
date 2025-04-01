@@ -164,7 +164,7 @@ function Home() {
         dispatch(updateLastMessage({ id: chatId, message, unread: User.id.value !== message._senderId.value }))
         if (chatId == activeChat?.id.value)
             readHistory(activeChat.id.value, dispatch)
-        else if (!message.chat?.left && !chats[message.chat?.id?.value].dialog?.notifySettings?.muteUntil) {
+        else if (!message.chat?.left && !chats[message.chat?.id?.value]?.dialog?.notifySettings?.muteUntil) {
             if (!isWindowFocused.current)
                 notify(chats[chatId]?.title ?? message.chat?.title ?? message.chat?.firstName, {
                     body: (message._sender?.firstName + ': ') + message.text
@@ -178,12 +178,6 @@ function Home() {
             client.removeEventHandler(onNewMessage, new NewMessage({}))
         }
     }, [User, activeChat, chats, thread, isWindowFocused.current]) // onNewMessage
-
-    const onMessageAction = (response) => {
-        const chat = Object.values(chats).find((obj) => obj._id === response.chatId)
-        var typingStatus = chat.typingStatus ?? []
-        dispatch(updateTypingStatus({ chatId: response.chatId, typingStatus: [...typingStatus, response.user.firstname] }))
-    }
 
     const onIncomingCall = (call) => {
         if (!User._id || User._id === call.fromId) return

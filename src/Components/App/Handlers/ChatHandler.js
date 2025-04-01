@@ -2,7 +2,7 @@ import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
-import { chatAdded, setFullChat, updateChatRead, updateChatUserStatus } from "../../Stores/Chats";
+import { chatAdded, handleTypingStatus, removeTypingStatus, setFullChat, updateChatRead, updateChatUserStatus, updateTypingStatus } from "../../Stores/Chats";
 import { setActiveChat, setActiveFullChat } from "../../Stores/UI";
 import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
 import { returnBigInt } from "telegram/Helpers";
@@ -14,7 +14,7 @@ function ChatHandler() {
 
     const dispatch = useDispatch()
 
-    const onUpdate = (update) => {
+    const onUpdate = async (update) => {
         switch (update.className) {
             case 'UpdateUserStatus':
                 dispatch(updateChatUserStatus({ id: update.userId.value, status: update.status }))
@@ -35,6 +35,18 @@ function ChatHandler() {
                 dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
                 dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
                 break;
+            case 'UpdateUserTyping':
+                dispatch(handleTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
+                setTimeout(() => {
+                    dispatch(removeTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
+                }, 5000); break
+            case 'UpdateChannelUserTyping':
+                const user = await client.getEntity(update.fromId)
+                dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                setTimeout(() => {
+                    dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                }, 5000);
+                break
             default:
                 break;
         }

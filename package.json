@@ -38,6 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "https://hamidrezanm.github.io/Magram",
   "eslintConfig": {
     "extends": [
       "react-app",

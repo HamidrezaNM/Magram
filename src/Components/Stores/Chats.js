@@ -70,10 +70,22 @@ export const chatsSlice = createSlice({
                 state.value[action.payload.id] = { ...chat, entity: { ...chat.entity, status: action.payload.status } }
             }
         },
-        updateTypingStatus: (state, action) => {
+        handleTypingStatus: (state, action) => {
             const chat = state.value[action.payload.chatId]
             if (chat) {
-                chat.typingStatus = action.payload.typingStatus
+                if (chat.typing)
+                    state.value[action.payload.chatId].typing = [...state.value[action.payload.chatId].typing, action.payload.typing]
+                else
+                    state.value[action.payload.chatId].typing = [action.payload.typing]
+            }
+        },
+        removeTypingStatus: (state, action) => {
+            const chat = state.value[action.payload.chatId]
+            if (chat) {
+                if (chat.typing)
+                    state.value[action.payload.chatId].typing = state.value[action.payload.chatId].typing.filter(item => item !== action.payload.typing)
+                else
+                    state.value[action.payload.chatId].typing = [action.payload.typing]
             }
         }
     },
@@ -92,7 +104,8 @@ export const {
     updateLastMessage,
     updateChatUnreadCount,
     updateChatUserStatus,
-    updateTypingStatus
+    handleTypingStatus,
+    removeTypingStatus
 } = chatsSlice.actions
 
 export default chatsSlice.reducer

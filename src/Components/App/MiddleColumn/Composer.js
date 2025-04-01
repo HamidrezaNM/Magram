@@ -17,6 +17,9 @@ import { getChatType } from "../../Helpers/chats";
 import Attachment from "./Attachment";
 import { CustomFile } from "telegram/client/uploads";
 import { returnBigInt } from "telegram/Helpers";
+import MenuItem from "../../UI/MenuItem";
+import DropdownMenu from "../../UI/DropdownMenu";
+import Menu from "../../UI/Menu";
 
 function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
@@ -387,6 +390,25 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         )}
         {renderComposerButton() ?? <>
             <div className="Composer">
+                {getChatType(chat?.entity) === 'Bot' &&
+                    activeFullChat?.botInfo?.commands && <>
+                        <div className="commands">
+                            <Menu icon="menu">
+                                <DropdownMenu>
+                                    {activeFullChat.botInfo.commands.map(
+                                        item =>
+                                            <MenuItem
+                                                title={'/' + item.command}
+                                                subtitle={item.description}
+                                                onClick={() => sendMessage('/' + item.command)}
+                                            />
+                                    )}
+                                    <hr />
+                                    <MenuItem style={{ height: 33, minHeight: 'auto', paddingLeft: 32 }} title="COMMANDS" onClick={() => { }} />
+                                </DropdownMenu>
+                            </Menu>
+                        </div>
+                    </>}
                 <div className="emoji-button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                     <div className="icon">mood</div>
                 </div>

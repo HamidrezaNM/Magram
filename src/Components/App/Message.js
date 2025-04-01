@@ -18,7 +18,7 @@ import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
 import { getMediaDimensions, getMediaType, isDocumentPhoto } from "../Helpers/messages";
-import { deleteMessage } from "../Util/messages";
+import { deleteMessage, retractVote } from "../Util/messages";
 import { getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
@@ -110,6 +110,11 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         handleContextMenuClose()
     }, [data, isPinned.current])
 
+    const handleRetractVote = useCallback(async () => {
+        retractVote(data.chatId, data.id, dispatch)
+        handleContextMenuClose()
+    }, [data])
+
     const handleEdit = useCallback(() => {
         dispatch(handleEditMessage(data)); handleContextMenuClose()
     }, [data])
@@ -157,12 +162,14 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                         isPhoto={data.type === 'media'}
                         canPin={isAdmin && !isPinned.current}
                         canUnpin={isAdmin && isPinned.current}
+                        canRetractVote={data.media?.results?.results}
                         canEdit={User.id.value === data._senderId?.value}
                         canDelete={User.id.value === data._senderId?.value || isAdmin}
                         onReply={handleReply}
                         onCopy={handleCopy}
                         onSavePhoto={handleSave}
                         onPin={handlePin}
+                        onRetractVote={handleRetractVote}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                     />
