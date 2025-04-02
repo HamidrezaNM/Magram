@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
@@ -7,57 +7,55 @@ import { setActiveChat, setActiveFullChat } from "../../Stores/UI";
 import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
 import { returnBigInt } from "telegram/Helpers";
 
-function ChatHandler() {
+const ChatHandler = forwardRef(({ }, ref) => {
 
     const activeChat = useSelector((state) => state.ui.activeChat)
-    // const chats = useSelector((state) => state.chats.value)
 
     const dispatch = useDispatch()
 
-    const onUpdate = async (update) => {
-        switch (update.className) {
-            case 'UpdateUserStatus':
-                dispatch(updateChatUserStatus({ id: update.userId.value, status: update.status }))
-                if (activeChat?.id?.value == update.userId.value) {
-                    dispatch(setActiveChat({ ...activeChat, entity: { ...activeChat.entity, status: update.status } }))
-                }
-                break;
-            case 'UpdateChannel':
-                if (update._entities) {
-                    const [chatId, peer] = update._entities.entries().next().value
-                    const chat = generateChatWithPeer(peer, returnBigInt(chatId))
+    useImperativeHandle(
+        ref,
+        () => ({
+            async onUpdate(update) {
+                switch (update.type) {
+                    case 'UpdateUserStatus':
+                        dispatch(updateChatUserStatus({ id: update.userId.value, status: update.status }))
+                        if (activeChat?.id?.value == update.userId.value) {
+                            dispatch(setActiveChat({ ...activeChat, entity: { ...activeChat.entity, status: update.status } }))
+                        }
+                        break;
+                    case 'UpdateChannel':
+                        if (update.channel) {
+                            const [chatId, peer] = update.channel
+                            const chat = generateChatWithPeer(peer, returnBigInt(chatId))
 
-                    console.log('channel updated', chat)
-                    dispatch(chatAdded(chat))
+                            console.log('channel updated', chat)
+                            dispatch(chatAdded(chat))
+                        }
+                        break;
+                    case 'UpdateReadHistoryOutbox':
+                        dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
+                        dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
+                        break;
+                    case 'UpdateUserTyping':
+                        dispatch(handleTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
+                        setTimeout(() => {
+                            dispatch(removeTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
+                        }, 5000); break
+                    case 'UpdateChannelUserTyping':
+                        const user = await client.getEntity(update.fromId)
+                        dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                        setTimeout(() => {
+                            dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                        }, 5000);
+                        break
+                    default:
+                        break;
                 }
-                break;
-            case 'UpdateReadHistoryOutbox':
-                dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
-                dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
-                break;
-            case 'UpdateUserTyping':
-                dispatch(handleTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
-                setTimeout(() => {
-                    dispatch(removeTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
-                }, 5000); break
-            case 'UpdateChannelUserTyping':
-                const user = await client.getEntity(update.fromId)
-                dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                setTimeout(() => {
-                    dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                }, 5000);
-                break
-            default:
-                break;
-        }
-    }
-
-    useEffect(() => {
-        client.addEventHandler(onUpdate);
-        return () => {
-            client.removeEventHandler(onUpdate)
-        }
-    }, [activeChat?.id])
+            }
+        }),
+        [activeChat?.id],
+    )
 
     useEffect(() => {
         (async () => {
@@ -87,6 +85,6 @@ function ChatHandler() {
     }, [activeChat?.id])
 
     return;
-}
+})
 
 export default memo(ChatHandler)

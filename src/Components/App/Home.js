@@ -55,6 +55,7 @@ import Thread from "./MiddleColumn/Thread";
 import MiddleColumn from "./MiddleColumn";
 import Toasts from "../UI/Toasts";
 import Dialogs from "../UI/Dialogs";
+import UpdateManager from "./UpdateManager";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -66,7 +67,6 @@ function Home() {
     const [callState, setCallState] = useState({});
     const [connectionState, setConnectionState] = useState('Authenticating...');
 
-    const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
     const isWindowFocused = useRef(true);
@@ -283,9 +283,7 @@ function Home() {
                         <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
                 </div>
 
-                {/* Handlers */}
-                <ChatHandler />
-                <MessagesHandler />
+                <UpdateManager />
             </IKContext>
         </ThemeProvider>
     )

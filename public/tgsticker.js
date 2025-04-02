@@ -127,7 +127,7 @@ window.RLottie = (function () {
                 let workersRemain = rlottie.WORKERS_LIMIT;
                 for (let workerNum = 0; workerNum < rlottie.WORKERS_LIMIT; workerNum++) {
                     (function (workerNum) {
-                        const rlottieWorker = rlottieWorkers[workerNum] = new QueryableWorker('rlottie/rlottie-wasm.worker.js');
+                        const rlottieWorker = rlottieWorkers[workerNum] = new QueryableWorker('Magram/rlottie/rlottie-wasm.worker.js');
                         rlottieWorker.addListener('ready', function () {
                             console.log(dT(), 'worker #' + workerNum + ' ready');
                             rlottieWorker.addListener('frame', onFrame);
