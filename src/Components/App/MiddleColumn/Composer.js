@@ -27,6 +27,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [botStarted, setBotStarted] = useState(false);
+    const [muted, setMuted] = useState(false);
 
     const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
@@ -255,6 +256,17 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         }))
     }, [User, chat])
 
+    const handleToggleMute = useCallback(async () => {
+        const result = await client.invoke(new Api.account.UpdateNotifySettings({
+            peer: chat.entity?.id,
+            settings: new Api.InputPeerNotifySettings({
+                muteUntil: muted ? null : 2147483647,
+            })
+        }))
+        console.log(result, chat)
+        setMuted(!muted)
+    }, [muted, chat])
+
     const onUploadMedia = async (file, buffer, media) => {
         const messageId = Date.now()
         const messageText = messageInputHandled.replace(/&nbsp;/g, ' ').trim()
@@ -343,7 +355,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         if (chat?.entity?.left && !thread)
             return <div className="Button" onClick={handleJoinGroup}>Join</div>
         if (getChatType(chat?.entity) === 'Channel')
-            return <div className="Button" onClick={() => { }}>Mute</div>
+            return <div className="Button" onClick={handleToggleMute}>{muted ? 'Unmute' : 'Mute'}</div>
         if (getChatType(chat?.entity) === 'Bot' && !botStarted)
             if (activeFullChat?.blocked)
                 return <div className="Button" onClick={restartBot}>Restart</div>

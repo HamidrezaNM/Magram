@@ -44,7 +44,7 @@ export function Switch({ checked = false, setChecked }) {
 }
 
 export function getChatColor(id) {
-    return ' peer-color-' + getPeerColorIndexById(id)
+    return 'peer-color-' + getPeerColorIndexById(id)
 }
 
 export function getPeerColorIndexById(peerId) {

@@ -105,4 +105,16 @@
     .message-media .Poll {
         min-width: min(29rem, 100vw - 7rem);
     }
+
+    .Toasts {
+        width: 100%;
+        padding: 8px;
+        bottom: 48px;
+    }
+
+    .Toast {
+        width: auto;
+        padding: 12px;
+        background-color: #121212fa;
+    }
 }

@@ -23,8 +23,12 @@ export async function openUrl(url, dispatch) {
             viewChat(generateChatWithPeer(peer), dispatch)
             break
         case 'privateChannelLink':
-            const entity = await client.getEntity(deepLink.channelId)
-            viewChat(generateChatWithPeer(entity), dispatch)
+            try {
+                const entity = await client.getEntity(deepLink.channelId)
+                viewChat(generateChatWithPeer(entity), dispatch)
+            } catch (error) {
+                dispatch(handleToast({ icon: 'error', title: 'This link is invalid' }))
+            }
             break;
         case 'inviteLink':
             try {
@@ -49,7 +53,7 @@ export async function openUrl(url, dispatch) {
             }
             break
         case 'proxy':
-            dispatch(handleToast({ icon: 'error', title: "Proxy doesn't supported" }))
+            dispatch(handleToast({ icon: 'error', title: "Proxy isn't supported" }))
             break
         default:
             dispatch(handleToast({ icon: 'error', title: 'This link is not currently supported.' }))

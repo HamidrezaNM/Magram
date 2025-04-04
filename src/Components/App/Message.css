@@ -218,11 +218,13 @@
     overflow: hidden;
 }
 
-.message-reply .line {
+.MessageLine {
     background-color: var(--primary);
     background-color: var(--accent-color);
     min-width: 3px;
-    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    border-radius: 8px;
 }
 
 .message-reply .title {
@@ -260,6 +262,16 @@
     align-items: center;
     justify-content: center;
     user-select: none;
+}
+
+.message-media.media-position-top {
+    margin-top: -0.575rem;
+    margin-bottom: 0.285rem;
+}
+
+.message-media.media-position-bottom {
+    margin-bottom: -0.575rem;
+    margin-top: 0.285rem;
 }
 
 .Message.transparent .message-media {
@@ -326,6 +338,7 @@
     padding: 4px 0;
     flex-wrap: wrap;
     direction: ltr;
+    user-select: none;
 }
 
 .MessageReactions .reaction {
@@ -561,9 +574,14 @@
     width: 0;
     height: 4px;
     min-width: 4px;
+    max-width: none;
     background-color: var(--primary);
     border-radius: 8px;
     transition: all .3s ease;
+}
+
+.Radio .line.animate {
+    max-width: 0;
 }
 
 .Radio .PollVoters {
@@ -572,6 +590,33 @@
     bottom: -4px;
     line-height: 1;
     font-size: 14px;
+    font-weight: 500;
+}
+
+.WebPage {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+    margin-inline: .575rem;
+    background-color: var(--accent-bg);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.WebPage .body {
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    padding-left: 0;
+    font-size: 14px;
+}
+
+.WebPage .body .siteName {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.WebPage .body .title {
     font-weight: 500;
 }
 

@@ -4,6 +4,7 @@ import { client } from "../../../App";
 import { Api } from "telegram";
 import buildClassName from "../../Util/buildClassName";
 import { Icon } from "../common";
+import Transition from "../Transition";
 
 function Poll({ media, messageId, chatId }) {
     const [results, setResults] = useState(media.results)
@@ -18,6 +19,7 @@ function Poll({ media, messageId, chatId }) {
             options: [item.option]
         }))
         setResults(result.updates[0].results)
+        // media = { ...media, results: result.updates[0].results }
     }
 
     return <div className={buildClassName("Poll", results?.results && results.totalVoters > 0 && 'Results')}>
@@ -28,11 +30,26 @@ function Poll({ media, messageId, chatId }) {
         <div className="answers">
             <div className="RadioGroup">
                 {media.poll.answers.map((item, index) =>
-                    <label className={buildClassName("Radio", results?.results && results?.results[index].chosen && 'active')}>
+                    <label
+                        className={buildClassName(
+                            "Radio", results?.results && results?.results[index].chosen && 'active'
+                        )}>
                         <input type="radio" onClick={e => onVote(e, item)} value={index} name={"Poll-" + messageId} />
-                        {results?.results && results.totalVoters > 0 && <div className="PollVoters">{Math.round(results?.results[index].voters / results.totalVoters * 100)}%</div>}
-                        <div className="RadioMain">{renderTextWithEntities(item.text.text, item.text.entities, false)}</div>
-                        {results?.results && results.totalVoters > 0 && <div className="line" style={{ width: `calc(${results.results[index].voters / highestVoters} * (100% - 32px))` }}></div>}
+                        {
+                            results?.results &&
+                            results.totalVoters > 0 &&
+                            <div className="PollVoters">{Math.round(results?.results[index].voters / results.totalVoters * 100)}%</div>
+                        }
+                        <div className="RadioMain">
+                            {renderTextWithEntities(item.text.text, item.text.entities, false)}
+                        </div>
+                        {
+                            results?.results &&
+                            results.totalVoters > 0 &&
+                            <Transition state={true}>
+                                <div className="line" style={{ width: `calc(${results.results[index].voters / highestVoters} * (100% - 32px))` }}></div>
+                            </Transition>
+                        }
                         {results?.results && results?.results[index].chosen && <Icon size={14} name="done" />}
                     </label>
                 )}

@@ -13,7 +13,7 @@ import MessageContextMenu from "./MessageContextMenu";
 import { EmojiConvertor } from "emoji-js";
 import MessageText, { getMessageText } from "./MessageText";
 import MessageSeen from "./Message/MessageSeen";
-import MessageMedia, { calculateMediaDimensions } from "./Message/MessageMedia";
+import MessageMedia, { calculateMediaDimensions, getMediaPosition } from "./Message/MessageMedia";
 import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
@@ -49,6 +49,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     const isOutMessage = useRef(data.peerId?.userId?.value === User.id.value || data.out);
     const isAction = data.action !== undefined
     const msgTime = new Date(data.date * 1000);
+    const mediaPosition = data.media && getMediaPosition(data.media)
 
     console.log('Message Rerendered')
 
@@ -268,22 +269,46 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
             <div className={buildClassName("bubble", noAvatar && 'noAvatar')}>
                 <div className="bubble-content">
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
-                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={"from" + getChatColor(data._sender?.id?.value)}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
-                        {data.replyTo && (!isThread || data.replyToMessage) && <div className={"message-reply" + getChatColor(data.replyToMessage?._sender?.id?.value ?? 0) + (data.media ? ' withMargin' : '')} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
-                            <div className="line"></div>
+                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value))}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
+                        {data.replyTo && (!isThread || data.replyToMessage) && <div className={buildClassName("message-reply", getChatColor(data.replyToMessage?._sender?.id?.value ?? 0), (data.media && 'withMargin'))} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
+                            <div className="MessageLine"></div>
                             <div className="body">
                                 <div className="title">{data.replyToMessage ? <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} /> : 'Loading...'}</div>
                                 <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
                             </div>
                         </div>}
                         <div className="message-text" dir="auto">
-                            {data.media &&
-                                <MessageMedia media={data.media} data={data} className={!data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption'} noAvatar={noAvatar} ref={messageMedia} />
+                            {data.media && mediaPosition === 'top' &&
+                                <MessageMedia
+                                    media={data.media}
+                                    data={data}
+                                    className={buildClassName(
+                                        !data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption',
+                                        'media-position-' + mediaPosition
+                                    )}
+                                    noAvatar={noAvatar}
+                                    ref={messageMedia}
+                                />
                             }
+
                             {data.type === 'call' &&
                                 <MessageCall data={data} />
                             }
+
                             <MessageText data={data} isInChat="true" />
+
+                            {data.media && mediaPosition === 'bottom' &&
+                                <MessageMedia
+                                    media={data.media}
+                                    data={data}
+                                    className={buildClassName(
+                                        !data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption',
+                                        'media-position-' + mediaPosition
+                                    )}
+                                    noAvatar={noAvatar}
+                                    ref={messageMedia}
+                                />
+                            }
                             {renderReactionAndMeta()}
                         </div>
                     </div>

@@ -10,6 +10,8 @@ import AnimatedSticker from "./AnimatedSticker";
 import Poll from "./Poll";
 import Audio from "./Audio";
 import buildClassName from "../../Util/buildClassName";
+import WebPage from "./WebPage";
+import { Api } from "telegram";
 
 const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
@@ -135,8 +137,10 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
                 return <Poll media={media} messageId={data.id} chatId={data.chatId} />
             case 'MessageMediaInvoice':
                 return <span style={{ margin: '0.575rem' }}>{media.description}</span>
+            case 'MessageMediaWebPage':
+                return <WebPage media={media} userId={Number(data._senderId)} />
             default:
-                break;
+                return <span style={{ margin: '0.575rem', fontWeight: '500' }}>This message is currently not supported in this version of Magram.</span>
         }
     }
 
@@ -271,6 +275,11 @@ export function getStickerDimensions(width, height) {
         width: baseWidth,
         height: calculatedHeight,
     };
+}
+
+export function getMediaPosition(media) {
+    if (media instanceof Api.MessageMediaWebPage) return 'bottom'
+    return 'top'
 }
 
 const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {

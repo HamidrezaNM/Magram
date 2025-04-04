@@ -1,12 +1,11 @@
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import { toDoubleDigit } from "./Home";
-import { client, socket } from "../../App";
+import { client } from "../../App";
 import Chat, { ChatsLoading } from "./Chat";
 import { useDispatch, useSelector } from "react-redux";
 import { setChats } from "../Stores/Chats";
 import { setActiveChat } from "../Stores/UI";
-import { Icon } from "./common";
 import buildClassName from "../Util/buildClassName";
 
 function ChatList() {
@@ -21,7 +20,7 @@ function ChatList() {
 
     const chats = useSelector((state) => state.chats.value)
 
-    const activeChat = useSelector((state) => state.ui.activeChat)
+    const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
     const allChats = Object.values(chats).sort((a, b) => {
         if (a.message?.date > b.message?.date) {
@@ -79,15 +78,11 @@ function ChatList() {
                     <div className="info">
                         <div className="title">Archived Chats</div>
                     </div>
-                    {/* <div className="subtitle">
-                        <div className="message-details">salam</div>
-                        {info.unreadCount ? info.unreadCount > 0 && <div className={buildClassName('unread', info.dialog?.notifySettings?.muteUntil && 'muted')}>{info.unreadCount}</div> : null}
-                    </div> */}
                 </div>
             </div>
         </div>}
         {allChats.filter(chat => !!chat.archived === showArchives).map((item) => (
-            !item.entity?.migratedTo && <Chat key={item.id?.value} info={item} isActive={activeChat?.id.value == item.id.value} />
+            !item.entity?.migratedTo && <Chat key={item.id?.value} info={item} isActive={Number(activeChatId) == item.id.value} />
         ))}
         {Object.keys(chats).length === 0 &&
             <ChatsLoading />

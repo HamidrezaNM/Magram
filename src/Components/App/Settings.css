@@ -53,6 +53,12 @@
     flex: 1;
 }
 
+.Page .FlexColumn .title,
+.Page .FlexColumn .subtitle {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .Page .FlexColumn .subtitle {
     font-size: 16px;
 }
@@ -105,4 +111,8 @@
     position: static;
     position: relative;
     cursor: pointer;
+}
+
+.Page .Item.Device .Meta {
+    flex: none !important;
 }

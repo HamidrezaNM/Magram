@@ -72,7 +72,7 @@ function SettingsDevices() {
         <div className="section ThisDevice">
             <div className="Items">
                 <span className="title">This device</span>
-                <div className="Item">
+                <div className="Item Device">
                     <Icon name={currentSession?.platform === 'Android' ? "android" : 'laptop_windows'} />
                     <div className="FlexColumn">
                         <span className="title">{currentSession?.deviceModel}</span>
@@ -88,7 +88,7 @@ function SettingsDevices() {
                 <span className="title">Active sessions</span>
                 {sessions && sessions.map((item) => (
                     <Menu key={item.hash?.value} animateWidth={false} custom={
-                        <div className="Item">
+                        <div className="Item Device">
                             <Icon name={item.platform === 'Android' ? "android" : 'laptop_windows'} />
                             <div className="FlexColumn">
                                 <span className="title">{item.deviceModel}</span>
@@ -97,7 +97,7 @@ function SettingsDevices() {
                             <span className="Meta">{item.country}</span>
                         </div>}>
                         <DropdownMenu className="CustomMenu">
-                            <div className="Item">
+                            <div className="Item Device">
                                 <Icon name={item.platform === 'Android' ? "android" : 'laptop_windows'} />
                                 <div className="FlexColumn">
                                     <span className="title">{item.deviceModel}</span>

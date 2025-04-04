@@ -83,7 +83,7 @@ function Home() {
 
     const chats = useSelector((state) => state.chats.value)
 
-    const activeChat = useSelector((state) => state.ui.activeChat)
+    const activeChat = useSelector((state) => state.ui.activeChat?.id)
     const thread = useSelector((state) => state.ui.thread)
     const page = useSelector((state) => state.ui.page)
     const showCall = useSelector((state) => state.ui.showCall)
@@ -119,7 +119,7 @@ function Home() {
 
     useEffect(() => {
         window.onhashchange = () => {
-            if (window.location.hash?.split('#')[1] != activeChat?.id.value) {
+            if (window.location.hash?.split('#')[1] != Number(activeChat)) {
                 // if (document.querySelector('.backBtn')) {
                 //     document.querySelector('.backBtn').click()
                 // } else
@@ -162,8 +162,8 @@ function Home() {
             dispatch(messageAdded({ ...message, chatId: thread.chatId?.value + '_' + thread.id }));
         }
         dispatch(updateLastMessage({ id: chatId, message, unread: User.id.value !== message._senderId.value }))
-        if (chatId == activeChat?.id.value)
-            readHistory(activeChat.id.value, dispatch)
+        if (chatId == Number(activeChat))
+            readHistory(Number(activeChat), dispatch)
         else if (!message.chat?.left && !chats[message.chat?.id?.value]?.dialog?.notifySettings?.muteUntil) {
             if (!isWindowFocused.current)
                 notify(chats[chatId]?.title ?? message.chat?.title ?? message.chat?.firstName, {
