@@ -1004,6 +1004,7 @@ a {
   color: var(--primary);
   cursor: pointer;
   text-decoration: none;
+  position: relative;
 }
 
 a:hover {
@@ -1214,15 +1215,37 @@ a:hover {
 }
 
 .Loading .border-top {
-  top: 0;
-  height: 1px;
+  top: -1px;
+  height: 2px;
   width: 100%;
 }
 
 .Loading .border-bottom {
-  bottom: 0;
-  height: 1px;
+  bottom: -1px;
+  height: 2px;
   width: 100%;
+}
+
+.TextLoading {
+  position: absolute;
+  width: calc(100% + 6px);
+  height: calc(100% + 4px);
+  top: 0;
+  left: 0;
+  margin: -2px -3px;
+  border-radius: 8px;
+  background-image: linear-gradient(90deg, transparent, #ffffff30, transparent);
+  background-position-x: 200%;
+  background-size: 200%;
+  border: 1px solid #ffffff20;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: opacity .3s ease;
+  animation: ItemLoading 1s linear infinite;
+}
+
+.TextLoading.animate {
+  opacity: 0;
 }
 
 .App .MuiSlider-root {

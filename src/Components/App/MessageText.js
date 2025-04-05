@@ -54,7 +54,7 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
                 }
                 return `${data.sender?.firstName} removed ${data._actionEntities[0]?.firstName}`
             case 'MessageActionPinMessage':
-                return `${data.sender?.firstName ?? data.sender.title} pinned this message`
+                return `${data.sender?.firstName ?? data.sender?.title ?? data.chat?.title} pinned this message`
             case 'MessageActionGroupCallScheduled':
                 let date = data.action.scheduleDate * 1000
                 return `Live stream scheduled on ${getDate(date, false, true)}, ${formatTime(date)}`

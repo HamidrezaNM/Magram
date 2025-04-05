@@ -263,13 +263,13 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={e => { if (!e.target.closest('.bubble')) handleReply() }}>
             {(!isOutMessage.current && !noAvatar) && (
                 <div className={"message-from-profile" + (isSameFromNextMsg ? ' hidden' : '')}>
-                    <Profile entity={data.sender} name={data.sender?.firstName ?? data.sender?.title ?? 'Anonymous'} id={data.sender?.id?.value} size={42} />
+                    <Profile entity={data.sender ?? data.chat} name={data.sender?.firstName ?? data.sender?.title ?? data.chat?.title ?? 'Anonymous'} id={data.sender?.id?.value ?? data.chat?.id?.value} size={42} />
                 </div>
             )}
             <div className={buildClassName("bubble", noAvatar && 'noAvatar')}>
                 <div className="bubble-content">
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
-                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value))}><FullNameTitle chat={data._sender ?? { title: 'Anonymous' }} /></div>}
+                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value ?? data.chat?.id))}><FullNameTitle chat={data._sender ?? data.chat ?? { title: 'Anonymous' }} /></div>}
                         {data.replyTo && (!isThread || data.replyToMessage) && <div className={buildClassName("message-reply", getChatColor(data.replyToMessage?._sender?.id?.value ?? 0), (data.media && 'withMargin'))} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
                             <div className="MessageLine"></div>
                             <div className="body">

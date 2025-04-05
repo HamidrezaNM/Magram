@@ -416,7 +416,7 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             return
 
         (async () => {
-            const param = size ? { thumb: media.document.thumbs[0] } : {}
+            const param = size ? { thumb: new Api.PhotoSize({ type: 'm' }) } : {}
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
             if (!result) return
@@ -434,7 +434,7 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
 
     return <>
         {!content ?
-            <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} className={'blurred'} />
+            <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
             :
             <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={isLoaded && autoplay} loop={autoplay} />
         }

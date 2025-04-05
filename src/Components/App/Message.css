@@ -187,6 +187,10 @@
     line-height: 1.2;
 }
 
+.message-details .message-views .icon {
+    line-height: .875;
+}
+
 .message-reply {
     font-size: 13px;
     display: flex;

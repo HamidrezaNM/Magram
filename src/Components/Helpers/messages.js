@@ -62,6 +62,10 @@ export function isDocumentSticker(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeSticker')
 }
 
+export function isDocumentAudio(document) {
+    return document.attributes?.find(i => i.className === 'DocumentAttributeAudio')
+}
+
 export function isDocumentVoice(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeAudio')?.voice
 }
@@ -77,6 +81,8 @@ export function getMediaType(media) {
             if (isDocumentVideo(media.document)) return 'Video'
             if (isDocumentPhoto(media.document)) return 'Photo'
             if (isDocumentVoice(media.document)) return 'Voice'
+            if (isDocumentAudio(media.document)) return 'Music'
+            return 'Document'
         case 'MessageMediaPoll':
             return 'Poll'
         default:

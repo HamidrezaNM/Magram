@@ -59,4 +59,6 @@ export async function openUrl(url, dispatch) {
             dispatch(handleToast({ icon: 'error', title: 'This link is not currently supported.' }))
             break;
     }
+
+    return true;
 }

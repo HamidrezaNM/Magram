@@ -115,7 +115,7 @@
     content: '';
     height: 48px;
     position: absolute;
-    width: 2px;
+    width: 3px;
     top: 0;
     background: linear-gradient(to bottom, var(--surface-color), transparent 10%, transparent 90%, var(--surface-color));
 }
