@@ -56,6 +56,18 @@ function Chat({ info, isActive }) {
         setOpenDeleteModal(true)
     }
 
+    const handleArchive = async (turn) => {
+        handleContextMenuClose()
+        const result = await client.invoke(new Api.folders.EditPeerFolders({
+            folderPeers: [new Api.InputFolderPeer({
+                folderId: Number(turn),
+                peer: info.inputEntity
+            })]
+        }))
+
+        console.log(result)
+    }
+
     const onLeaveGroup = () => {
         dispatch(removeChat(info.id.value))
         setOpenDeleteModal(false)
@@ -77,8 +89,12 @@ function Chat({ info, isActive }) {
                 <ChatContextMenu
                     canMute={true}
                     canMarkAsRead={true}
+                    canArchive={!info.archived}
+                    canUnarchive={info.archived}
                     canPin={true}
                     canDelete={true}
+                    onArchive={() => handleArchive(true)}
+                    onUnarchive={() => handleArchive(false)}
                     onDelete={handleDelete}
                 />
             </>

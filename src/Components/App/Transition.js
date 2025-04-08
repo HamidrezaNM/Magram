@@ -14,7 +14,7 @@ export default function Transition({ state, action, activeAction, eachElement = 
                     item.classList.add('animate', 'hideAnim')
                 })
             } else {
-                element.current.firstElementChild.classList.add('animate', 'hideAnim')
+                element.current.firstElementChild?.classList?.add('animate', 'hideAnim')
                 // element.current.firstElementChild.classList.add('hideAnim')
             }
             setTimeout(() => {

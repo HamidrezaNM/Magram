@@ -12,12 +12,17 @@ export function getChatIdFromPeer(peer) {
     return utils.getPeerId(peer)
 }
 
-export function getPeerId(peerId) {
-    switch (peerId.className) {
+export function getPeerId(peer) {
+    switch (peer.className) {
         case 'PeerUser':
-            return peerId.userId.value
+        case 'InputPeerUser':
+            return peer.userId.value
+        case 'PeerChat':
+        case 'InputPeerChat':
+            return peer.chatId.value
         case 'PeerChannel':
-            return peerId.channelId.value
+        case 'InputPeerChannel':
+            return peer.channelId.value
         default:
             break;
     }

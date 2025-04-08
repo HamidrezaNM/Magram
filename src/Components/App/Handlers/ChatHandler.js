@@ -33,9 +33,11 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             dispatch(chatAdded(chat))
                         }
                         break;
-                    case 'UpdateReadHistoryOutbox':
-                        dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
-                        dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
+                    case 'UpdateReadHistory':
+                        dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId, unreadCount: update.stillUnreadCount }))
+                        if (activeChat)
+                            dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
+                        console.log('updated unread count', update.stillUnreadCount, getChatIdFromPeer(update.peer))
                         break;
                     case 'UpdateUserTyping':
                         dispatch(handleTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
@@ -43,11 +45,15 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             dispatch(removeTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
                         }, 5000); break
                     case 'UpdateChannelUserTyping':
-                        const user = await client.getEntity(update.fromId)
-                        dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                        setTimeout(() => {
-                            dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                        }, 5000);
+                        try {
+                            const user = await client.getEntity(update.fromId)
+                            dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                            setTimeout(() => {
+                                dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                            }, 5000);
+                        } catch (error) {
+
+                        }
                         break
                     default:
                         break;

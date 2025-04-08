@@ -9,6 +9,7 @@ import Composer from "./MiddleColumn/Composer";
 import { useSelector } from "react-redux";
 import Messages from "./Messages";
 import { generateChatWithPeer } from "../Helpers/chats";
+import buildClassName from "../Util/buildClassName";
 
 function MiddleColumn({ }) {
     const [composerChat, setComposerChat] = useState()
@@ -16,10 +17,15 @@ function MiddleColumn({ }) {
     const MessagesRef = useRef()
     const BottomRef = useRef();
     const scrollToBottom = useRef();
+    const background = useRef();
+    const canvas = useRef();
 
     const activeChat = useSelector((state) => state.ui.activeChat)
     const chats = useSelector((state) => state.chats.value)
     const thread = useSelector((state) => state.ui.thread)
+    const darkMode = useSelector((state) => state.ui.darkMode)
+
+    const maskPattern = darkMode
 
     const handleScrollToBottom = () => {
         MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "smooth" })
@@ -39,8 +45,29 @@ function MiddleColumn({ }) {
             setComposerChat(activeChat)
     }, [thread, activeChat])
 
+    useEffect(() => {
+        if (!canvas.current) return
+
+        var ctx = canvas.current.getContext("2d");
+
+        var length = background.current.clientWidth, angle = 0;
+        var grd = ctx.createLinearGradient(0, 0, 0 + Math.cos(angle) * length, 0 + Math.sin(angle) * length);
+
+        grd.addColorStop(0, "#3d2471");
+        grd.addColorStop(1, "#002b29");
+        // grd.addColorStop(.66, "#962fbf");
+        // grd.addColorStop(1, "#4f5bd5");
+
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, background.current.clientWidth, background.current.clientHeight);
+    }, [background.current?.clientWidth, maskPattern])
+
     return <>
-        <div className="background purple"></div>
+        <div className={buildClassName("background", "purple", maskPattern && "has-mask-pattern")} ref={background}>
+            {maskPattern && <div className="MaskPattern">
+                <canvas width={background.current?.clientWidth} height={background.current?.clientHeight} ref={canvas}></canvas>
+            </div>}
+        </div>
         {activeChat && <div className="Content">
             <div className="TopBar">
                 <ChatInfo key={activeChat.id.value} />

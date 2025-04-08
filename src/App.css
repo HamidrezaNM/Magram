@@ -213,7 +213,19 @@
   width: 100%;
   position: absolute;
   height: 100%;
+  overflow: hidden;
   z-index: -1;
+}
+
+.background.has-mask-pattern {
+  background: #111;
+}
+
+.background .MaskPattern {
+  mask-image: url(./assets/ChatBGPatternMask.svg);
+  mask-size: 510px;
+  mask-size: contain;
+  mask-position: center;
 }
 
 .background::after {
@@ -225,6 +237,10 @@
   mix-blend-mode: plus-lighter;
   background-repeat: repeat;
   background-size: 510px;
+}
+
+.background.has-mask-pattern::after {
+  display: none;
 }
 
 .background {
@@ -842,20 +858,55 @@
   flex: 1;
 }
 
-.Page .Tabs {
+.Tabs {
   display: flex;
   gap: 8px;
   padding: 8px;
 }
 
-.Page .Tab {
+.Tab {
   background-color: var(--secondary);
   padding: 8px;
   border-radius: 8px;
+  transition: all .3s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
-.Page .Tab.active {
+.Tab:hover {
+  background-color: var(--on-primary);
+}
+
+.Tab.active {
   background-color: var(--primary-container);
+}
+
+.TabContainer,
+.TabContent {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.TabContent {
+  left: 0;
+  width: 100%;
+  transition: left .3s ease;
+}
+
+.next .TabContent.hideAnim,
+.prev .TabContent.showAnim {
+  position: absolute;
+  left: -100%;
+  top: 51px;
+}
+
+.next .TabContent.showAnim,
+.prev .TabContent.hideAnim {
+  position: absolute;
+  left: 100%;
+  top: 51px;
 }
 
 .Page.animate {

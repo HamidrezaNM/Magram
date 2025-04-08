@@ -49,13 +49,13 @@ export const chatsSlice = createSlice({
         updateChatRead: (state, action) => {
             const chat = state.value[action.payload.chatId]
             if (chat) {
-                state.value[action.payload.chatId] = { ...chat, dialog: { ...chat.dialog, readOutboxMaxId: action.payload.maxId } }
+                state.value[action.payload.chatId] = { ...chat, dialog: { ...chat.dialog, readOutboxMaxId: action.payload.maxId }, unreadCount: action.payload.unreadCount ?? chat.unreadCount }
             }
         },
         updateLastMessage: (state, action) => {
             const chat = state.value[action.payload.id]
             if (chat) {
-                state.value[action.payload.id] = { ...chat, message: action.payload.message, unreadCount: action.payload.unread ? chat.unreadCount + 1 : 0 }
+                state.value[action.payload.id] = { ...chat, message: action.payload.message, unreadCount: action.payload.unread ? chat.unreadCount + 1 : chat.unreadCount }
             }
         },
         updateChatUnreadCount: (state, action) => {
