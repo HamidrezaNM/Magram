@@ -765,7 +765,7 @@
   background-color: var(--secondary);
   position: absolute;
   left: 0;
-  z-index: 1;
+  z-index: 2;
   user-select: none;
   transition: all .3s ease;
 }
@@ -862,6 +862,10 @@
   display: flex;
   gap: 8px;
   padding: 8px;
+  position: sticky;
+  top: -48px;
+  background-color: var(--secondary);
+  z-index: 1;
 }
 
 .Tab {
@@ -892,6 +896,7 @@
 .TabContent {
   left: 0;
   width: 100%;
+  scroll-snap-align: center;
   transition: left .3s ease;
 }
 

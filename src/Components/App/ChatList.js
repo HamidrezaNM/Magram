@@ -117,7 +117,7 @@ function ChatList() {
     }
 
     return <div className="ChatList" ref={ChatListRef}>
-        <Tabs index={folderTabIndex} tabs={<>
+        <Tabs index={folderTabIndex} setIndex={setFolderTabIndex} tabs={<>
             {folders?.length > 1 && folders.map((folder, index) =>
                 <div className={buildClassName(
                     "Tab",
@@ -129,7 +129,7 @@ function ChatList() {
             )}
         </>
         }>
-            <TabContent state={folderTabIndex === 0}>
+            <TabContent state={folderTabIndex === 0 || true}>
                 {archives?.length > 0 && <div className="Archives">
                     <div className={buildClassName("Chat showAnim", showArchives && 'active')} onClick={() => { setShowArchives(!showArchives); ChatListRef.current.classList.add('Animating') }}>
                         <div className="body">
@@ -153,7 +153,7 @@ function ChatList() {
             </TabContent>
             {folders.map((folder, index) =>
                 index !== 0 &&
-                <TabContent state={folderTabIndex === index}>
+                <TabContent state={folderTabIndex === index || true}>
                     {renderFolderChats(index)}
                     {Object.keys(chats).length === 0 &&
                         <ChatsLoading />
