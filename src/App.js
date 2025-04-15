@@ -28,7 +28,7 @@ const API_HASH = process.env.REACT_APP_API_HASH
 
 const deviceData = GetDeviceData()
 
-export const client = new TelegramClient(SESSION, API_ID, API_HASH, {
+export const client = new TelegramClient(SESSION, Number(API_ID), API_HASH, {
   appVersion: packageInfo?.version ?? '1.0',
   deviceModel: deviceData.browser + (deviceData.browserMajorVersion ? ' ' + deviceData.browserMajorVersion : ''),
   systemVersion: deviceData.os + (deviceData.osVersion ? ' ' + deviceData.osVersion : '')

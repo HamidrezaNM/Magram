@@ -145,7 +145,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                         }
                     );
 
-                    setIsLoaded(true)
+                    setIsLoaded(false)
                     if (result?.length) {
                         dispatch(unshiftMessages({ chatId: activeChat.id.value, messages: result.reverse() }))
                         setMessagesRenderCount(messages.length + result.length < messagesRenderCount * 2 ? messages.length + result.length : messagesRenderCount * 2)

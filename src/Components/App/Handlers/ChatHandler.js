@@ -33,9 +33,11 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             dispatch(chatAdded(chat))
                         }
                         break;
-                    case 'UpdateReadHistoryOutbox':
-                        dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId }))
-                        dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
+                    case 'UpdateReadHistory':
+                        dispatch(updateChatRead({ chatId: getChatIdFromPeer(update.peer), maxId: update.maxId, unreadCount: update.stillUnreadCount }))
+                        if (activeChat)
+                            dispatch(setActiveChat({ ...activeChat, dialog: { ...activeChat.dialog, readOutboxMaxId: update.maxId } }))
+                        console.log('updated unread count', update.stillUnreadCount, getChatIdFromPeer(update.peer))
                         break;
                     case 'UpdateUserTyping':
                         dispatch(handleTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
@@ -49,9 +51,7 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             setTimeout(() => {
                                 dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
                             }, 5000);
-                        } catch (error) {
-                            console.log(error)
-                        }
+                        } catch (error) { }
                         break
                     default:
                         break;

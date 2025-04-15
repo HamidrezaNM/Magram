@@ -19,12 +19,14 @@ import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
 import { getMediaDimensions, getMediaType, isDocumentPhoto } from "../Helpers/messages";
 import { deleteMessage, retractVote } from "../Util/messages";
-import { getChatType } from "../Helpers/chats";
+import { generateChatWithPeer, getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
 import FullNameTitle from "../common/FullNameTitle";
 import buildClassName from "../Util/buildClassName";
 import InlineButtons from "./Message/InlineButtons";
+import { formatTime } from "../Util/dateFormat";
+import { viewChat } from "./ChatList";
 
 function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false, isiOS }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -304,6 +306,12 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 <div className="bubble-content">
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
                         {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value ?? data.chat?.id))}><FullNameTitle chat={data._sender ?? data.chat ?? { title: 'Anonymous' }} /></div>}
+                        {data.fwdFrom && <div className={buildClassName("message-forward", (data.media && 'withMargin'))} onClick={() => viewChat(generateChatWithPeer(data._forward._chat), dispatch)}>
+                            <div className="title">
+                                <div>Forward from - {`${getDate(data.fwdFrom.date * 1000, true, true)} ${formatTime(data.fwdFrom.date * 1000)}`}</div>
+                                <div>{data._forward?._chat?.title ?? data._forward?._sender?.firstName}</div>
+                            </div>
+                        </div>}
                         {data.replyTo && (!isThread || data.replyToMessage) && <div className={buildClassName("message-reply", getChatColor(data.replyToMessage?._sender?.id?.value ?? 0), (data.media && 'withMargin'))} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
                             <div className="MessageLine"></div>
                             <div className="body">

@@ -191,7 +191,8 @@
     line-height: .875;
 }
 
-.message-reply {
+.message-reply,
+.message-forward {
     font-size: 13px;
     display: flex;
     align-items: center;
@@ -209,11 +210,20 @@
     transition: all 0.3s ease;
 }
 
-.message-reply:hover {
+.message-forward {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bc);
+    padding: 2px 4px;
+}
+
+.message-reply:hover,
+.message-forward:hover {
     background-color: var(--on-primary);
 }
 
-.message-reply.withMargin {
+.message-reply.withMargin,
+.message-forward.withMargin {
     margin-bottom: 0.86rem;
 }
 
@@ -670,6 +680,7 @@
     background-color: var(--surface-color);
     padding: 4px;
     font-size: 16px;
+    user-select: none;
 }
 
 .Message .InlineButtons {

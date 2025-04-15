@@ -33,8 +33,16 @@ function UpdateManager() {
                 })
                 break;
             case 'UpdateReadHistoryOutbox':
+            case 'UpdateReadHistoryInbox':
                 chatHandler.current.onUpdate({
-                    type: 'UpdateReadHistoryOutbox',
+                    type: 'UpdateReadHistory',
+                    ...update
+                })
+                break;
+            case 'UpdateReadChannelInbox':
+                chatHandler.current.onUpdate({
+                    type: 'UpdateReadHistory',
+                    peer: new Api.PeerChannel({ channelId: update.channelId }),
                     ...update
                 })
                 break;

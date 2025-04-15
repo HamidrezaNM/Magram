@@ -7,9 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { setChats } from "../Stores/Chats";
 import { setActiveChat } from "../Stores/UI";
 import buildClassName from "../Util/buildClassName";
+import Tabs from "../UI/Tabs";
+import { Api } from "telegram";
+import { getPeerId } from "../Helpers/chats";
+import TabContent from "../UI/TabContent";
 
 function ChatList() {
     const [showArchives, setShowArchives] = useState(false)
+    const [folderTabIndex, setFolderTabIndex] = useState(0)
+    const [folders, setFolders] = useState([])
 
     const ChatListRef = useRef()
 
@@ -39,6 +45,10 @@ function ChatList() {
     useEffect(() => {
         (async () => {
             try {
+                const getFolders = await client.invoke(new Api.messages.GetDialogFilters())
+                setFolders(getFolders.filters)
+                console.log(getFolders)
+
                 const getChats = await client.getDialogs()
                 ChatListRef.current.classList.add('Animating')
                 dispatch(setChats(getChats))
@@ -50,7 +60,6 @@ function ChatList() {
 
     useEffect(() => {
         if (Object.keys(chats).length > 0) {
-            // ChatListRef.current.classList.add('Animating')
             const items = ChatListRef.current.querySelectorAll('.ChatList.Animating .Chat')
             const itemsLength = Object.keys(items).length
 
@@ -66,27 +75,92 @@ function ChatList() {
         }
     }, [chats, showArchives])
 
-    return <div className="ChatList" ref={ChatListRef}>
-        {archives?.length > 0 && <div className="Archives">
-            <div className={buildClassName("Chat showAnim", showArchives && 'active')} onClick={() => { setShowArchives(!showArchives); ChatListRef.current.classList.add('Animating') }}>
-                {/* <div className="meta">
-                    <div className="profile">
-                        <Icon name="archive" size={28} />
-                    </div>
-                </div> */}
-                <div className="body">
-                    <div className="info">
-                        <div className="title">Archived Chats</div>
-                    </div>
-                </div>
-            </div>
-        </div>}
-        {allChats.filter(chat => !!chat.archived === showArchives).map((item) => (
-            !item.entity?.migratedTo && <Chat key={item.id?.value} info={item} isActive={Number(activeChatId) == item.id.value} />
-        ))}
-        {Object.keys(chats).length === 0 &&
-            <ChatsLoading />
+    const renderFolderChats = (index) => {
+        const folder = folders[index]
+
+        let folderChats = []
+
+        const includePeerIds = folders &&
+            index !== 0 &&
+            folder.includePeers.length &&
+            folder.includePeers.map(
+                peer =>
+                    getPeerId(peer)
+            )
+
+        const includePeerChats = includePeerIds &&
+            allChats.filter(chat =>
+                includePeerIds.includes(chat.entity?.id?.value))
+
+        folderChats = includePeerChats
+
+        if (folder.excludeRead) {
+            let chats = folderChats?.length > 0 ? folderChats : allChats
+
+            folderChats = chats.filter(chat => chat.unreadCount !== 0)
         }
+
+        if (folder.excludeArchived) {
+            let chats = folderChats?.length > 0 ? folderChats : allChats
+
+            folderChats = chats.filter(chat => !chat.archived)
+        }
+
+        return folderChats?.length && folderChats.map((item) => (
+            !item.entity?.migratedTo &&
+            <Chat
+                key={item.id?.value}
+                info={item}
+                isActive={Number(activeChatId) == item.id.value}
+            />
+        ))
+    }
+
+    return <div className="ChatList" ref={ChatListRef}>
+        <Tabs index={folderTabIndex} setIndex={setFolderTabIndex} tabs={<>
+            {folders?.length > 1 && folders.map((folder, index) =>
+                <div className={buildClassName(
+                    "Tab",
+                    folderTabIndex === index &&
+                    'active'
+                )} onClick={() => setFolderTabIndex(index)}>
+                    {folder?.title?.text ?? 'All Chats'}
+                </div>
+            )}
+        </>
+        }>
+            <TabContent state={folderTabIndex === 0 || true}>
+                {archives?.length > 0 && <div className="Archives">
+                    <div className={buildClassName("Chat showAnim", showArchives && 'active')} onClick={() => { setShowArchives(!showArchives); ChatListRef.current.classList.add('Animating') }}>
+                        <div className="body">
+                            <div className="info">
+                                <div className="title">Archived Chats</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+                {allChats.filter(chat => !!chat.archived === showArchives).map((item) => (
+                    !item.entity?.migratedTo &&
+                    <Chat
+                        key={item.id?.value}
+                        info={item}
+                        isActive={Number(activeChatId) == item.id.value}
+                    />
+                ))}
+                {Object.keys(chats).length === 0 &&
+                    <ChatsLoading />
+                }
+            </TabContent>
+            {folders.map((folder, index) =>
+                index !== 0 &&
+                <TabContent state={folderTabIndex === index || true}>
+                    {renderFolderChats(index)}
+                    {Object.keys(chats).length === 0 &&
+                        <ChatsLoading />
+                    }
+                </TabContent>
+            )}
+        </Tabs>
     </div>
 }
 

@@ -14,7 +14,7 @@ export default function Transition({ state, onDeactivate, action, activeAction, 
                     item.classList.add('animate', 'hideAnim')
                 })
             } else {
-                element.current.firstElementChild.classList.add('animate', 'hideAnim')
+                element.current.firstElementChild?.classList?.add('animate', 'hideAnim')
                 // element.current.firstElementChild.classList.add('hideAnim')
             }
             if (onDeactivate)
