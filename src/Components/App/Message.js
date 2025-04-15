@@ -26,7 +26,7 @@ import FullNameTitle from "../common/FullNameTitle";
 import buildClassName from "../Util/buildClassName";
 import InlineButtons from "./Message/InlineButtons";
 
-function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false }) {
+function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false, isiOS }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -41,6 +41,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     const isAdmin = useSelector((state) => state.ui.activeChat?.isAdmin) ?? false // TODO: Replace it to Permissions
 
     const MessageEl = useRef()
+    const Bubble = useRef()
     const messageText = useRef()
     const messageMedia = useRef()
 
@@ -54,10 +55,32 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     console.log('Message Rerendered')
 
     useEffect(() => {
-        MessageEl.current.removeEventListener('contextmenu', messageMenu)
-        MessageEl.current.addEventListener('contextmenu', messageMenu)
+        var isLongPressTimeout
+        var holdTimeout
+
         if (document.body.clientWidth <= 480) {
-            MessageEl.current.onclick = messageMenu
+            if (isiOS) {
+                MessageEl.current.ontouchstart = e => {
+                    if (e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a')) return
+
+                    isLongPressTimeout = setTimeout(() => {
+                        MessageEl.current.classList.add('hold')
+                        holdTimeout = setTimeout(() => {
+                            MessageEl.current.classList.remove('hold')
+                            messageMenu(e)
+                        }, 500);
+                    }, 40);
+                }
+                MessageEl.current.ontouchend = MessageEl.current.ontouchmove = () => {
+                    MessageEl.current.classList.remove('hold')
+                    clearTimeout(isLongPressTimeout)
+                    clearTimeout(holdTimeout)
+                }
+            } else
+                MessageEl.current.onclick = messageMenu
+        } else {
+            MessageEl.current.removeEventListener('contextmenu', messageMenu)
+            MessageEl.current.addEventListener('contextmenu', messageMenu)
         }
     }, [data.message, isPinned.current])
 
@@ -165,7 +188,8 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                         canUnpin={isAdmin && isPinned.current}
                         canRetractVote={data.media?.results?.results}
                         canEdit={User.id.value === data._senderId?.value}
-                        canDelete={User.id.value === data._senderId?.value || isAdmin}
+                        canForward={true}
+                        canDelete={User.id.value === data._senderId?.value || isAdmin || true}
                         onReply={handleReply}
                         onCopy={handleCopy}
                         onSavePhoto={handleSave}
@@ -176,7 +200,17 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                     />
                 </>
             )
-            dispatch(handleContextMenu({ items, e }))
+
+            if (isiOS) {
+                const rect = Bubble.current.getBoundingClientRect()
+
+                var top = rect.top + rect.height
+                var left = rect.left + rect.width
+                var height = MessageEl.offsetHeight
+
+                dispatch(handleContextMenu({ items, e, top, left, height, activeElement: MessageEl.current }))
+            } else
+                dispatch(handleContextMenu({ items, e }))
         } else if (e.target.closest('.message-from-profile')) {
             const items = (
                 <>
@@ -266,7 +300,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                     <Profile entity={data.sender ?? data.chat} name={data.sender?.firstName ?? data.sender?.title ?? data.chat?.title ?? 'Anonymous'} id={data.sender?.id?.value ?? data.chat?.id?.value} size={42} />
                 </div>
             )}
-            <div className={buildClassName("bubble", noAvatar && 'noAvatar')}>
+            <div ref={Bubble} className={buildClassName("bubble", noAvatar && 'noAvatar')}>
                 <div className="bubble-content">
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
                         {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value ?? data.chat?.id))}><FullNameTitle chat={data._sender ?? data.chat ?? { title: 'Anonymous' }} /></div>}

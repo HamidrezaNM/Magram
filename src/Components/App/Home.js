@@ -4,6 +4,7 @@ import { Icon, Profile } from "./common";
 import './LeftColumn.css'
 import './MiddleColumn.css'
 import '../../MATheme.css'
+import '../../CustomTheme.css'
 import { useRef } from "react";
 import { useContext } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
@@ -56,6 +57,7 @@ import MiddleColumn from "./MiddleColumn";
 import Toasts from "../UI/Toasts";
 import Dialogs from "../UI/Dialogs";
 import UpdateManager from "./UpdateManager";
+import buildClassName from "../Util/buildClassName";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -93,6 +95,9 @@ function Home() {
     const background = useSelector((state) => state.ui.background)
     const mediaPreview = useSelector((state) => state.ui.mediaPreview)
     const darkMode = useSelector((state) => state.ui.darkMode)
+    const customTheme = useSelector((state) => state.ui.customTheme)
+
+    const themeOptions = Object.keys(customTheme).filter(key => customTheme[key]);
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -246,7 +251,7 @@ function Home() {
         })
 
         client.addEventHandler((update) => {
-            if (update.constructor === UpdateConnectionState) {
+            if (update instanceof UpdateConnectionState) {
                 setConnectionState(update.state === 1 ? 'connected' : 'Connecting...')
             }
         });
@@ -263,7 +268,7 @@ function Home() {
     return (
         <ThemeProvider theme={darkTheme}>
             <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint}>
-                <div className="Home animate" ref={homeRef}>
+                <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
                     <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
                     <Transition state={showCall} action={() => dispatch(handleCall())}>
                         <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
@@ -276,7 +281,6 @@ function Home() {
                         <MediaPreview />
                     </Transition>
 
-                    <ContextMenu />
                     <Toasts />
                     <Dialogs />
                     {background &&

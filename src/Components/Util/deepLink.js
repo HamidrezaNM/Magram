@@ -25,7 +25,8 @@ function parseHttpLink(link) {
                 type: 'publicUsernameOrBotLink',
                 username: pathParams[0],
                 start: queryParams.start,
-                text: queryParams.text
+                text: queryParams.text,
+                startApp: queryParams.startapp
             }
         case 'privateChannelLink':
             return {
@@ -65,6 +66,8 @@ function getHttpLinkType(queryParams, pathParams) {
             case 'joinchat':
                 return 'joinchatLink'
         }
+        if (isUsernameValid(method))
+            return 'publicUsernameOrBotLink'
     }
 
 }

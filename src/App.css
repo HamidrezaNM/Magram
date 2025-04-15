@@ -15,6 +15,7 @@
   --secondary-text: #aaa;
   --on-primary: #272727;
   --active-primary: #373737;
+  --theme: #000;
   --text-color: #d5d5d5;
   --dyn-text-color: #d5d5d5;
   --app-background: linear-gradient(109.6deg, #0e1214 11.2%, #0b1116 51.2%, rgb(3 15 26) 98.6%);
@@ -57,6 +58,7 @@
   --secondary-text: #aaa;
   --on-primary: #f1f1f1;
   --active-primary: #eee;
+  --theme: #fff;
   --text-color: #000;
   --dyn-text-color: #000;
   --background: #fff;
@@ -1178,6 +1180,24 @@ a:hover {
 
 .MediaPreview.animate .Content {
   transform: scale(0.95);
+}
+
+.BackButton {
+  display: flex;
+  color: var(--primary);
+  align-items: center;
+  font-size: 18px;
+  transition: opacity .2s ease;
+}
+
+.BackButton:hover {
+  opacity: .5;
+}
+
+.BackButton .icon {
+  font-size: 28px !important;
+  margin: 0;
+  padding: 0;
 }
 
 .Spoiler {

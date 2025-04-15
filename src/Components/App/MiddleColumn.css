@@ -61,7 +61,7 @@
 .MiddleColumn .TopBar .PinnedMessage {
     display: flex;
     background-color: var(--surface-color);
-    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--active-primary);
     height: 48px;
     align-items: center;
     gap: 8px;

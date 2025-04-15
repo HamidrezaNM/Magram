@@ -22,6 +22,15 @@
         z-index: 0;
     }
 
+    .LeftColumn .Chats {
+        padding-block: 48px;
+        scroll-snap-type: y mandatory;
+    }
+
+    .ChatList {
+        scroll-snap-align: center;
+    }
+
     /* .MiddleColumn {
         display: none;
     }

@@ -55,8 +55,6 @@
 
 .LeftColumn .Chats {
     height: calc(100% - 54px);
-    padding-block: 48px;
-    scroll-snap-type: y mandatory;
 }
 
 .LeftColumn.Compact .Chats.scrollable {
@@ -66,7 +64,6 @@
 .ChatList {
     display: flex;
     flex-direction: column;
-    scroll-snap-align: center;
     min-height: calc(100% + 96px);
 }
 

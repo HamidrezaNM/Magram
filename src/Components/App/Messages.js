@@ -11,6 +11,7 @@ import { Api } from "telegram";
 import { readHistory } from "../Util/messages";
 import buildClassName from "../Util/buildClassName";
 import { getChatType } from "../Helpers/chats";
+import ContextMenu from "./MiddleColumn/ContextMenu";
 
 const Messages = forwardRef(({ MessagesRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -21,6 +22,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
     const messages = useSelector((state) => state.messages.value[activeChat.id.value])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     const dispatch = useDispatch()
 
@@ -247,6 +249,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                                 prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
                                 prevMsgDate={messages[messageStartIndex + index - 1]?.date}
                                 nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
+                                isiOS={iOSTheme}
                             />
                             {
                                 item.id === activeChat?.dialog?.readInboxMaxId &&
@@ -271,6 +274,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     </div>
                 </div>
             </div>)}
+        <ContextMenu />
     </div>
 
 })

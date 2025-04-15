@@ -10,6 +10,7 @@ import { client } from "../../../App";
 import { Api } from "telegram";
 import { readHistory } from "../../Util/messages";
 import { setMessages } from "../../Stores/Messages";
+import ContextMenu from "./ContextMenu";
 
 const Thread = forwardRef(({ ThreadRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -25,6 +26,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
 
     const messages = useSelector((state) => state.messages.value[chatId])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     const dispatch = useDispatch()
 
@@ -189,7 +191,13 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
         </div>
         {messages ? <>
             {messages.slice(0, Math.max(messagesRenderCount, 0)).map((item, index) => (
-                <Message isThread={true} key={thread.chatId?.value + '_' + item?.id} data={item} prevMsgFrom={messages[index - 1]?._senderId?.value} prevMsgDate={messages[index - 1]?.date} nextMsgFrom={messages[index + 1]?._senderId?.value} />
+                <Message
+                    isThread={true}
+                    key={thread.chatId?.value + '_' + item?.id}
+                    data={item} prevMsgFrom={messages[index - 1]?._senderId?.value}
+                    prevMsgDate={messages[index - 1]?.date}
+                    nextMsgFrom={messages[index + 1]?._senderId?.value}
+                    isiOS={iOSTheme} />
             ))}
             {!isLoaded && <div className="loading">
                 {<MessagesLoading />}
@@ -199,6 +207,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
             !isLoaded && <div className="loading">
                 {<MessagesLoading />}
             </div>}
+        <ContextMenu />
     </div>
 
 })

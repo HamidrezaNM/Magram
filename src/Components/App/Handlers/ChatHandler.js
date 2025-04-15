@@ -43,11 +43,15 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             dispatch(removeTypingStatus({ chatId: Number(update.userId), typing: Number(update.userId) }))
                         }, 5000); break
                     case 'UpdateChannelUserTyping':
-                        const user = await client.getEntity(update.fromId)
-                        dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                        setTimeout(() => {
-                            dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
-                        }, 5000);
+                        try {
+                            const user = await client.getEntity(update.fromId)
+                            dispatch(handleTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                            setTimeout(() => {
+                                dispatch(removeTypingStatus({ chatId: getChatIdFromPeer(update.channelId), typing: user?.firstName }))
+                            }, 5000);
+                        } catch (error) {
+                            console.log(error)
+                        }
                         break
                     default:
                         break;

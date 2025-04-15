@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { handleContextMenu } from "../../Stores/UI";
+import Transition from "../Transition";
 
 function ContextMenu() {
 
@@ -10,14 +11,24 @@ function ContextMenu() {
 
     const contextMenuDiv = useRef();
     const contextMenuBG = useRef();
+    const activeElement = useRef();
 
-    useEffect(() => {
-        if (!contextMenu) return;
+    const onChange = () => {
+        if (!contextMenu) {
+            if (activeElement.current) {
+                activeElement.current.classList.remove('active')
+                activeElement.current.style = ''
+                Array.from(activeElement.current.children).forEach(item => {
+                    item.style.top = '0'
+                })
+            }
+            return
+        };
         let e = contextMenu.e
-        let clientX = e.clientX
-        let clientY = e.clientY
+        let clientY = contextMenu.top || e.clientY
         let w = contextMenuDiv.current.clientWidth
         let h = contextMenuDiv.current.clientHeight
+        let clientX = contextMenu.left || e.clientX
 
         let originX = 'left'
         let originY = 'top'
@@ -26,26 +37,37 @@ function ContextMenu() {
             originX = 'right'
         }
         if (clientY > document.body.clientHeight - (h + 20)) {
-            clientY -= h
+            clientY = document.body.clientHeight - h * 2 + 20
             originY = 'bottom'
+            if (contextMenu.activeElement) {
+                contextMenu.activeElement.style.minHeight = contextMenu.height + 'px'
+                Array.from(contextMenu.activeElement.children).forEach(item => {
+                    item.style.position = 'relative'
+                    item.style.top = `${clientY - contextMenu.top}px`
+                })
+            }
         }
         requestAnimationFrame(() => {
             contextMenuBG.current?.classList.remove('animate')
             contextMenuDiv.current.classList.remove('animate')
             contextMenuDiv.current.style.height = 0;
             requestAnimationFrame(() => {
-                contextMenuDiv.current.style = `height: ${h}px; top: ${clientY}px; left: ${clientX}px;`
+                contextMenuDiv.current.style = `height: ${h}px; top: ${clientY}px; left: ${clientX}px; transform-origin: ${originY} !important`
             });
         });
-    }, [contextMenu]) // ContextMenu
 
-    return contextMenu && (<>
-        <div className="bg ContextMenuBG animate" ref={contextMenuBG} onClick={() => dispatch(handleContextMenu())}></div>
+        if (contextMenu.activeElement) {
+            activeElement.current = contextMenu.activeElement
+            contextMenu.activeElement.classList.add('active')
+        }
+    }
+
+    return <Transition state={!!contextMenu} eachElement onDeactivate={onChange} activeAction={onChange}>
+        <div className="bg ContextMenuBG" ref={contextMenuBG} onClick={() => dispatch(handleContextMenu())}></div>
         <div className="ContextMenu animate" ref={contextMenuDiv}>
-            {contextMenu.items}
+            {contextMenu?.items}
         </div>
-    </>
-    )
+    </Transition>
 }
 
 export default memo(ContextMenu)

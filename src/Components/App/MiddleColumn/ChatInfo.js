@@ -4,7 +4,7 @@ import { getChatData } from "../Chat"
 import { handleCall, handleThread, setActiveChat } from "../../Stores/UI"
 import { PageHandle } from "../Page"
 import { showUserProfile } from "../Pages/UserProfile"
-import { Icon, Profile } from "../common"
+import { BackArrow, Icon, Profile } from "../common"
 import { getDate } from "../Message"
 import { formatTime } from "../../Util/dateFormat"
 import { client, socket } from "../../../App"
@@ -29,6 +29,7 @@ function ChatInfo() {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
     const typingStatus = useSelector((state) => state.chats.value[activeChat.id.value]?.typing)
     const thread = useSelector((state) => state.ui.thread)
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
 
     const isSavedMessages = activeChat.id.value === User.id.value
     const chatType = getChatType(activeChat.entity)
@@ -36,7 +37,7 @@ function ChatInfo() {
     const dispatch = useDispatch()
 
     const showChatProfile = useCallback((e) => {
-        if (e.target.closest('.BackArrow'))
+        if (e.target.closest('.BackArrow') || e.target.closest('.BackButton'))
             return
         if (chatType === 'User' || chatType === 'Bot') {
             showUserProfile(activeChat.entity, dispatch)
@@ -98,15 +99,25 @@ function ChatInfo() {
     return <><div className="ChatInfo">
         <div className="info" onClick={showChatProfile}>
             {!thread ? <>
-                <Icon name="arrow_back" className="BackArrow" onClick={() => dispatch(setActiveChat())} />
-                <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
-                <div className="body">
-                    <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                    {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
-                </div>
+                <BackArrow title="Chats" onClick={() => dispatch(setActiveChat())} isiOS={centerTopBar} />
+                {centerTopBar ? <>
+                    <div className="body">
+                        <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
+                        {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
+                    </div>
+                    <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
+                </>
+                    : <>
+                        <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
+                        <div className="body">
+                            <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
+                            {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
+                        </div>
+                    </>
+                }
             </> :
                 <>
-                    <Icon name="arrow_back" className="BackArrow visible" onClick={() => dispatch(handleThread())} />
+                    <BackArrow className="visible" title="Back" onClick={() => dispatch(handleThread())} isiOS={centerTopBar} />
                     <div className="body">
                         <div className="title">{thread.replies.replies} Comments</div>
                     </div>

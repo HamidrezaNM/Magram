@@ -28,6 +28,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [isTyping, setIsTyping] = useState(false);
     const [botStarted, setBotStarted] = useState(false);
     const [muted, setMuted] = useState(false);
+    const [joined, setJoined] = useState(false);
 
     const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
@@ -38,6 +39,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const editMessage = useSelector((state) => state.ui.editMessage)
     const replyToMessage = useSelector((state) => state.ui.replyToMessage)
     const sendBotCommand = useSelector((state) => state.ui.sendBotCommand)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     const ikUploadRefTest = useRef()
     const messageInputEl = useRef();
@@ -250,10 +252,11 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         dispatch(setChat(chat))
     }
 
-    const handleJoinGroup = useCallback(() => {
-        client.invoke(new Api.channels.JoinChannel({
+    const handleJoinGroup = useCallback(async () => {
+        await client.invoke(new Api.channels.JoinChannel({
             channel: chat.entity?.id.value
         }))
+        setJoined(true)
     }, [User, chat])
 
     const handleToggleMute = useCallback(async () => {
@@ -352,7 +355,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     }
 
     const renderComposerButton = () => {
-        if (chat?.entity?.left && !thread)
+        if (chat?.entity?.left && !thread && !joined)
             return <div className="Button" onClick={handleJoinGroup}>Join</div>
         if (getChatType(chat?.entity) === 'Channel')
             return <div className="Button" onClick={handleToggleMute}>{muted ? 'Unmute' : 'Mute'}</div>
@@ -363,6 +366,15 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 return <div className="Button" onClick={startBot}>Start</div>
         return undefined
     }
+
+    const Emoji = <div className="emoji-button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+        <div className="icon">mood</div>
+    </div>
+
+    const Attach = <div className="attach-button" ref={attachButton}>
+        <Attachment onUpload={onUploadMedia} />
+        <Icon name="attachment" size="28" />
+    </div>
 
     return <>
         {replyToMessage && (
@@ -427,9 +439,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                             </Menu>
                         </div>
                     </>}
-                <div className="emoji-button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                    <div className="icon">mood</div>
-                </div>
+                {
+                    iOSTheme ? Attach : Emoji
+                }
                 {showEmojiPicker && <div style={{ position: 'absolute', bottom: 50 }}>
                     <Picker onEmojiSelect={(e) => { changeMessageInputHandler(messageInput + e.shortcodes) }} theme="dark" set="apple" previewPosition="none" data={EmojiData} />
                 </div>}
@@ -447,10 +459,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                         />
                         <span className="placeholder" ref={placeholderRef}>Message</span>
                     </> : <><Icon name="lock" /><span className="disabled">Text not allowed</span></>}
-                    <div className="attach-button" ref={attachButton}>
-                        <Attachment onUpload={onUploadMedia} />
-                        <Icon name="attachment" size="28" />
-                    </div>
+                    {
+                        iOSTheme ? Emoji : Attach
+                    }
                 </div>
                 <div
                     className="send-button"

@@ -109,12 +109,14 @@ const MessagesHandler = forwardRef(({ }, ref) => {
         let chatId = data.channelId && getChatIdFromPeer(new Api.PeerChannel({ channelId: data.channelId }))
 
         const updateChatLastMessage = (messageId) => {
-            if (chatId && chats[chatId].message?.id === messageId) {
-                const chatMessages = messages[chatId]
-                dispatch(updateLastMessage({
-                    id: chatId, message: chatMessages.length > 2 ? chatMessages[chatMessages.length - 2] : null
-                }))
-            }
+            try {
+                if (chatId && chats[chatId].message?.id === messageId) {
+                    const chatMessages = messages[chatId]
+                    dispatch(updateLastMessage({
+                        id: chatId, message: chatMessages.length > 2 ? chatMessages[chatMessages.length - 2] : null
+                    }))
+                }
+            } catch (error) { }
         }
 
         if (!chatId)

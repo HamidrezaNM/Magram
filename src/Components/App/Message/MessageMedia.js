@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { Icon } from "../common";
 import Transition from "../Transition";
 import { handleMediaPreview } from "../../Stores/UI";
-import { getDocumentAudioAttributes, getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentSticker, isDocumentVideo, isDocumentVoice } from "../../Helpers/messages";
+import { getDocumentAudioAttributes, getDocumentFileName, getDocumentImageAttributes, getDocumentVideoAttributes, getMediaDimensions, getPhotoDimensions, isDocumentAudio, isDocumentSticker, isDocumentVideo, isDocumentVoice } from "../../Helpers/messages";
 import { abortDownload, downloadMedia } from "../../Util/media";
 import AnimatedSticker from "./AnimatedSticker";
 import Poll from "./Poll";
@@ -130,7 +130,11 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
                 }
                 if (isDocumentVoice(media.document)) {
                     const audioAttributes = getDocumentAudioAttributes(media.document)
-                    return <Audio ref={image} media={media} details={{ duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
+                    return <Audio ref={image} media={media} isVoice details={{ duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
+                }
+                if (isDocumentAudio(media.document)) {
+                    const audioAttributes = getDocumentAudioAttributes(media.document)
+                    return <Audio ref={image} media={media} details={{ title: audioAttributes?.title, performer: audioAttributes?.performer, duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
                 }
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
             case 'MessageMediaPoll':

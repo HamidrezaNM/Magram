@@ -10,7 +10,7 @@ export const TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 375px)');
 export const WITH_AVATAR_TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 410px)');
 const AVG_VOICE_DURATION = 10;
 
-const Audio = forwardRef(({ children, media, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+const Audio = forwardRef(({ children, media, isVoice = false, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
     const [isPlaying, setIsPlaying] = useState(false)
@@ -65,7 +65,7 @@ const Audio = forwardRef(({ children, media, details, size, noAvatar = false, up
             return
         }
 
-        if (isLowQualityLoaded.current && size === 16 || uploading || !media)
+        if (size === 16 || uploading || !media)
             return
 
         (async () => {
@@ -88,7 +88,7 @@ const Audio = forwardRef(({ children, media, details, size, noAvatar = false, up
                 </div>
             }
             <audio ref={audio} src={content} loop={autoplay} onTimeUpdate={e => setPlayProgress(e.target.currentTime / e.target.duration)} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
-            <div className="details">
+            {isVoice ? <div className="details">
                 <div
                     className="waveform"
                     draggable={false}
@@ -98,6 +98,12 @@ const Audio = forwardRef(({ children, media, details, size, noAvatar = false, up
                 </div>
                 <div className="subtitle"><span>{fancyTimeFormat(details?.duration)}</span>{!isLoaded && ' - ' + (loaded ? formatBytes(loaded) + ' / ' : '') + formatBytes(details?.size)}</div>
             </div>
+                : <div className="details">
+                    <div className="title">{details.title}</div>
+                    <div className="subtitle">{details.performer}</div>
+                    <div className="subtitle"><span>{fancyTimeFormat(details?.duration)}</span>{!isLoaded && ' - ' + (loaded ? formatBytes(loaded) + ' / ' : '') + formatBytes(details?.size)}</div>
+                </div>
+            }
         </div>
     </>
 })

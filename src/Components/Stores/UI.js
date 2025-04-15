@@ -29,6 +29,11 @@ export const uiSlice = createSlice({
         mediaPreview: null,
         toasts: [],
         dialogs: [],
+        customTheme: {
+            centerTopBar: true,
+            bottomBar: true,
+            iOSTheme: true
+        },
         background: null,
         darkMode: true
     },

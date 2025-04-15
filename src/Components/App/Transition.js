@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-export default function Transition({ state, action, activeAction, eachElement = false, children }) {
+export default function Transition({ state, onDeactivate, action, activeAction, eachElement = false, children }) {
     const [isActive, setIsActive] = useState(false)
 
     const element = useRef()
@@ -17,6 +17,8 @@ export default function Transition({ state, action, activeAction, eachElement = 
                 element.current.firstElementChild.classList.add('animate', 'hideAnim')
                 // element.current.firstElementChild.classList.add('hideAnim')
             }
+            if (onDeactivate)
+                onDeactivate()
             setTimeout(() => {
                 setIsActive(false)
             }, 300);
