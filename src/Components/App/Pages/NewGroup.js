@@ -1,18 +1,20 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext, UserContext } from "../../Auth/Auth";
-import { Icon, Profile } from "../common";
+import { BackArrow, Icon, Profile } from "../common";
 import './NewGroup.css';
 import { PageClose, PageHeader, pageClose } from "../Page";
 import DropdownMenu from "../../UI/DropdownMenu";
 import Menu from "../../UI/Menu";
 import MenuItem from "../../UI/MenuItem";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../../App";
 
 export default function NewGroup() {
     const [firstname, setFirstname] = useState('')
     const [username, setUsername] = useState('')
     const [bio, setBio] = useState('')
+
+    const centerTopBar = useSelector((state) => state.ui.customTheme)
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)
@@ -47,7 +49,7 @@ export default function NewGroup() {
 
     return <div className="NewGroup fadeThrough">
         <PageHeader key={firstname + username + bio}>
-            <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch)} /></div>
+            <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
             <div className="Title"><span>New Group</span></div>
             <div className="Meta">
                 <button onClick={() => createGroup()}>Create</button>

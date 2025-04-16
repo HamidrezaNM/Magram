@@ -99,7 +99,7 @@ function ChatInfo() {
     return <><div className="ChatInfo">
         <div className="info" onClick={showChatProfile}>
             {!thread ? <>
-                <BackArrow title="Chats" onClick={() => dispatch(setActiveChat())} isiOS={centerTopBar} />
+                <BackArrow title="Back" onClick={() => dispatch(setActiveChat())} isiOS={centerTopBar} />
                 {centerTopBar ? <>
                     <div className="body">
                         <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>

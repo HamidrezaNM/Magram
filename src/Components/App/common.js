@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { client } from "../../App"
 import { profilePhoto } from "../Util/profilePhoto"
 import buildClassName from "../Util/buildClassName"
+import Transition from "./Transition"
 
 export function Icon({ name, size = 24, color = null, onClick, className = null }) {
     return <div className={"icon" + (className ? ' ' + className : '')} style={{ fontSize: size + 'px' }} onClick={onClick}>{name}</div>
@@ -44,11 +45,24 @@ export function Switch({ checked = false, setChecked }) {
     </label>
 }
 
-export function BackArrow({ onClick, className, isiOS = false, title }) {
-    return isiOS ? <div className="BackButton" onClick={onClick}>
-        <Icon name="arrow_back_ios_new" className={buildClassName("BackArrow", className)} size={24} />
-        <span>{title ?? 'Back'}</span>
-    </div>
+export function BackArrow({ onClick, className, isiOS = false, title, index = 0 }) {
+    const [state, setState] = useState(true)
+
+    const prevIndex = useRef(0)
+
+    useEffect(() => {
+        setState(index > prevIndex.current)
+
+        prevIndex.current = index
+    }, [index])
+
+    return isiOS ?
+        <Transition state={state} alwaysShow>
+            <div className="BackButton" onClick={onClick}>
+                <Icon name="arrow_back_ios_new" className={buildClassName("BackArrow", className)} size={24} />
+                <span>{title ?? 'Back'}</span>
+            </div>
+        </Transition>
         : <Icon name="arrow_back" className={buildClassName("BackArrow", className)} onClick={onClick} />
 }
 

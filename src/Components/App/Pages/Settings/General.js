@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PageClose, PageHeader } from "../../Page";
-import { Icon, Switch } from "../../common";
+import { BackArrow, Icon, Switch } from "../../common";
 import { UserContext } from "../../../Auth/Auth";
 
 export default function SettingsGeneral() {
@@ -9,6 +9,8 @@ export default function SettingsGeneral() {
     const [privateChat, setPrivateChat] = useState(false)
     const [groups, setGroups] = useState(false)
     const [channels, setChannels] = useState(false)
+
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 
@@ -18,13 +20,13 @@ export default function SettingsGeneral() {
 
     return <div className={"SettingsGeneral" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
-            <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch, true)} /></div>
+            <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
             <div className="Title"><span>General</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">
+            <span className="title">Notifications for chats</span>
             <div className="Items">
-                <span className="title">Notifications for chats</span>
                 <div className="Item"><span>Private Chats</span>
                     <Switch checked={privateChat} setChecked={setPrivateChat} />
                 </div>

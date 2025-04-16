@@ -6,7 +6,7 @@ import { Menu } from "@mui/material";
 import DropdownMenu from "../UI/DropdownMenu";
 
 function Page({ children }) {
-    return <div className="Page scrollable">
+    return <div className="Page">
         {children}
     </div>
 }

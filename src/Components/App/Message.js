@@ -53,6 +53,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     const isAction = data.action !== undefined
     const msgTime = new Date(data.date * 1000);
     const mediaPosition = data.media && getMediaPosition(data.media)
+    const isMobile = document.body.clientWidth <= 480
 
     console.log('Message Rerendered')
 
@@ -60,7 +61,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         var isLongPressTimeout
         var holdTimeout
 
-        if (document.body.clientWidth <= 480) {
+        if (isMobile) {
             if (isiOS) {
                 MessageEl.current.ontouchstart = e => {
                     if (e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a')) return
@@ -203,14 +204,15 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 </>
             )
 
-            if (isiOS) {
+            if (isMobile && isiOS) {
                 const rect = Bubble.current.getBoundingClientRect()
 
                 var top = rect.top + rect.height
                 var left = rect.left + rect.width
+                var width = rect.width
                 var height = MessageEl.offsetHeight
 
-                dispatch(handleContextMenu({ items, e, top, left, height, activeElement: MessageEl.current }))
+                dispatch(handleContextMenu({ items, e, top, left, width, height, activeElement: MessageEl.current }))
             } else
                 dispatch(handleContextMenu({ items, e }))
         } else if (e.target.closest('.message-from-profile')) {

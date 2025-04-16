@@ -105,6 +105,20 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         <Transition state={callMinimal && showCall}>
             <CallMinimal Call={CallRef} CallStream={CallStream} CallState={callState} />
         </Transition>
+        {/* <div className="BottomBar">
+            <div className="Item">
+                <Icon name="person" size={32} />
+                <div className="title">Contacts</div>
+            </div>
+            <div className="Item active">
+                <Icon name="forum" size={32} />
+                <div className="title">Chats</div>
+            </div>
+            <div className="Item">
+                <Icon name="settings" size={32} />
+                <div className="title">Settings</div>
+            </div>
+        </div> */}
     </div>
 }
 

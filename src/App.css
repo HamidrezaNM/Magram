@@ -777,9 +777,11 @@
   max-height: none;
 }
 
-.Page.scrollable,
-.SubPage.scrollable {
+.Page>div,
+.SubPage>div {
+  height: inherit;
   scrollbar-width: none;
+  overflow-y: overlay;
 }
 
 .Page .Items {
@@ -787,6 +789,7 @@
   flex-direction: column;
 }
 
+.Page .section>.title,
 .Page .Items>.title {
   font-size: 16px;
   color: #666;
@@ -827,7 +830,7 @@
 }
 
 .Page .Item.preWrap {
-  height: auto;
+  height: auto !important;
 }
 
 .Page .Item.preWrap span {
@@ -1008,6 +1011,9 @@
 
 .Page .section {
   background-color: var(--secondary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .Page .textfield {
@@ -1243,17 +1249,35 @@ a:hover {
   color: var(--primary);
   align-items: center;
   font-size: 18px;
+  cursor: pointer;
   transition: opacity .2s ease;
 }
 
-.BackButton:hover {
+.BackButton:active {
   opacity: .5;
 }
 
+.LeftColumn .TopBar {
+  position: relative;
+}
+
 .BackButton .icon {
-  font-size: 28px !important;
+  font-size: 20px !important;
   margin: 0;
   padding: 0;
+  background-color: transparent !important;
+}
+
+.BackButton span {
+  font-size: 16px;
+  position: absolute;
+  left: 20px;
+  transition: left .3s ease;
+}
+
+.BackButton.showAnim span {
+  left: 50%;
+  transition: none;
 }
 
 .Spoiler {

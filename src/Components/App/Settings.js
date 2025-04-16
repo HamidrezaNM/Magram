@@ -1,5 +1,5 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Icon, Profile } from "./common";
+import { BackArrow, Icon, Profile } from "./common";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import Page, { PageClose, PageHandle, PageHeader, SubPage, pageClose } from "./Page";
 import DropdownMenu from "../UI/DropdownMenu";
@@ -35,6 +35,7 @@ function Settings() {
     const usernameMenu = useRef()
 
     const subPage = useSelector((state) => state.ui.subPage)
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
 
     const logOut = async () => {
         await client.invoke(new Api.auth.LogOut())
@@ -112,7 +113,7 @@ function Settings() {
     return <>
         <div className={"Settings" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
             <PageHeader>
-                <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch)} /></div>
+                <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span>Settings</span></div>
                 <div className="Meta">
                     <Menu icon="more_vert">

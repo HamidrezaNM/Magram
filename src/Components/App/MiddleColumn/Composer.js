@@ -151,6 +151,8 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         var input = emoji.replace_unified(value)
         input = input.replaceAll(/<img.*?title="(.*?)"(\/?)>/g, ":$1:")
 
+        const sendIcon = iOSTheme ? 'north' : 'send'
+
         setMessageInputHandled(output)
         setMessageInput(input);
 
@@ -160,15 +162,16 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             placeholderRef.current
                 .classList.add("hidden");
 
-            if (sendButton.current.children[0].innerHTML !== "send") {
+            if (sendButton.current.children[0].innerHTML !== sendIcon) {
                 sendButton.current.children[0].classList.add("animate");
                 attachButton.current.querySelector('.icon').classList.add("hidden");
                 setTimeout(() => {
                     attachButton.current.style.display = "none";
                 }, 300);
                 setTimeout(() => {
-                    sendButton.current.children[0].innerHTML = "send";
+                    sendButton.current.children[0].innerHTML = sendIcon;
                     sendButton.current.children[0].classList.remove("animate");
+                    sendButton.current.children[0].classList.add("send");
                 }, 150);
             }
         } else {
@@ -182,6 +185,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             setTimeout(() => {
                 sendButton.current.children[0].innerHTML = "mic";
                 sendButton.current.children[0].classList.remove("animate");
+                sendButton.current.children[0].classList.remove("send");
             }, 150);
         }
     }, [messageInput]);

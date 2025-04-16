@@ -14,7 +14,7 @@ function MessageMeta({ edited, views, postAuthor, seen, time, isOutMessage }) {
         <div className="message-time">{`${toDoubleDigit(
             time.getHours()
         )}:${toDoubleDigit(time.getMinutes())}`}</div>
-        {isOutMessage.current && (
+        {isOutMessage.current && !views && (
             <MessageSeen seen={seen} />
         )}
     </div>

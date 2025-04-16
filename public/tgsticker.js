@@ -475,8 +475,12 @@ window.RLottie = (function () {
         }
 
         initApi(() => {
-            const reqId = initPlayer(options.container, options);
-            callback && callback(reqId);
+            try {
+                const reqId = initPlayer(options.container, options);
+                callback && callback(reqId);
+            } catch (error) {
+                console.log(error)
+            }
         });
     }
 

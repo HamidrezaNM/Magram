@@ -2,7 +2,7 @@ import { memo, useCallback, useContext, useEffect, useRef, useState } from "reac
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../../Auth/Auth";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
-import { Icon, Profile } from "../common";
+import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
 import Transition from "../Transition";
@@ -29,6 +29,7 @@ function UserProfile() {
     const page = useRef()
 
     const userProfile = useSelector((state) => state.ui.userProfile)
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
 
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
@@ -89,7 +90,7 @@ function UserProfile() {
     return <>
         <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page}>
             <PageHeader>
-                <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch)} /></div>
+                <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span></span></div>
                 <div className="Meta">
                     <Icon name="call" onClick={() => dispatch(handleCall(userProfile))} />
@@ -117,7 +118,7 @@ function UserProfile() {
                     {fullUser?.about && <div className="Item preWrap"><Icon name="info" /><span>{fullUser.about}</span></div>}
                 </div>
             </div>
-            <div className="section">
+            <div className="section TabSection">
                 <div className="Tabs">
                     <div className="Tab active"><span>Groups</span></div>
                     <div className="Tab"><span>Media</span></div>

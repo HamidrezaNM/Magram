@@ -126,4 +126,9 @@
         padding: 12px;
         background-color: #121212fa;
     }
+
+    .BackButton span,
+    .MiddleColumn .ChatInfo .BackButton span {
+        left: 28px;
+    }
 }

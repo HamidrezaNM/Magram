@@ -1,7 +1,7 @@
 import { memo, useCallback, useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PageClose, PageHeader } from "../../Page";
-import { Icon, Switch } from "../../common";
+import { BackArrow, Icon, Switch } from "../../common";
 import { AuthContext, UserContext } from "../../../Auth/Auth";
 import { DetectDevice, GetDeviceData } from "../../../Auth/Verify";
 import { client, socket } from "../../../../App";
@@ -14,6 +14,8 @@ function SettingsDevices() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [currentSession, setCurrentSession] = useState()
     const [sessions, setSessions] = useState()
+
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 
@@ -65,13 +67,13 @@ function SettingsDevices() {
 
     return <div className={"SettingsDevices" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
-            <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch, true)} /></div>
+            <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
             <div className="Title"><span>Devices</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section ThisDevice">
+            <span className="title">This device</span>
             <div className="Items">
-                <span className="title">This device</span>
                 <div className="Item Device">
                     <Icon name={currentSession?.platform === 'Android' ? "android" : 'laptop_windows'} />
                     <div className="FlexColumn">
@@ -84,8 +86,8 @@ function SettingsDevices() {
             </div>
         </div >
         <div className="section ActiveSession">
+            <span className="title">Active sessions</span>
             <div className="Items">
-                <span className="title">Active sessions</span>
                 {sessions && sessions.map((item) => (
                     <Menu key={item.hash?.value} animateWidth={false} custom={
                         <div className="Item Device">

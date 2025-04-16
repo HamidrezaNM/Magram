@@ -63,7 +63,7 @@ function MiddleColumn({ }) {
     }, [background.current?.clientWidth, maskPattern])
 
     return <>
-        <div className={buildClassName("background", "purple", maskPattern && "has-mask-pattern")} ref={background}>
+        <div className={buildClassName("background", "green", maskPattern && "has-mask-pattern")} ref={background}>
             {maskPattern && <div className="MaskPattern">
                 <canvas width={background.current?.clientWidth} height={background.current?.clientHeight} ref={canvas}></canvas>
             </div>}

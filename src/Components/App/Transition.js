@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-export default function Transition({ state, onDeactivate, action, activeAction, eachElement = false, children }) {
+export default function Transition({ state, alwaysShow = false, onDeactivate, action, activeAction, eachElement = false, children }) {
     const [isActive, setIsActive] = useState(false)
 
     const element = useRef()
@@ -61,7 +61,7 @@ export default function Transition({ state, onDeactivate, action, activeAction, 
         }
     }, [isActive])
 
-    return <>{isActive && <div className="Transition hidden" ref={element}>
+    return <>{(isActive || alwaysShow) && <div className="Transition hidden" ref={element}>
         {children}
     </div>}</>
 }

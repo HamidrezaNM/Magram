@@ -266,3 +266,34 @@
     right: 0;
     margin: -1px;
 }
+
+/* .LeftColumn {
+    display: flex;
+    flex-direction: column;
+} */
+
+.BottomBar {
+    display: flex;
+    border-top: 1px solid var(--active-primary);
+    padding: 8px 0;
+}
+
+.BottomBar .Item {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.BottomBar .Item.active {
+    color: var(--primary);
+}
+
+.BottomBar .Item .icon {
+    padding: 0;
+}
+
+.BottomBar .Item .title {
+    font-size: 14px;
+}

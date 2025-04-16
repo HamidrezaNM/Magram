@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthContext, UserContext } from "../../Auth/Auth";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
-import { Icon, Profile } from "../common";
+import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
 import Transition from "../Transition";
@@ -34,6 +34,7 @@ export default function Search() {
     const placeholderRef = useRef()
 
     const subPage = useSelector((state) => state.ui.subPage)
+    const centerTopBar = useSelector((state) => state.ui.customTheme)
 
     useEffect(() => {
         setIsLoaded(true)
@@ -92,7 +93,7 @@ export default function Search() {
     return <>
         <div className={"Search" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
             <PageHeader>
-                <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch)} /></div>
+                <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span>Search</span></div>
                 <div className="Meta"></div>
             </PageHeader>
@@ -118,7 +119,7 @@ export default function Search() {
                     ))}
                 </div>
             </div>
-            <div className="section">
+            <div className="section TabSection">
                 <div className="Tabs">
                     <div className="Tab active"><span>Chats</span></div>
                 </div>

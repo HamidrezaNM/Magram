@@ -16,7 +16,9 @@ function ContextMenu() {
     const onChange = () => {
         if (!contextMenu) {
             if (activeElement.current) {
-                activeElement.current.classList.remove('active')
+                setTimeout(() => {
+                    activeElement.current.classList.remove('active')
+                }, 300);
                 activeElement.current.style = ''
                 Array.from(activeElement.current.children).forEach(item => {
                     item.style.top = '0'
@@ -32,12 +34,14 @@ function ContextMenu() {
 
         let originX = 'left'
         let originY = 'top'
-        if (clientX > document.body.clientWidth - (w + 20)) {
+        if (clientX > document.body.clientWidth - (w + 10)) {
             clientX -= w
             originX = 'right'
+        } else if (contextMenu.width) {
+            clientX -= contextMenu.width + 10
         }
-        if (clientY > document.body.clientHeight - (h + 20)) {
-            clientY = document.body.clientHeight - h * 2 + 20
+        if (clientY > document.body.clientHeight - (h + 70)) {
+            clientY = document.body.clientHeight - (h + 70)
             originY = 'bottom'
             if (contextMenu.activeElement) {
                 contextMenu.activeElement.style.minHeight = contextMenu.height + 'px'
