@@ -5,7 +5,19 @@
 .MiddleColumn .TopBar {
     display: flex;
     flex-direction: column;
+    position: absolute;
+    width: calc(100% - 16px);
+    backdrop-filter: blur(50px);
+    z-index: 1;
 }
+
+.MiddleColumn .TopBar+div {
+    padding-top: 56px;
+}
+
+/* .MiddleColumn:has(.TopBar .PinnedMessage) .TopBar+div {
+    margin-top: 96px;
+} */
 
 .TopBar .ChatInfo {
     display: flex;
@@ -59,7 +71,7 @@
 }
 
 .ChatInfo .BackButton span {
-    left: 44px;
+    left: 28px;
 }
 
 .MiddleColumn .TopBar .PinnedMessage {
@@ -191,6 +203,10 @@
 
 .MiddleColumn .Messages.NoMessages .NoMessage {
     justify-content: center;
+}
+
+.MiddleColumn .Messages>:first-child {
+    margin-top: auto !important;
 }
 
 .MiddleColumn .bottom {

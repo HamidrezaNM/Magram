@@ -414,6 +414,8 @@ export const getDate = (date, weekday = true, short = false) => {
             else if (_date.getDate() >= now.getDate() - 7) {
                 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 return weekday[_date.getDay()]
+            } else {
+                return `${parsedMonth[_date.getMonth()]} ${_date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}`
             }
         } else {
             return `${parsedMonth[_date.getMonth()]} ${_date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}`

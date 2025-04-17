@@ -58,6 +58,10 @@
         background-color: #ffffff10;
     } */
 
+    .MiddleColumn .Content .TopBar {
+        width: 100%;
+    }
+
     .MiddleColumn .ChatInfo .BackArrow {
         display: block;
     }
@@ -124,7 +128,7 @@
     .Toast {
         width: auto;
         padding: 12px;
-        background-color: #121212fa;
+        background-color: #121212f8;
     }
 
     .BackButton span,

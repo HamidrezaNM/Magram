@@ -30,6 +30,7 @@ function UserProfile() {
 
     const userProfile = useSelector((state) => state.ui.userProfile)
     const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
@@ -70,6 +71,7 @@ function UserProfile() {
             isGroup: false,
             isUser: true
         }))
+        PageClose(dispatch)
     }, [])
 
     const renderCommonChats = () => {
@@ -90,7 +92,7 @@ function UserProfile() {
     return <>
         <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page}>
             <PageHeader>
-                <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
+                <div><BackArrow index={1} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span></span></div>
                 <div className="Meta">
                     <Icon name="call" onClick={() => dispatch(handleCall(userProfile))} />
@@ -110,8 +112,33 @@ function UserProfile() {
                         <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
                         <div className="subtitle" style={{ fontSize: 14 }}>{userInfoSubtitle()}</div>
                     </div>
-                    <div className="StartChat" onClick={privateMessage}><Icon name="chat" /></div>
+                    {!iOSTheme &&
+                        <div className="StartChat" onClick={privateMessage}>
+                            <Icon name="chat" />
+                        </div>}
                 </div>
+                {iOSTheme && <>
+                    <div className="Buttons">
+                        <div className="Button">
+                            <Icon name="call" />
+                            <div className="title">
+                                Call
+                            </div>
+                        </div>
+                        <div className="Button" onClick={privateMessage}>
+                            <Icon name="chat" />
+                            <div className="title">
+                                Message
+                            </div>
+                        </div>
+                        <div className="Button">
+                            <Icon name="more_horiz" />
+                            <div className="title">
+                                More
+                            </div>
+                        </div>
+                    </div>
+                </>}
                 <div className="Items">
                     {userProfile.phone && <div className="Item"><Icon name="phone" /><span>+{userProfile.countryCode} {userProfile.phone}</span></div>}
                     {userProfile.username && <div className="Item"><Icon name="alternate_email" /><span>{userProfile.username}</span></div>}

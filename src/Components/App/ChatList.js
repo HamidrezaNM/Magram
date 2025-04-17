@@ -47,7 +47,6 @@ function ChatList() {
             try {
                 const getFolders = await client.invoke(new Api.messages.GetDialogFilters())
                 setFolders(getFolders.filters)
-                console.log(getFolders)
 
                 const getChats = await client.getDialogs()
                 ChatListRef.current.classList.add('Animating')
@@ -124,7 +123,7 @@ function ChatList() {
                     folderTabIndex === index &&
                     'active'
                 )} onClick={() => setFolderTabIndex(index)}>
-                    {folder?.title?.text ?? 'All Chats'}
+                    <span>{folder?.title?.text ?? 'All Chats'}</span>
                 </div>
             )}
         </>

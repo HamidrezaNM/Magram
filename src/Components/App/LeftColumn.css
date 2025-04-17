@@ -78,6 +78,10 @@
     transform: scale(1);
 }
 
+.ChatList .Tabs {
+    top: -48px;
+}
+
 .Chat {
     display: flex;
     align-items: center;
@@ -254,11 +258,15 @@
 .Search .topPeers .Item {
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: auto !important;
     font-size: 14px;
     gap: 6px;
     padding: 8px;
     width: auto;
+}
+
+.Item.Input {
+    position: relative;
 }
 
 .fab.quickChatButton .DropdownMenu {
