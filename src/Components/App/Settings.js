@@ -18,6 +18,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import SettingsChatSettings from "./Pages/Settings/ChatSettings";
 import { Api } from "telegram";
 import { handleCoolDown } from "../Util/coolDown";
+import FullNameTitle from "../common/FullNameTitle";
 
 function Settings() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -127,7 +128,7 @@ function Settings() {
             <div className="section Info">
                 <div className="User">
                     <Profile entity={User} name={User.firstName} id={User.id?.value} />
-                    <div className="name">{User.firstName} {User.lastName}</div>
+                    <div className="name"><FullNameTitle chat={User} /></div>
                 </div>
                 <div className="Items">
                     <div className="Item"><Icon name="phone" /><span>+{User.countryCode} {User.phone}</span></div>

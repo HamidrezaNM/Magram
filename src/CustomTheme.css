@@ -328,7 +328,7 @@
     }
 
     .iOSTheme:has(.MiddleColumn.focused) .LeftColumn {
-        transform: translateX(-50%);
+        transform: translateX(calc(-50% + 68px));
     }
 
     .iOSTheme .MiddleColumn {

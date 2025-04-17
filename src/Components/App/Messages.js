@@ -259,6 +259,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     <Message
                         key={activeChat.id?.value + '_' + item?.id}
                         data={item}
+                        seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
                         prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
                         prevMsgDate={messages[messageStartIndex + index - 1]?.date}
                         nextMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
