@@ -172,7 +172,7 @@ function ChatInfo() {
 
 export function getUserStatus(lastSeen, peer, short = true) {
     if (peer && peer.bot) return 'bot'
-    if (!lastSeen) return
+    if (!lastSeen) return 'Last seen a long time ago'
     switch (lastSeen.className) {
         case 'LastMonth': {
             return 'Last seen within a month';
@@ -194,7 +194,7 @@ export function getUserStatus(lastSeen, peer, short = true) {
                 return 'Last seen recently';
         }
 
-        default: {
+        default:
             const wasOnline = lastSeen.wasOnline
 
             if (!wasOnline) return 'Last seen a long time ago';
@@ -250,8 +250,8 @@ export function getUserStatus(lastSeen, peer, short = true) {
             }
 
             return `Last seen ${getDate(wasOnlineDate, false, true)} at ${formatTime(wasOnlineDate)}`
-        }
     }
+
 }
 
 export default memo(ChatInfo)

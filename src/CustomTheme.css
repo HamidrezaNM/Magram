@@ -56,6 +56,11 @@
     --primary: #016de4;
 }
 
+.Dark .iOSTheme {
+    --primary-container: #000;
+    --secondary: #1a1a1a;
+}
+
 .iOSTheme .bottom .Composer {
     height: 42px;
 }
@@ -126,6 +131,10 @@
 .iOSTheme .ContextMenuBG {
     backdrop-filter: blur(50px);
     /* opacity: unset; */
+}
+
+.iOSTheme .TopBar {
+    background-color: var(--secondary);
 }
 
 .iOSTheme .Page {

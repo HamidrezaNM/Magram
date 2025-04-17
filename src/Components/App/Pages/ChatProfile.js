@@ -33,7 +33,8 @@ export default function ChatProfile() {
     const subPage = useSelector((state) => state.ui.subPage)
     const activeChat = useSelector((state) => state.ui.activeChat)
     const fullChat = useSelector((state) => state.ui.activeFullChat)
-    const centerTopBar = useSelector((state) => state.ui.customTheme)
+    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     useEffect(() => {
         setIsLoaded(true);
@@ -101,6 +102,28 @@ export default function ChatProfile() {
                             <div className="subtitle" style={{ fontSize: 14 }}>{getChatSubtitle(fullChat ?? activeChat.entity, getChatType(activeChat.entity))}</div>
                         </div>
                     </div>
+                    {iOSTheme && <>
+                        <div className="Buttons">
+                            <div className="Button">
+                                <Icon name="notifications" />
+                                <div className="title">
+                                    Mute
+                                </div>
+                            </div>
+                            <div className="Button" onClick={() => setOpenDeleteModal(true)}>
+                                <Icon name="move_item" />
+                                <div className="title">
+                                    Leave
+                                </div>
+                            </div>
+                            <div className="Button">
+                                <Icon name="more_horiz" />
+                                <div className="title">
+                                    More
+                                </div>
+                            </div>
+                        </div>
+                    </>}
                     <div className="Items">
                         {activeChat.entity?.username && <div className="Item"><Icon name="alternate_email" /><span>{activeChat.entity?.username}</span></div>}
                         {fullChat?.about && <div className="Item preWrap"><Icon name="info" /><span dir="auto">{fullChat?.about}</span></div>}
