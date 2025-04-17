@@ -82,7 +82,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                             <MenuItem profile={User} title={User.firstName + ' ' + (User.lastName ?? '')} onClick={() => { }} />
                         </DropdownMenu>
                     </Menu>
-                    <div className="Title"><span>{connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState}</span></div>
+                    <div className="Title" onDoubleClick={() => window.location.reload()}><span>{connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState}</span></div>
                     <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}><Icon name="search" /></div>
                 </>}
             </div>

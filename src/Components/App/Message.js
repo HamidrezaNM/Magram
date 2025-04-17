@@ -28,7 +28,7 @@ import InlineButtons from "./Message/InlineButtons";
 import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
 
-function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false, isiOS }) {
+function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false, isiOS, unreadFrom }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -394,6 +394,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 </DialogActions>
             </Dialog>
         </div>
+        {unreadFrom && <div className="UnreadMessages">Unread Messages</div>}
     </>;
 }
 

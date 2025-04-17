@@ -28,7 +28,8 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     const isLoading = useRef(false)
     const autoScroll = useRef(true);
-    const unreadMessages = useRef();
+    const previousScrollHeightMinusTop = useRef(0);
+    const messageRenderIncrease = useRef(false);
 
     const messageStartIndex = messages?.length - messagesRenderCount > 0 ? messages?.length - messagesRenderCount : 0
 
@@ -128,8 +129,11 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             }
 
             if (isLoaded && messages?.length > 20 && MessagesRef.current.scrollTop < 1) {
+                previousScrollHeightMinusTop.current = MessagesRef.current.scrollHeight - MessagesRef.current.scrollTop
+                messageRenderIncrease.current = true
+
                 if (messages?.length <= messagesRenderCount) {
-                    setIsLoaded(true)
+                    setIsLoaded(false)
                     // const messagesLength = messages?.length
                     let maxMessageId = null
 
@@ -145,7 +149,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                         }
                     );
 
-                    setIsLoaded(false)
+                    setIsLoaded(true)
                     if (result?.length) {
                         dispatch(unshiftMessages({ chatId: activeChat.id.value, messages: result.reverse() }))
                         setMessagesRenderCount(messages.length + result.length < messagesRenderCount * 2 ? messages.length + result.length : messagesRenderCount * 2)
@@ -153,8 +157,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                         return
                 } else
                     setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
-                console.log('message render count increase')
-                MessagesRef.current.scroll({ left: 0, top: 1, behavior: "instant" })
+                console.log('message render count increase', messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
             }
         }
     }
@@ -180,6 +183,16 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             }
         }
     }, [activeChat, messages, messagesRenderCount]) // Scroll to Bottom on Load
+
+    useEffect(() => {
+        if (messageRenderIncrease.current && previousScrollHeightMinusTop.current > 0) {
+            // setTimeout(() => {
+            MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight - previousScrollHeightMinusTop.current, behavior: "instant" })
+            console.log(MessagesRef.current.scrollTop, previousScrollHeightMinusTop.current)
+            // }, 200);
+            messageRenderIncrease.current = false
+        }
+    }, [messagesRenderCount])
 
     useEffect(() => {
         if (_goToMessage) {
@@ -211,10 +224,12 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     const handleKeyUp = e => {
         if (e.keyCode === 38) {
-            const data = messages[activeChat._id];
-            if (data.length > 0) {
-                dispatch(handleEditMessage(data[data.length - 1]))
-            }
+            setMessagesRenderCount(messages?.length < messagesRenderCount + 1 ? messages?.length : messagesRenderCount + 1)
+
+            // const data = messages[activeChat._id];
+            // if (data.length > 0) {
+            //     dispatch(handleEditMessage(data[data.length - 1]))
+            // }
         }
     }
 
@@ -238,26 +253,21 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     <MessagesLoading />
                 </div>
             }
-            {
-                messages && messages
-                    .slice(Math.max(messages.length - messagesRenderCount, 0))
-                    .map((item, index) => (
-                        <>
-                            <Message key={activeChat.id?.value + '_' + item?.id}
-                                data={item}
-                                seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
-                                prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
-                                prevMsgDate={messages[messageStartIndex + index - 1]?.date}
-                                nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
-                                isiOS={iOSTheme}
-                            />
-                            {
-                                item.id === activeChat?.dialog?.readInboxMaxId &&
-                                item.id !== activeChat?.dialog.topMessage &&
-                                <div ref={unreadMessages} className="UnreadMessages">Unread Messages</div>
-                            }
-                        </>
-                    ))
+            {messages && messages
+                .slice(Math.max(messages.length - messagesRenderCount, 0))
+                .map((item, index) =>
+                    <Message
+                        key={activeChat.id?.value + '_' + item?.id}
+                        data={item}
+                        prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
+                        prevMsgDate={messages[messageStartIndex + index - 1]?.date}
+                        nextMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
+                        unreadFrom={
+                            item.id === activeChat?.dialog?.readInboxMaxId &&
+                            item.id !== activeChat?.dialog.topMessage
+                        }
+                        isiOS={iOSTheme} />
+                )
             }
         </> :
             (<div className="NoMessage Message">
