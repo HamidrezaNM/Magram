@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { handleContextMenu } from "../../Stores/UI";
 import Transition from "../Transition";
 
-function ContextMenu() {
+function ContextMenu({ type }) {
 
     const contextMenu = useSelector((state) => state.ui.contextMenu)
 
@@ -17,7 +17,7 @@ function ContextMenu() {
         if (!contextMenu) {
             if (activeElement.current) {
                 setTimeout(() => {
-                    activeElement.current.classList.remove('active')
+                    activeElement.current.classList.remove('selected')
                 }, 300);
                 activeElement.current.style = ''
                 Array.from(activeElement.current.children).forEach(item => {
@@ -62,11 +62,11 @@ function ContextMenu() {
 
         if (contextMenu.activeElement) {
             activeElement.current = contextMenu.activeElement
-            contextMenu.activeElement.classList.add('active')
+            contextMenu.activeElement.classList.add('selected')
         }
     }
 
-    return <Transition state={!!contextMenu} eachElement onDeactivate={onChange} activeAction={onChange}>
+    return <Transition state={!!contextMenu && contextMenu.type === type} eachElement onDeactivate={onChange} activeAction={onChange}>
         <div className="bg ContextMenuBG" ref={contextMenuBG} onClick={() => dispatch(handleContextMenu())}></div>
         <div className="ContextMenu animate" ref={contextMenuDiv}>
             {contextMenu?.items}

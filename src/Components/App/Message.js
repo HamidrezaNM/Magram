@@ -210,11 +210,11 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 var top = rect.top + rect.height
                 var left = rect.left + rect.width
                 var width = rect.width
-                var height = MessageEl.offsetHeight
+                var height = MessageEl.current.offsetHeight
 
-                dispatch(handleContextMenu({ items, e, top, left, width, height, activeElement: MessageEl.current }))
+                dispatch(handleContextMenu({ items, type: 'message', e, top, left, width, height, activeElement: MessageEl.current }))
             } else
-                dispatch(handleContextMenu({ items, e }))
+                dispatch(handleContextMenu({ items, type: 'message', e }))
         } else if (e.target.closest('.message-from-profile')) {
             const items = (
                 <>

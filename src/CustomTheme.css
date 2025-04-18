@@ -119,11 +119,18 @@
     transition: transform .5s ease;
 }
 
-.iOSTheme .Message.active {
+.iOSTheme .Message.selected,
+.iOSTheme .Chat.selected {
     z-index: 4;
+    overflow: visible;
 }
 
-.iOSTheme .Message>* {
+.iOSTheme .Chat.selected {
+    background-color: transparent;
+}
+
+.iOSTheme .Message>*,
+.iOSTheme .Chat>* {
     top: 0;
     transition: all .3s ease;
 }
@@ -133,7 +140,7 @@
     /* opacity: unset; */
 }
 
-.iOSTheme .TopBar {
+.iOSTheme .LeftColumn .TopBar {
     background-color: var(--secondary);
 }
 
@@ -303,6 +310,7 @@
     max-width: 140px;
     padding: 12px;
     border-radius: 12px;
+    cursor: pointer;
     transition: all .3s ease;
 }
 

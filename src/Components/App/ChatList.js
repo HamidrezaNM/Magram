@@ -11,6 +11,7 @@ import Tabs from "../UI/Tabs";
 import { Api } from "telegram";
 import { getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
+import ContextMenu from "./MiddleColumn/ContextMenu";
 
 function ChatList() {
     const [showArchives, setShowArchives] = useState(false)
@@ -25,6 +26,7 @@ function ChatList() {
     const dispatch = useDispatch()
 
     const chats = useSelector((state) => state.chats.value)
+    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
@@ -111,6 +113,7 @@ function ChatList() {
                 key={item.id?.value}
                 info={item}
                 isActive={Number(activeChatId) == item.id.value}
+                isiOS={iOSTheme}
             />
         ))
     }
@@ -144,6 +147,7 @@ function ChatList() {
                         key={item.id?.value}
                         info={item}
                         isActive={Number(activeChatId) == item.id.value}
+                        isiOS={iOSTheme}
                     />
                 ))}
                 {Object.keys(chats).length === 0 &&
@@ -160,6 +164,7 @@ function ChatList() {
                 </TabContent>
             )}
         </Tabs>
+        <ContextMenu type="chat" />
     </div>
 }
 

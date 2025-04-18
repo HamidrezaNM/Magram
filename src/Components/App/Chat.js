@@ -16,13 +16,15 @@ import { Api } from "telegram";
 import { deleteChat, getChatType, getDeleteChatText } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 
-function Chat({ info, isActive }) {
+function Chat({ info, isActive, isiOS }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
     const ChatEl = useRef()
+
+    const isMobile = document.body.clientWidth <= 480
 
     const dispatch = useDispatch()
 
@@ -99,7 +101,18 @@ function Chat({ info, isActive }) {
                 />
             </>
         )
-        dispatch(handleContextMenu({ items, e }))
+
+        if (isMobile && isiOS) {
+            const rect = ChatEl.current.getBoundingClientRect()
+
+            var top = rect.top + rect.height
+            var left = rect.left + rect.width
+            var width = rect.width
+            var height = ChatEl.current.offsetHeight
+
+            dispatch(handleContextMenu({ items, type: 'chat', e, top, left, width, height, activeElement: ChatEl.current }))
+        } else
+            dispatch(handleContextMenu({ items, type: 'chat', e }))
     }
 
     return <><div ref={ChatEl} className={"Chat" + (isActive ? ' active' : '')} onClick={() => viewChat(info, dispatch)}>

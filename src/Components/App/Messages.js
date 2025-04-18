@@ -262,7 +262,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                         seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
                         prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
                         prevMsgDate={messages[messageStartIndex + index - 1]?.date}
-                        nextMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
+                        nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
                         unreadFrom={
                             item.id === activeChat?.dialog?.readInboxMaxId &&
                             item.id !== activeChat?.dialog.topMessage
@@ -285,7 +285,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     </div>
                 </div>
             </div>)}
-        <ContextMenu />
+        <ContextMenu type="message" />
     </div>
 
 })
