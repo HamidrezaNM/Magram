@@ -84,7 +84,7 @@ export const messagesSlice = createSlice({
             if (state.value[action.payload.chatId]) {
                 let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.id)
                 if (messageIndex)
-                    state.value[action.payload.chatId][messageIndex] = { ...action.payload.message }
+                    state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], ...action.payload.message }
             }
         },
         updateMessageSeen: (state, action) => {

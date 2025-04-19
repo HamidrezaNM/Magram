@@ -174,11 +174,11 @@ export function getUserStatus(lastSeen, peer, short = true) {
     if (peer && peer.bot) return 'bot'
     if (!lastSeen) return 'Last seen a long time ago'
     switch (lastSeen.className) {
-        case 'LastMonth': {
+        case 'UserStatusLastMonth': {
             return 'Last seen within a month';
         }
 
-        case 'LastWeek': {
+        case 'UserStatusLastWeek': {
             return 'Last seen within a week';
         }
 

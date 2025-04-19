@@ -1014,7 +1014,15 @@
   background-color: var(--secondary);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* overflow: hidden; */
+}
+
+.section:has(.TabContainer) {
+  display: none;
+}
+
+.section:has(.TabContainer .TabContent) {
+  display: flex;
 }
 
 .Page .textfield {

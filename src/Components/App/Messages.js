@@ -2,7 +2,7 @@ import { forwardRef, memo, useContext, useEffect, useRef, useState } from "react
 import Message from "./Message";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages, unshiftMessages } from "../Stores/Messages";
-import { handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage } from "../Stores/UI";
+import { handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleToast } from "../Stores/UI";
 import MessagesLoading from "../UI/MessagesLoading";
 import { client } from "../../App";
 import { getMessageText } from "./MessageText";
@@ -84,32 +84,37 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                     lastMessageId = messages[messagesLength - 1]?.id
                 }
 
-                const result = await client.getMessages(
-                    activeChat.id.value,
-                    {
-                        limit: 100,
-                        minId: lastMessageId
-                    }
-                );
-
-                if (result.total > messagesLength && messagesLength < 100) {
-                    const all = await client.getMessages(
+                try {
+                    const result = await client.getMessages(
                         activeChat.id.value,
                         {
-                            limit: 100
+                            limit: 100,
+                            minId: lastMessageId
                         }
                     );
 
-                    onGetMessages(all, true)
+                    if (result.total > messagesLength && messagesLength < 100) {
+                        const all = await client.getMessages(
+                            activeChat.id.value,
+                            {
+                                limit: 100
+                            }
+                        );
+
+                        onGetMessages(all, true)
+                    }
+
+                    if (result.length)
+                        onGetMessages(result)
+                    else {
+                        setIsLoaded(true)
+                        handlePinnedMessages()
+                        readHistory(activeChat.id.value, dispatch)
+                    }
+                } catch (error) {
+                    dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
                 }
 
-                if (result.length)
-                    onGetMessages(result)
-                else {
-                    setIsLoaded(true)
-                    handlePinnedMessages()
-                    readHistory(activeChat.id.value, dispatch)
-                }
 
                 document.querySelector('.scrollToBottom').style.bottom = document.querySelector('.bottom').clientHeight + 8 + 'px'
             }

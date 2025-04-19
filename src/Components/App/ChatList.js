@@ -107,7 +107,7 @@ function ChatList() {
             folderChats = chats.filter(chat => !chat.archived)
         }
 
-        return folderChats?.length && folderChats.map((item) => (
+        return folderChats?.length ? folderChats.map((item) => (
             !item.entity?.migratedTo &&
             <Chat
                 key={item.id?.value}
@@ -116,6 +116,7 @@ function ChatList() {
                 isiOS={iOSTheme}
             />
         ))
+            : null
     }
 
     return <div className="ChatList" ref={ChatListRef}>

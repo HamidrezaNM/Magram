@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
 import { chatAdded, handleTypingStatus, removeTypingStatus, setFullChat, updateChatRead, updateChatUserStatus, updateTypingStatus } from "../../Stores/Chats";
-import { setActiveChat, setActiveFullChat } from "../../Stores/UI";
+import { handleToast, setActiveChat, setActiveFullChat } from "../../Stores/UI";
 import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
 import { returnBigInt } from "telegram/Helpers";
 
@@ -64,26 +64,31 @@ const ChatHandler = forwardRef(({ }, ref) => {
     useEffect(() => {
         (async () => {
             if (activeChat) {
-                if (activeChat.isChannel) {
-                    if (!activeChat.fullChat) {
-                        const fullChannel = await client.invoke(
-                            new Api.channels.GetFullChannel({ channel: activeChat.id.value })
+                try {
+                    if (activeChat.isChannel) {
+                        if (!activeChat.fullChat) {
+                            const fullChannel = await client.invoke(
+                                new Api.channels.GetFullChannel({ channel: activeChat.id.value })
+                            )
+
+                            dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullChannel.fullChat }))
+                            dispatch(setActiveFullChat(fullChannel.fullChat))
+                        } else {
+                            dispatch(setActiveFullChat(activeChat.fullChat))
+                        }
+                    } else if (activeChat.isUser) {
+                        const fullUser = await client.invoke(
+                            new Api.users.GetFullUser({ id: activeChat?.id })
                         )
 
-                        dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullChannel.fullChat }))
-                        dispatch(setActiveFullChat(fullChannel.fullChat))
-                    } else {
-                        dispatch(setActiveFullChat(activeChat.fullChat))
-                    }
-                } else if (activeChat.isUser) {
-                    const fullUser = await client.invoke(
-                        new Api.users.GetFullUser({ id: activeChat?.id })
-                    )
-
-                    dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullUser.fullUser }))
-                    dispatch(setActiveFullChat(fullUser.fullUser))
-                } else
+                        dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullUser.fullUser }))
+                        dispatch(setActiveFullChat(fullUser.fullUser))
+                    } else
+                        dispatch(setActiveFullChat())
+                } catch (error) {
                     dispatch(setActiveFullChat())
+                    dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
+                }
             }
         })()
     }, [activeChat?.id])

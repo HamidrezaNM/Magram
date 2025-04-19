@@ -5,6 +5,7 @@ import { getMediaType } from "../Helpers/messages";
 import renderTextWithEntities from "../Helpers/renderTextWithEntities";
 import { formatTime } from "../Util/dateFormat";
 import { getDate } from "./Message";
+import MessageCall from "./Message/MessageCall";
 
 function MessageText({ data, isInChat = false, includeFrom = false }) {
     const User = useContext(UserContext)
@@ -60,8 +61,15 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
                 return `Live stream scheduled on ${getDate(date, false, true)}, ${formatTime(date)}`
             case 'MessageActionGroupCall':
                 return 'Live stream started'
+            case 'MessageActionContactSignUp':
+                return `${data.sender?.firstName} joined Telegram!`
+            case 'MessageActionPhoneCall':
+                return isInChat ? <MessageCall data={data} /> : 'Outgoing Call'
             default:
-                break;
+                return <span>This message is currently not supported in this version of Magram.
+                    <br /><br />
+                    <code>{data.action.className}</code>
+                </span>
         }
     } else if (!isInChat) {
         if (data.media) {

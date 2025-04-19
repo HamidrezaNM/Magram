@@ -1,43 +1,45 @@
-import { memo, useContext } from "react";
+import { memo } from "react";
 import { Icon } from "../common";
-import { UserContext } from "../../Auth/Auth";
 
 function MessageCall({ data }) {
-    const User = useContext(UserContext)
-
     let statusText = ''
     let durationText = ''
 
-    switch (data.call?.status) {
-        case 'answered':
-            if (data.from._id === User._id)
+    switch (data.action?.reason.className) {
+        case 'PhoneCallDiscardReasonHangup':
+            if (data.out)
                 statusText = 'Outgoing Call'
             else
                 statusText = 'Incoming Call'
 
-            if (data.call?.duration / 3600 >= 2)
-                durationText = Math.floor(data.call?.duration / 3600) + ' hours'
-            else if (data.call?.duration / 3600 >= 1)
-                durationText = Math.floor(data.call?.duration / 3600) + ' hour'
-            else if (data.call?.duration / 60 >= 2)
-                durationText = Math.floor(data.call?.duration / 60) + ' minutes'
-            else if (data.call?.duration / 60 >= 1)
-                durationText = Math.floor(data.call?.duration / 60) + ' minute'
-            else
-                durationText = data.call?.duration + ' seconds'
+            const duration = data.action.duration
+
+            if (duration / 3600 >= 2)
+                durationText = Math.floor(duration / 3600) + ' hours'
+            else if (duration / 3600 >= 1)
+                durationText = Math.floor(duration / 3600) + ' hour'
+            else if (duration / 60 >= 2)
+                durationText = Math.floor(duration / 60) + ' minutes'
+            else if (duration / 60 >= 1)
+                durationText = Math.floor(duration / 60) + ' minute'
+            else if (duration)
+                durationText = duration + ' seconds'
             break;
-        case 'declined':
+        case 'PhoneCallDiscardReasonBusy':
             statusText = 'Declined Call'
             break;
+        case 'PhoneCallDiscardReasonMissed':
+            statusText = 'Missed Call'
+            break;
         default:
-            if (data.from._id === User._id)
+            if (data.out)
                 statusText = 'Outgoing Call'
             else
                 statusText = 'Incoming Call'
             break;
     }
 
-    return <div className={"message-call" + (data.message ? ' without-margin' : '')}>
+    return <div className="message-call">
         <div>
             <Icon name="call" />
         </div>

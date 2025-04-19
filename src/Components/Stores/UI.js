@@ -160,6 +160,9 @@ export const uiSlice = createSlice({
         handleBackground: (state, action) => {
             state.background = action.payload
         },
+        handleCustomTheme: (state, action) => {
+            state.customTheme = { ...state.customTheme, ...action.payload }
+        },
         handleToggleDarkMode: (state) => {
             state.darkMode = !state.darkMode
         }
@@ -199,6 +202,7 @@ export const {
     handleToast,
     handleDialog,
     handleBackground,
+    handleCustomTheme,
     handleToggleDarkMode
 } = uiSlice.actions
 

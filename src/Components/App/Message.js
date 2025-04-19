@@ -64,7 +64,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         if (isMobile) {
             if (isiOS) {
                 MessageEl.current.ontouchstart = e => {
-                    if (e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a')) return
+                    if (e.target.closest('.message-reply') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a')) return
 
                     isLongPressTimeout = setTimeout(() => {
                         MessageEl.current.classList.add('hold')
@@ -227,7 +227,18 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                     />
                 </>
             )
-            dispatch(handleContextMenu({ items, e }))
+
+            if (isMobile && isiOS) {
+                const rect = Bubble.current.getBoundingClientRect()
+
+                var top = rect.top + rect.height
+                var left = rect.left + rect.width
+                var width = rect.width
+                var height = MessageEl.current.offsetHeight
+
+                dispatch(handleContextMenu({ items, type: 'message', e, top, left, width, height, activeElement: MessageEl.current }))
+            } else
+                dispatch(handleContextMenu({ items, type: 'message', e }))
         }
     }, [data, isPinned.current])
 
@@ -333,10 +344,6 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                                     noAvatar={noAvatar}
                                     ref={messageMedia}
                                 />
-                            }
-
-                            {data.type === 'call' &&
-                                <MessageCall data={data} />
                             }
 
                             <MessageText data={data} isInChat="true" />

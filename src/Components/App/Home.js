@@ -110,6 +110,12 @@ function Home() {
     }, [])
 
     useEffect(() => {
+        setTimeout(() => {
+            homeRef.current.classList.remove('animate')
+        }, 300);
+    }, [customTheme])
+
+    useEffect(() => {
         const _chats = localStorage.getItem("chats")
         const _messages = localStorage.getItem("messages")
 

@@ -9,6 +9,7 @@ import { handleToggleDarkMode } from "../../../Stores/UI";
 import SettingsAnimations from "./Animations";
 import Transition from "../../Transition";
 import buildClassName from "../../../Util/buildClassName";
+import SettingsThemes from "./Themes";
 
 export default function SettingsChatSettings() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -26,6 +27,8 @@ export default function SettingsChatSettings() {
         switch (subPage[1]?.page) {
             case 'Animations':
                 return <SettingsAnimations />
+            case 'Themes':
+                return <SettingsThemes />
             default:
                 break;
         }
@@ -275,6 +278,10 @@ export default function SettingsChatSettings() {
                     <div className="Item" onClick={() => dispatch(handleToggleDarkMode())}>
                         <Icon name="light_mode" />
                         <span>Switch to {darkMode ? 'Day' : 'Night'} Mode</span>
+                    </div>
+                    <div className="Item" onClick={() => PageHandle(dispatch, 'Themes', 'Themes', true)}>
+                        <Icon name="format_paint" />
+                        <span>Browse Themes</span>
                     </div>
                 </div>
             </div>

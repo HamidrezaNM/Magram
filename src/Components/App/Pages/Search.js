@@ -17,6 +17,9 @@ import { getChatData } from "../Chat";
 import { Api } from "telegram";
 import { generateChatWithPeer, getChatIdFromPeer, getChatSubtitle } from "../../Helpers/chats";
 import { handleCoolDown } from "../../Util/coolDown";
+import Tabs from "../../UI/Tabs";
+import TabContent from "../../UI/TabContent";
+import buildClassName from "../../Util/buildClassName";
 
 
 export default function Search() {
@@ -24,6 +27,7 @@ export default function Search() {
     const [input, setInput] = useState('')
     const [topPeers, setTopPeers] = useState([])
     const [chats, setChats] = useState([])
+    const [tabIndex, setTabIndex] = useState(0)
 
     const Auth = useContext(AuthContext)
 
@@ -120,20 +124,26 @@ export default function Search() {
                 </div>
             </div>
             <div className="section TabSection">
-                <div className="Tabs">
-                    <div className="Tab active"><span>Chats</span></div>
+                <Tabs index={tabIndex} setIndex={setTabIndex} tabs={<div
+                    className={buildClassName("Tab", tabIndex === 0 && 'active')}
+                    onClick={() => setTabIndex(0)}>
+                    <span>Chats</span>
                 </div>
-                <div className="Items">
-                    {chats.length > 0 && Object.values(chats).map((item) => (
-                        !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
-                            <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
-                            <div className="UserDetails">
-                                <div className="title">{item?.title ?? item.firstName}</div>
-                                <div className="subtitle">{getChatSubtitle(item)}</div>
-                            </div>
+                }>
+                    <TabContent state={true}>
+                        <div className="Items">
+                            {chats.length > 0 && Object.values(chats).map((item) => (
+                                !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                                    <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
+                                    <div className="UserDetails">
+                                        <div className="title">{item?.title ?? item.firstName}</div>
+                                        <div className="subtitle">{getChatSubtitle(item)}</div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </TabContent>
+                </Tabs>
             </div>
         </div >
     </>

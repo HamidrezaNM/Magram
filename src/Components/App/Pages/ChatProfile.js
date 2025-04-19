@@ -19,11 +19,15 @@ import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { deleteChat, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
 import { Api } from "telegram";
+import Tabs from "../../UI/Tabs";
+import buildClassName from "../../Util/buildClassName";
+import TabContent from "../../UI/TabContent";
 
 
 export default function ChatProfile() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [tabIndex, setTabIndex] = useState(0)
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)
@@ -36,11 +40,13 @@ export default function ChatProfile() {
     const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
     const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
+    const chatType = getChatType(activeChat.entity)
+
     useEffect(() => {
         setIsLoaded(true);
 
         (async () => {
-            if (!activeChat.participants && getChatType(activeChat.entity) === 'Group') {
+            if (!activeChat.participants && chatType === 'Group') {
                 const participants = await client.getParticipants(activeChat)
                 console.log(participants)
 
@@ -130,22 +136,29 @@ export default function ChatProfile() {
                     </div>
                 </div>
                 <div className="section TabSection">
-                    <div className="Tabs">
-                        <div className="Tab active"><span>Members</span></div>
-                    </div>
-                    <div className="Items">
-                        <div className="Item" onClick={() => { }}><Icon name="person_add" /><span>Add Members</span></div>
-                        {activeChat?.participants && Object.values(activeChat.participants).map((item, index) => (
-                            item.id && <div className="Item" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
-                                <Profile size={44} entity={item} id={item.id?.value} name={item.firstName} />
-                                <div className="UserDetails">
-                                    <div className="title">{item.firstName}</div>
-                                    <div className="subtitle">{getUserStatus(item.status, item)}</div>
-                                </div>
-                                {item.participant?.adminRights && <div className="meta">{item.participant?.rank ?? 'Admin'}</div>}
+                    <Tabs index={tabIndex} setIndex={setTabIndex} tabs={
+                        chatType === 'Group' && <div
+                            className={buildClassName("Tab", tabIndex === 0 && 'active')}
+                            onClick={() => setTabIndex(0)}>
+                            <span>Members</span>
+                        </div>
+                    }>
+                        {chatType === 'Group' && <TabContent state={true}>
+                            <div className="Items">
+                                <div className="Item" onClick={() => { }}><Icon name="person_add" /><span>Add Members</span></div>
+                                {activeChat?.participants && Object.values(activeChat.participants).map((item, index) => (
+                                    item.id && <div className="Item" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
+                                        <Profile size={44} entity={item} id={item.id?.value} name={item.firstName} />
+                                        <div className="UserDetails">
+                                            <div className="title">{item.firstName}</div>
+                                            <div className="subtitle">{getUserStatus(item.status, item)}</div>
+                                        </div>
+                                        {item.participant?.adminRights && <div className="meta">{item.participant?.rank ?? 'Admin'}</div>}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </TabContent>}
+                    </Tabs>
                 </div>
             </div >
             <Transition state={subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition>
