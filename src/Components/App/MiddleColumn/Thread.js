@@ -207,7 +207,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
             !isLoaded && <div className="loading">
                 {<MessagesLoading />}
             </div>}
-        <ContextMenu />
+        <ContextMenu type="message" />
     </div>
 
 })

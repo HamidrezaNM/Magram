@@ -17,9 +17,11 @@ import Menu from "../../UI/Menu"
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
 import { removeChat } from "../../Stores/Chats"
 import { viewChat } from "../ChatList"
+import buildClassName from "../../Util/buildClassName"
 
 function ChatInfo() {
     const [openDeleteChatModal, setOpenDeleteChatModal] = useState(false)
+    const [typingAction, setTypingAction] = useState(false)
 
     const User = useContext(UserContext);
 
@@ -45,12 +47,18 @@ function ChatInfo() {
             PageHandle(dispatch, 'ChatProfile', '')
     }, [page, showPage, activeChat])
 
-    const chatInfoSubtitle = () => {
+    const chatInfoSubtitle = useCallback(() => {
         if (typingStatus && typingStatus.length > 0) {
+            if (!typingAction)
+                setTypingAction(true)
             if (chatType === 'User' || chatType === 'Bot')
                 return 'typing...'
             return typingStatus.join(', ') + ' is typing...'
         }
+
+        if (typingAction)
+            setTypingAction(false)
+
         switch (chatType) {
             case 'User':
                 if (activeChat.id.value == '777000') return 'Service notifications'
@@ -74,7 +82,7 @@ function ChatInfo() {
             default:
                 break;
         }
-    }
+    }, [activeChat, chatType, typingStatus, typingAction])
 
     const onLeaveGroup = () => {
         dispatch(removeChat(activeChat.id.value))
@@ -103,7 +111,7 @@ function ChatInfo() {
                 {centerTopBar ? <>
                     <div className="body">
                         <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                        {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
+                        {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}
                     </div>
                     <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                 </>
@@ -111,7 +119,7 @@ function ChatInfo() {
                         <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                         <div className="body">
                             <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                            {!isSavedMessages && <div className="subtitle">{chatInfoSubtitle()}</div>}
+                            {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}> {chatInfoSubtitle()}</div>}
                         </div>
                     </>
                 }
@@ -132,7 +140,7 @@ function ChatInfo() {
                 </DropdownMenu>
             </Menu>
         </div>
-    </div>
+    </div >
         <Dialog
             open={openDeleteChatModal}
             onClose={() => setOpenDeleteChatModal(false)}

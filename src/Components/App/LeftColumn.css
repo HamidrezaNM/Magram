@@ -78,10 +78,6 @@
     transform: scale(1);
 }
 
-.ChatList .Tabs {
-    top: -48px;
-}
-
 .Chat {
     display: flex;
     align-items: center;

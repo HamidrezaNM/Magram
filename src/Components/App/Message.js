@@ -64,7 +64,15 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         if (isMobile) {
             if (isiOS) {
                 MessageEl.current.ontouchstart = e => {
-                    if (e.target.closest('.message-reply') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a')) return
+                    if (
+                        e.target.closest('.message-reply') ||
+                        e.target.closest('.message-media') ||
+                        e.target.closest('.MessageReactions') ||
+                        e.target.closest('.Spoiler') ||
+                        e.target.closest('.Comments') ||
+                        e.target.closest('.InlineButtons') ||
+                        e.target.closest('a')
+                    ) return
 
                     isLongPressTimeout = setTimeout(() => {
                         MessageEl.current.classList.add('hold')
@@ -243,10 +251,21 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     }, [data, isPinned.current])
 
     const renderReactionAndMeta = () => {
-        const meta = <MessageMeta edited={data.editDate && !data.editHide} views={data.views} postAuthor={data.postAuthor} seen={data.sended === undefined || data.sended === true ? seen : data.sended} time={msgTime} isOutMessage={isOutMessage} />
+        const meta = <MessageMeta
+            edited={data.editDate && !data.editHide}
+            views={data.views}
+            postAuthor={data.postAuthor}
+            seen={data.sended === undefined || data.sended === true ? seen : data.sended}
+            time={msgTime}
+            isOutMessage={isOutMessage} />
 
         if (data.reactions && data.reactions.results.length > 0)
-            return <MessageReactions messageId={data.id} chatId={data._chatPeer} reactions={data.reactions}>{meta}</MessageReactions>
+            return <MessageReactions
+                messageId={data.id}
+                chatId={data._chatPeer}
+                reactions={data.reactions}>
+                {meta}
+            </MessageReactions>
         else
             return meta
     }
@@ -266,7 +285,11 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
         return <div className="Comments" onClick={onClick}>
             <div className="RecentRepliers">
                 {repliersUsers.map((item) => {
-                    return item?.accessHash && <Profile size={24} entity={item} id={item.id?.value} name={item.firstName} />
+                    return item?.accessHash &&
+                        <Profile size={24}
+                            entity={item}
+                            id={item.id?.value}
+                            name={item.firstName} />
                 })}
             </div>
             <span>{data.replies.replies} Comments</span>
@@ -285,13 +308,27 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     var _msgDate = new Date(data.date * 1000)
     var _prevMsgDate = new Date(prevMsgDate * 1000)
 
-    const noAvatar = isAction || !isThread && getChatType(data._chat) !== 'Group'
+    const noAvatar = isAction || !isThread && !data.fromId && getChatType(data._chat) !== 'Group'
 
     const isTransparent = () => {
         if (data.media) {
             const mediaType = getMediaType(data.media)
 
-            if (mediaType === 'Sticker' || mediaType === 'RoundVideo' || ((mediaType === 'Video' || mediaType === 'Photo' || mediaType === 'GIF') && !isDocumentPhoto(data.media.document) && data.message == '' && (!data.reactions || !data.reactions.results.length)))
+            if (
+                mediaType === 'Sticker' ||
+                mediaType === 'RoundVideo' ||
+                ((
+                    mediaType === 'Video' ||
+                    mediaType === 'Photo' ||
+                    mediaType === 'GIF'
+                ) &&
+                    !isDocumentPhoto(data.media.document) &&
+                    data.message == '' &&
+                    (
+                        !data.reactions ||
+                        !data.reactions.results.length
+                    )
+                ))
                 return true
         }
         return false
@@ -304,41 +341,109 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     }
 
     return <>
-        {(_msgDate.getFullYear() !== _prevMsgDate.getFullYear() ||
+        {
+            _msgDate.getFullYear() !== _prevMsgDate.getFullYear() ||
             _msgDate.getMonth() !== _prevMsgDate.getMonth() ||
-            _msgDate.getDate() !== _prevMsgDate.getDate()) && <div className="sticky-date">
+            _msgDate.getDate() !== _prevMsgDate.getDate() &&
+            <div className="sticky-date">
                 <span>{getDate(data.date * 1000)}</span>
-            </div>}
-        <div className={`Message${isOutMessage.current ? " Out" : " In"}${isTransparent() ? " transparent" : ""}${isAction ? ' Action' : ''}`} id={data.id} ref={MessageEl} onDoubleClick={e => { if (!e.target.closest('.bubble')) handleReply() }}>
+            </div>
+        }
+        <div
+            className={buildClassName(
+                'Message',
+                isOutMessage.current ? 'Out' : 'In',
+                isTransparent() && 'transparent',
+                isAction && 'Action'
+            )}
+            id={data.id}
+            ref={MessageEl}
+            onDoubleClick={e => {
+                if (!e.target.closest('.bubble'))
+                    handleReply()
+            }}
+        >
             {(!isOutMessage.current && !noAvatar) && (
-                <div className={"message-from-profile" + (isSameFromNextMsg ? ' hidden' : '')}>
-                    <Profile entity={data.sender ?? data.chat} name={data.sender?.firstName ?? data.sender?.title ?? data.chat?.title ?? 'Anonymous'} id={data.sender?.id?.value ?? data.chat?.id?.value} size={42} />
+                <div className={buildClassName(
+                    "message-from-profile",
+                    isSameFromNextMsg && 'hidden'
+                )}>
+                    <Profile
+                        entity={data._sender ?? data._chat}
+                        name={data._sender?.firstName ??
+                            data._sender?.title ??
+                            data._chat?.title ??
+                            'Anonymous'}
+                        id={data._sender?.id?.value ??
+                            data._chat?.id?.value}
+                        size={42}
+                    />
                 </div>
             )}
-            <div ref={Bubble} className={buildClassName("bubble", noAvatar && 'noAvatar')}>
+            <div
+                ref={Bubble}
+                className={buildClassName("bubble",
+                    noAvatar && 'noAvatar')}
+            >
                 <div className="bubble-content">
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
-                        {(!isOutMessage.current && !noAvatar) && (!isSameFromPrevMsg && !data.media) && <div className={buildClassName("from", getChatColor(data._sender?.id?.value ?? data.chat?.id))}><FullNameTitle chat={data._sender ?? data.chat ?? { title: 'Anonymous' }} /></div>}
-                        {data.fwdFrom && <div className={buildClassName("message-forward", (data.media && 'withMargin'))} onClick={() => viewChat(generateChatWithPeer(data._forward._chat), dispatch)}>
-                            <div className="title">
-                                <div>Forward from - {`${getDate(data.fwdFrom.date * 1000, true, true)} ${formatTime(data.fwdFrom.date * 1000)}`}</div>
-                                <div>{data._forward?._chat?.title ?? data._forward?._sender?.firstName}</div>
-                            </div>
-                        </div>}
-                        {data.replyTo && (!isThread || data.replyToMessage) && <div className={buildClassName("message-reply", getChatColor(data.replyToMessage?._sender?.id?.value ?? 0), (data.media && 'withMargin'))} onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}>
-                            <div className="MessageLine"></div>
-                            <div className="body">
-                                <div className="title">{data.replyToMessage ? <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} /> : 'Loading...'}</div>
-                                <div className="subtitle" dir="auto"><MessageText data={data.replyToMessage ?? ''} /></div>
-                            </div>
-                        </div>}
+                        {(!isOutMessage.current && !noAvatar) &&
+                            (!isSameFromPrevMsg && !data.media) &&
+                            <div className={buildClassName(
+                                "from",
+                                getChatColor(data._sender?.id?.value ?? data.chat?.id)
+                            )}>
+                                <FullNameTitle
+                                    chat={data._sender ??
+                                        data.chat ??
+                                        { title: 'Anonymous' }} />
+                            </div>}
+                        {data.fwdFrom &&
+                            <div className={buildClassName(
+                                "message-forward",
+                                (data.media && 'withMargin')
+                            )}
+                                onClick={() =>
+                                    viewChat(generateChatWithPeer(data._forward._chat), dispatch)}>
+                                <div className="title">
+                                    <div>
+                                        Forward from - {`${getDate(data.fwdFrom.date * 1000, true, true)} ${formatTime(data.fwdFrom.date * 1000)}`}
+                                    </div>
+                                    <div>
+                                        {data._forward?._chat?.title ?? data._forward?._sender?.firstName}
+                                    </div>
+                                </div>
+                            </div>}
+                        {data.replyTo &&
+                            (!isThread || data.replyToMessage) &&
+                            <div className={
+                                buildClassName("message-reply",
+                                    getChatColor(data.replyToMessage?._sender?.id?.value ?? 0),
+                                    (data.media && 'withMargin'))}
+                                onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}
+                            >
+                                <div className="MessageLine"></div>
+                                <div className="body">
+                                    <div className="title">
+                                        {data.replyToMessage ?
+                                            <FullNameTitle chat={data.replyToMessage?._sender ?? { title: 'Anonymous' }} />
+                                            : 'Loading...'}
+                                    </div>
+                                    <div className="subtitle" dir="auto">
+                                        <MessageText data={data.replyToMessage ?? ''} />
+                                    </div>
+                                </div>
+                            </div>}
                         <div className="message-text" dir="auto">
-                            {data.media && mediaPosition === 'top' &&
+                            {data.media &&
+                                mediaPosition === 'top' &&
                                 <MessageMedia
                                     media={data.media}
                                     data={data}
                                     className={buildClassName(
-                                        !data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption',
+                                        !data.message &&
+                                        (!data.reactions || data.reactions.results?.length == 0) &&
+                                        'NoCaption',
                                         'media-position-' + mediaPosition
                                     )}
                                     noAvatar={noAvatar}
@@ -352,10 +457,13 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                                 <MessageMedia
                                     media={data.media}
                                     data={data}
-                                    className={buildClassName(
-                                        !data.message && (!data.reactions || data.reactions.results?.length == 0) && 'NoCaption',
-                                        'media-position-' + mediaPosition
-                                    )}
+                                    className={
+                                        buildClassName(
+                                            !data.message &&
+                                            (!data.reactions || data.reactions.results?.length == 0) &&
+                                            'NoCaption',
+                                            'media-position-' + mediaPosition
+                                        )}
                                     noAvatar={noAvatar}
                                     ref={messageMedia}
                                 />
@@ -363,7 +471,8 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                             {renderReactionAndMeta()}
                         </div>
                     </div>
-                    {data.replies?.comments && renderCommentSection()}
+                    {data.replies?.comments &&
+                        renderCommentSection()}
                 </div>
                 {renderInlineButtons()}
             </div>
@@ -401,7 +510,8 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 </DialogActions>
             </Dialog>
         </div>
-        {unreadFrom && <div className="UnreadMessages">Unread Messages</div>}
+        {unreadFrom &&
+            <div className="UnreadMessages">Unread Messages</div>}
     </>;
 }
 

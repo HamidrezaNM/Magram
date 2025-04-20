@@ -46,7 +46,8 @@ function Tabs({ tabs, children, index, setIndex }) {
             overflowX: 'auto',
             scrollSnapType: 'x mandatory',
             scrollBehavior: 'smooth',
-            scrollbarWidth: 'none'
+            scrollbarWidth: 'none',
+            flex: 1
         }} ref={scrollDiv} onScroll={onScroll}>
             <div style={{
                 display: 'flex',

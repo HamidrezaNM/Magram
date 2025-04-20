@@ -15,12 +15,16 @@ import { client } from "../../../App";
 import { Api } from "telegram";
 import { generateChatWithPeer, getChatSubtitle } from "../../Helpers/chats";
 import { viewChat } from "../ChatList";
+import buildClassName from "../../Util/buildClassName";
+import Tabs from "../../UI/Tabs";
+import TabContent from "../../UI/TabContent";
 
 
 function UserProfile() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [fullUser, setFullUser] = useState()
     const [commonChats, setCommonChats] = useState()
+    const [tabIndex, setTabIndex] = useState(0)
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)
@@ -146,13 +150,30 @@ function UserProfile() {
                 </div>
             </div>
             <div className="section TabSection">
-                <div className="Tabs">
-                    <div className="Tab active"><span>Groups</span></div>
-                    <div className="Tab"><span>Media</span></div>
-                </div>
-                <div className="Items">
-                    {renderCommonChats()}
-                </div>
+                <Tabs index={tabIndex} setIndex={setTabIndex} tabs={
+                    <>
+                        <div
+                            className={buildClassName("Tab", tabIndex === 0 && 'active')}
+                            onClick={() => setTabIndex(0)}>
+                            <span>Media</span>
+                        </div>
+                        {commonChats?.length ? <div
+                            className={buildClassName("Tab", tabIndex === 1 && 'active')}
+                            onClick={() => setTabIndex(1)}>
+                            <span>Groups</span>
+                        </div> : null}
+                    </>
+                }>
+                    <TabContent state={true}>
+                        <div className="Items">
+                        </div>
+                    </TabContent>
+                    {commonChats?.length ? <TabContent state={true}>
+                        <div className="Items">
+                            {renderCommonChats()}
+                        </div>
+                    </TabContent> : null}
+                </Tabs>
             </div>
         </div>
         {/* <Transition state={ui.subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition> */}

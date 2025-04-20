@@ -31,6 +31,10 @@
         scroll-snap-align: center;
     }
 
+    .ChatList .Tabs {
+        top: -48px;
+    }
+
     /* .MiddleColumn {
         display: none;
     }

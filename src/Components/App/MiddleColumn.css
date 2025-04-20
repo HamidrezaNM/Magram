@@ -66,6 +66,11 @@
     font-size: 14px;
 }
 
+.TopBar .ChatInfo .info .body .subtitle.typing {
+    text-transform: none;
+    color: var(--primary);
+}
+
 .ChatInfo .actions {
     display: flex;
 }
