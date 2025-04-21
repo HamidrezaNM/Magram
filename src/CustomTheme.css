@@ -120,7 +120,8 @@
 }
 
 .iOSTheme .Message.selected,
-.iOSTheme .Chat.selected {
+.iOSTheme .Chat.selected,
+.iOSTheme .Items.Media .MediaItem.selected {
     z-index: 4;
     overflow: visible;
 }
@@ -130,7 +131,8 @@
 }
 
 .iOSTheme .Message>*,
-.iOSTheme .Chat>* {
+.iOSTheme .Chat>*,
+.iOSTheme .MediaItem>* {
     top: 0;
     transition: all .3s ease;
 }
@@ -286,7 +288,7 @@
     background-color: var(--primary);
     bottom: -16px;
     left: 0;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
 }
 
 .iOSTheme .Items .Item .profile,

@@ -1,14 +1,12 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../../Auth/Auth";
-import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
+import { PageClose, PageHandle, PageHeader } from "../Page";
 import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
-import Transition from "../Transition";
-import { ChatContext } from "../ChatContext";
 import Menu from "../../UI/Menu";
-import { handleCall, handlePage, handleTopbarTitleChange, handleUserProfile, setActiveChat } from "../../Stores/UI";
+import { handleCall, handleContextMenu, handleGoToMessage, handleUserProfile, setActiveChat } from "../../Stores/UI";
 import FullNameTitle from "../../common/FullNameTitle";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { client } from "../../../App";
@@ -18,6 +16,9 @@ import { viewChat } from "../ChatList";
 import buildClassName from "../../Util/buildClassName";
 import Tabs from "../../UI/Tabs";
 import TabContent from "../../UI/TabContent";
+import { Image, Video } from "../Message/MessageMedia";
+import { getDocumentFileName, getDocumentVideoAttributes, isDocumentVideo } from "../../Helpers/messages";
+import ContextMenu from "../MiddleColumn/ContextMenu";
 
 
 function UserProfile() {
@@ -25,16 +26,19 @@ function UserProfile() {
     const [fullUser, setFullUser] = useState()
     const [commonChats, setCommonChats] = useState()
     const [tabIndex, setTabIndex] = useState(0)
+    const [media, setMedia] = useState([])
+    const [GIFs, setGIFs] = useState([])
 
     const dispatch = useDispatch()
+
     const User = useContext(UserContext)
-    const Chat = useContext(ChatContext)
 
     const page = useRef()
 
     const userProfile = useSelector((state) => state.ui.userProfile)
     const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
     const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+
 
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
@@ -44,6 +48,21 @@ function UserProfile() {
             setIsLoaded(true);
         (async () => {
             setFullUser(((await client.invoke(new Api.users.GetFullUser({ id: userProfile.id }))).fullUser))
+
+            // Get Media Messages
+            const getMedia = await client.getMessages(userProfile.id, {
+                limit: 20,
+                filter: Api.InputMessagesFilterPhotoVideo,
+            })
+
+            setMedia(getMedia)
+
+            const getGIFs = await client.getMessages(userProfile.id, {
+                limit: 20,
+                filter: Api.InputMessagesFilterGif,
+            })
+
+            setGIFs(getGIFs)
 
             setCommonChats((await client.invoke(new Api.messages.GetCommonChats({
                 userId: userProfile.id
@@ -80,17 +99,26 @@ function UserProfile() {
 
     const renderCommonChats = () => {
 
-        return <>
-            {commonChats?.length > 0 && commonChats.map((item) => (
-                <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
-                    <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
-                    <div className="UserDetails">
-                        <div className="title">{item?.title ?? item.firstName}</div>
-                        <div className="subtitle">{getChatSubtitle(item)}</div>
-                    </div>
+        return commonChats?.length > 0 && commonChats.map((item) => (
+            <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
+                <div className="UserDetails">
+                    <div className="title">{item?.title ?? item.firstName}</div>
+                    <div className="subtitle">{getChatSubtitle(item)}</div>
                 </div>
-            ))}
-        </>
+            </div>
+        ))
+    }
+
+    const renderMedia = (media) => {
+        switch (media.className) {
+            case 'MessageMediaPhoto':
+                return <MediaImage media={media} />
+            case 'MessageMediaDocument':
+                if (isDocumentVideo(media.document)) {
+                    return <MediaVideo media={media} dispatch={dispatch} />
+                }
+        }
     }
 
     return <>
@@ -152,29 +180,49 @@ function UserProfile() {
             <div className="section TabSection">
                 <Tabs index={tabIndex} setIndex={setTabIndex} tabs={
                     <>
-                        <div
+                        {media?.length > 0 && <div
                             className={buildClassName("Tab", tabIndex === 0 && 'active')}
                             onClick={() => setTabIndex(0)}>
                             <span>Media</span>
-                        </div>
-                        {commonChats?.length ? <div
+                        </div>}
+                        {GIFs?.length > 0 && <div
                             className={buildClassName("Tab", tabIndex === 1 && 'active')}
                             onClick={() => setTabIndex(1)}>
+                            <span>GIFs</span>
+                        </div>}
+                        {commonChats?.length > 0 && <div
+                            className={buildClassName("Tab", tabIndex === 2 && 'active')}
+                            onClick={() => setTabIndex(2)}>
                             <span>Groups</span>
-                        </div> : null}
+                        </div>}
                     </>
                 }>
-                    <TabContent state={true}>
-                        <div className="Items">
+                    {media?.length > 0 && <TabContent state={true}>
+                        <div className="Items Media">
+                            {media && media.map(item =>
+                                <MediaItem key={item.id} messageId={item.id} dispatch={dispatch}>
+                                    {renderMedia(item.media)}
+                                </MediaItem>
+                            )}
                         </div>
-                    </TabContent>
-                    {commonChats?.length ? <TabContent state={true}>
+                    </TabContent>}
+                    {GIFs?.length > 0 && <TabContent state={true}>
+                        <div className="Items Media">
+                            {GIFs && GIFs.map(item =>
+                                <MediaItem key={item.id} messageId={item.id} dispatch={dispatch}>
+                                    <MediaVideo media={item.media} />
+                                </MediaItem>
+                            )}
+                        </div>
+                    </TabContent>}
+                    {commonChats?.length && <TabContent state={true}>
                         <div className="Items">
                             {renderCommonChats()}
                         </div>
-                    </TabContent> : null}
+                    </TabContent>}
                 </Tabs>
             </div>
+            <ContextMenu type="media" />
         </div>
         {/* <Transition state={ui.subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition> */}
     </>
@@ -185,4 +233,46 @@ export default memo(UserProfile)
 export const showUserProfile = (user, dispatch) => {
     dispatch(handleUserProfile(user))
     PageHandle(dispatch, 'UserProfile', '')
+}
+
+export const MediaItem = memo(({ children, messageId, dispatch }) => {
+    const element = useRef()
+
+    const onContextMenu = e =>
+        mediaMenu(e, element.current, messageId, dispatch)
+
+    useEffect(() => {
+        element.current.removeEventListener('contextmenu', onContextMenu)
+        element.current.addEventListener('contextmenu', onContextMenu)
+    }, [])
+
+    return <div ref={element} className="MediaItem">
+        {children}
+    </div>
+})
+
+export const MediaImage = memo(({ media }) => {
+    const [isLoaded, setIsLoaded] = useState(false)
+
+    return <Image media={media} size={16} _width={50} _height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} />
+})
+
+export const MediaVideo = memo(({ media }) => {
+    const [isLoaded, setIsLoaded] = useState(false)
+
+    const videoAttributes = getDocumentVideoAttributes(media.document)
+
+    return <Video media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={16} width={50} height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} autoplay={false} />
+})
+
+const mediaMenu = (e, element, messageId, dispatch) => {
+    e.preventDefault()
+
+    const items = (
+        <>
+            <MenuItem icon="chat" title="Show in chat" onClick={() => dispatch(handleGoToMessage(messageId))} />
+        </>
+    )
+
+    dispatch(handleContextMenu({ items, type: 'media', e, activeElement: element }))
 }

@@ -103,7 +103,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
                 setReplyToMessage(reply)
             }
         })()
-    }, [])
+    }, [data])
 
     // useEffect(() => {
     //     if (isPinned.current) {
@@ -188,7 +188,16 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
             return;
         e.preventDefault()
 
-        if (!(e.target.closest('.message-reply') || e.target.closest('.message-from-profile') || e.target.closest('.message-media') || e.target.closest('.MessageReactions') || e.target.closest('.Spoiler') || e.target.closest('.Comments') || e.target.closest('.InlineButtons') || e.target.closest('a'))) {
+        if (!(
+            e.target.closest('.message-reply') ||
+            e.target.closest('.message-from-profile') ||
+            e.target.closest('.message-media') ||
+            e.target.closest('.MessageReactions') ||
+            e.target.closest('.Spoiler') ||
+            e.target.closest('.Comments') ||
+            e.target.closest('.InlineButtons') ||
+            e.target.closest('a'))
+        ) {
             const items = (
                 <>
                     <MessageContextMenu

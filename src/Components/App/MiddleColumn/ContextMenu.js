@@ -6,6 +6,9 @@ import Transition from "../Transition";
 function ContextMenu({ type }) {
 
     const contextMenu = useSelector((state) => state.ui.contextMenu)
+    const isiOS = useSelector((state) => state.ui.customTheme.iOSTheme)
+
+    const isMobile = document.body.clientWidth <= 480
 
     const dispatch = useDispatch()
 
@@ -26,28 +29,47 @@ function ContextMenu({ type }) {
             }
             return
         };
+
         let e = contextMenu.e
-        let clientY = contextMenu.top || e.clientY
+        let clientY = e.clientY
         let w = contextMenuDiv.current.clientWidth
         let h = contextMenuDiv.current.clientHeight
-        let clientX = contextMenu.left || e.clientX
+        let clientX = e.clientX
+        let top;
+        let left;
+        let width;
+        let height;
+
+        if (contextMenu.activeElement && isMobile && isiOS) {
+            const rect = contextMenu.activeElement.getBoundingClientRect()
+
+            top = contextMenu.top || rect.top + rect.height
+            left = contextMenu.left || rect.left + rect.width
+            width = contextMenu.width || rect.width
+            height = contextMenu.height || contextMenu.activeElement?.offsetHeight
+
+            clientY = top
+            clientX = left
+            console.log(top, left, width, height)
+        }
+
 
         let originX = 'left'
         let originY = 'top'
         if (clientX > document.body.clientWidth - (w + 10)) {
             clientX -= w
             originX = 'right'
-        } else if (contextMenu.width) {
-            clientX -= contextMenu.width + 10
+        } else if (width) {
+            clientX -= width + 10
         }
         if (clientY > document.body.clientHeight - (h + 70)) {
             clientY = document.body.clientHeight - (h + 70)
             originY = 'bottom'
             if (contextMenu.activeElement) {
-                contextMenu.activeElement.style.minHeight = contextMenu.height + 'px'
+                contextMenu.activeElement.style.minHeight = height + 'px'
                 Array.from(contextMenu.activeElement.children).forEach(item => {
                     item.style.position = 'relative'
-                    item.style.top = `${clientY - contextMenu.top}px`
+                    item.style.top = `${clientY - top}px`
                 })
             }
         }

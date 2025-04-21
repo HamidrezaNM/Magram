@@ -26,7 +26,6 @@ function ChatList() {
     const dispatch = useDispatch()
 
     const chats = useSelector((state) => state.chats.value)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
     const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
@@ -113,7 +112,6 @@ function ChatList() {
                 key={item.id?.value}
                 info={item}
                 isActive={Number(activeChatId) == item.id.value}
-                isiOS={iOSTheme}
             />
         ))
             : null
@@ -148,7 +146,6 @@ function ChatList() {
                         key={item.id?.value}
                         info={item}
                         isActive={Number(activeChatId) == item.id.value}
-                        isiOS={iOSTheme}
                     />
                 ))}
                 {Object.keys(chats).length === 0 &&

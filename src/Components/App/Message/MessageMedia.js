@@ -286,7 +286,7 @@ export function getMediaPosition(media) {
     return 'top'
 }
 
-const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
+export const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
 
@@ -331,7 +331,9 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
             var data = window.URL.createObjectURL(blob)
 
             img.current.src = data;
-            setSrc(data)
+
+            if (setSrc)
+                setSrc(data)
 
             return
         }
@@ -347,7 +349,9 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
             if (img.current) {
                 let src = result.data
                 img.current.src = src;
-                setSrc(src)
+
+                if (setSrc)
+                    setSrc(src)
             }
             if (!result.thumbnail)
                 setIsLoaded(true)
@@ -362,7 +366,7 @@ const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = f
     </>
 })
 
-const Video = forwardRef(({ children, media, details, size, width, height, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+export const Video = forwardRef(({ children, media, details, size, width, height, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [thumb, setThumb] = useState()
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
@@ -410,7 +414,8 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             var blob = new Blob([buffer]);
             var data = window.URL.createObjectURL(blob)
 
-            setSrc(data)
+            if (setSrc)
+                setSrc(data)
             setContent(data)
 
             return
@@ -424,7 +429,9 @@ const Video = forwardRef(({ children, media, details, size, width, height, noAva
             const result = await downloadMedia(media, param, (e) => { setProgress({ loaded: Number(e.value), total: details.size }); setLoaded(Number(e.value)) }, size)
 
             if (!result) return
-            setSrc(result.data)
+
+            if (setSrc)
+                setSrc(result.data)
             if (!result.thumbnail) {
                 setContent(result.data)
                 setIsLoaded(true)

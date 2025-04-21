@@ -6,7 +6,7 @@ function Tabs({ tabs, children, index, setIndex }) {
     const prevIndex = useRef()
     const scrollDiv = useRef()
 
-    const widthPerTab = scrollDiv.current?.scrollWidth / tabs.props?.children?.length
+    const tabCount = tabs.props?.children ? tabs.props?.children.filter(item => !!item).length : 0
 
     useEffect(() => {
         prevIndex.current = index
@@ -20,6 +20,8 @@ function Tabs({ tabs, children, index, setIndex }) {
         //     containerRef.current.classList.remove('prev')
         //     containerRef.current.classList.add('next')
         // }
+        const widthPerTab = scrollDiv.current?.scrollWidth / tabCount
+
         if (scrollDiv.current && prevIndex.current !== index)
             scrollDiv.current.scrollLeft = widthPerTab * index
 
@@ -29,6 +31,7 @@ function Tabs({ tabs, children, index, setIndex }) {
     const onScroll = () => {
         if (!scrollDiv.current) return
 
+        const widthPerTab = scrollDiv.current?.scrollWidth / tabCount
         const currentIndex = Math.round(scrollDiv.current.scrollLeft / widthPerTab)
 
         if (currentIndex !== index) {
@@ -38,7 +41,7 @@ function Tabs({ tabs, children, index, setIndex }) {
     }
 
     return <div className="TabContainer" ref={containerRef}>
-        {tabs.props?.children?.length > 0 &&
+        {tabCount > 0 &&
             <div className="Tabs">
                 {tabs}
             </div>}
@@ -51,7 +54,7 @@ function Tabs({ tabs, children, index, setIndex }) {
         }} ref={scrollDiv} onScroll={onScroll}>
             <div style={{
                 display: 'flex',
-                width: tabs.props?.children?.length * 100 + '%'
+                width: tabCount * 100 + '%'
             }}>
                 {children}
             </div>

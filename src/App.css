@@ -982,6 +982,30 @@
   transform: translateY(50px);
 }
 
+.Page .Items.Media {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 2px;
+}
+
+.Page .Items.Media .MediaItem {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.Page .Items.Media .MediaItem>* {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.Page .Items.Media .MediaItem .blurred {
+  filter: blur(4px);
+}
+
 .emoji-inner {
   display: inline-block;
   width: 20px;
