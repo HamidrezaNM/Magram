@@ -210,7 +210,7 @@
     justify-content: center;
 }
 
-.MiddleColumn .Messages>:first-child {
+.MiddleColumn .Messages> :first-child:not(.NoMessage) {
     margin-top: auto !important;
 }
 

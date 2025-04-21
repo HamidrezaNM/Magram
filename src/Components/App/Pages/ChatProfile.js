@@ -17,11 +17,12 @@ import { getChatData } from "../Chat";
 import FullNameTitle from "../../common/FullNameTitle";
 import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
-import { deleteChat, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
+import { deleteChat, generateChatWithPeer, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
 import { Api } from "telegram";
 import Tabs from "../../UI/Tabs";
 import buildClassName from "../../Util/buildClassName";
 import TabContent from "../../UI/TabContent";
+import { viewChat } from "../ChatList";
 
 
 export default function ChatProfile() {
@@ -40,21 +41,25 @@ export default function ChatProfile() {
     const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
     const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
 
-    const chatType = getChatType(activeChat.entity)
+    const chatType = getChatType(activeChat?.entity)
 
     useEffect(() => {
         setIsLoaded(true);
 
         (async () => {
-            if (!activeChat.participants && chatType === 'Group') {
+            if (!activeChat?.participants && chatType === 'Group') {
                 const participants = await client.getParticipants(activeChat)
-                console.log(participants)
 
                 dispatch(updateChatParticipants({ id: activeChat.id.value, participants }))
                 dispatch(setActiveChat({ ...activeChat, participants }))
             }
         })()
     }, [])
+
+    const viewDiscussion = async () => {
+        const discussionChat = await client.getEntity(fullChat?.linkedChatId)
+        viewChat(generateChatWithPeer(discussionChat), dispatch)
+    }
 
     const onLeaveGroup = () => {
         dispatch(removeChat(activeChat.id.value))
@@ -95,6 +100,7 @@ export default function ChatProfile() {
                         {activeChat?.adminRights && <button onClick={() => { PageHandle(dispatch, 'Manage', 'Manage', true) }}>Manage</button>}
                         <Menu icon="more_vert">
                             <DropdownMenu className="top right withoutTitle">
+                                {chatType === 'Channel' && fullChat?.linkedChatId && <MenuItem icon="chat" title="View Discussion" onClick={viewDiscussion} />}
                                 <MenuItem icon="logout" title="Leave Group" className="danger" onClick={() => setOpenDeleteModal(true)} />
                             </DropdownMenu>
                         </Menu>
@@ -150,7 +156,7 @@ export default function ChatProfile() {
                                     item.id && <div className="Item" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
                                         <Profile size={44} entity={item} id={item.id?.value} name={item.firstName} />
                                         <div className="UserDetails">
-                                            <div className="title">{item.firstName}</div>
+                                            <div className="title"><FullNameTitle chat={item} /></div>
                                             <div className="subtitle">{getUserStatus(item.status, item)}</div>
                                         </div>
                                         {item.participant?.adminRights && <div className="meta">{item.participant?.rank ?? 'Admin'}</div>}

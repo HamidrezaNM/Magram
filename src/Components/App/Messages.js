@@ -31,6 +31,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const previousScrollHeightMinusTop = useRef(0);
     const messageRenderIncrease = useRef(false);
 
+    const chatType = getChatType(activeChat.entity)
     const messageStartIndex = messages?.length - messagesRenderCount > 0 ? messages?.length - messagesRenderCount : 0
 
     const onGetMessages = async (data, overwrite = false) => {
@@ -272,6 +273,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                             item.id === activeChat?.dialog?.readInboxMaxId &&
                             item.id !== activeChat?.dialog.topMessage
                         }
+                        chatType={chatType}
                         isiOS={iOSTheme} />
                 )
             }

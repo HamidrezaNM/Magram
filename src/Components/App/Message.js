@@ -28,7 +28,7 @@ import InlineButtons from "./Message/InlineButtons";
 import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
 
-function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread = false, isiOS, unreadFrom }) {
+function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, isThread = false, isiOS, unreadFrom }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -317,7 +317,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, isThread =
     var _msgDate = new Date(data.date * 1000)
     var _prevMsgDate = new Date(prevMsgDate * 1000)
 
-    const noAvatar = isAction || !isThread && !data.fromId && getChatType(data._chat) !== 'Group'
+    const noAvatar = isAction || !isThread && chatType !== 'Group'
 
     const isTransparent = () => {
         if (data.media) {

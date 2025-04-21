@@ -66,7 +66,7 @@ function ChatInfo() {
             case 'Bot':
                 return activeChat.entity.botActiveUsers ? activeChat.entity.botActiveUsers + ' monthly users' : 'bot'
             case 'Group':
-                const participantsCount = activeChat.entity?.participantsCount ?? fullChat?.participantsCount
+                const participantsCount = fullChat?.participantsCount ?? activeChat.entity?.participantsCount
                 const onlineCount = fullChat?.onlineCount
 
                 const participantsText = participantsCount ? (participantsCount > 1 ? participantsCount + ' members' : '1 member') : 'Updating...'
@@ -74,7 +74,8 @@ function ChatInfo() {
 
                 return participantsText + (onlineText ? ', ' + onlineText : '')
             case 'Channel':
-                const subscribersCount = activeChat.entity?.participantsCount ?? fullChat?.participantsCount
+                console.log(fullChat, activeChat)
+                const subscribersCount = fullChat?.participantsCount ?? activeChat.entity?.participantsCount
 
                 const subscribersText = subscribersCount ? (subscribersCount > 1 ? subscribersCount + ' subscribers' : '1 subscriber') : 'channel'
 
@@ -82,7 +83,7 @@ function ChatInfo() {
             default:
                 break;
         }
-    }, [activeChat, chatType, typingStatus, typingAction])
+    }, [activeChat, fullChat, chatType, typingStatus, typingAction])
 
     const onLeaveGroup = () => {
         dispatch(removeChat(activeChat.id.value))
@@ -119,7 +120,7 @@ function ChatInfo() {
                         <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                         <div className="body">
                             <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                            {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}> {chatInfoSubtitle()}</div>}
+                            {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}
                         </div>
                     </>
                 }

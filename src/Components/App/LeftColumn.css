@@ -249,6 +249,7 @@
 
 .Search .topPeers {
     display: flex;
+    overflow-x: overlay;
 }
 
 .Search .topPeers .Item {

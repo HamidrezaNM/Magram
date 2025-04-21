@@ -6,8 +6,6 @@ function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
     const prevIndex = useRef()
     const scrollDiv = useRef()
 
-    console.log(tabs.props?.children)
-
     const tabCount = tabs.props?.children ?
         tabs.props?.children?.filter ?
             tabs.props?.children.filter(item => !!item).length
