@@ -178,7 +178,7 @@ function UserProfile() {
                 </div>
             </div>
             <div className="section TabSection">
-                <Tabs index={tabIndex} setIndex={setTabIndex} tabs={
+                <Tabs index={tabIndex} setIndex={setTabIndex} showOneTab tabs={
                     <>
                         {media?.length > 0 && <div
                             className={buildClassName("Tab", tabIndex === 0 && 'active')}
@@ -254,7 +254,7 @@ export const MediaItem = memo(({ children, messageId, dispatch }) => {
 export const MediaImage = memo(({ media }) => {
     const [isLoaded, setIsLoaded] = useState(false)
 
-    return <Image media={media} size={16} _width={50} _height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} />
+    return <Image media={media} size={16} _width={50} _height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={() => { }} />
 })
 
 export const MediaVideo = memo(({ media }) => {
@@ -262,7 +262,7 @@ export const MediaVideo = memo(({ media }) => {
 
     const videoAttributes = getDocumentVideoAttributes(media.document)
 
-    return <Video media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={16} width={50} height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} autoplay={false} />
+    return <Video media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={16} width={50} height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={() => { }} autoplay={false} />
 })
 
 const mediaMenu = (e, element, messageId, dispatch) => {

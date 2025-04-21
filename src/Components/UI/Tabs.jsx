@@ -1,12 +1,18 @@
 import { memo, useEffect, useRef, useState } from "react"
 import Transition from "../App/Transition"
 
-function Tabs({ tabs, children, index, setIndex }) {
+function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
     const containerRef = useRef()
     const prevIndex = useRef()
     const scrollDiv = useRef()
 
-    const tabCount = tabs.props?.children ? tabs.props?.children.filter(item => !!item).length : 0
+    console.log(tabs.props?.children)
+
+    const tabCount = tabs.props?.children ?
+        tabs.props?.children?.filter ?
+            tabs.props?.children.filter(item => !!item).length
+            : 1
+        : 0
 
     useEffect(() => {
         prevIndex.current = index
@@ -41,7 +47,7 @@ function Tabs({ tabs, children, index, setIndex }) {
     }
 
     return <div className="TabContainer" ref={containerRef}>
-        {tabCount > 0 &&
+        {((showOneTab && tabCount > 0) || tabCount > 1) &&
             <div className="Tabs">
                 {tabs}
             </div>}
