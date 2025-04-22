@@ -4,14 +4,14 @@ import { PageClose, PageHeader } from "../../Page";
 import { BackArrow, Icon, Switch } from "../../common";
 import { UserContext } from "../../../Auth/Auth";
 import buildClassName from "../../../Util/buildClassName";
-import { handleCustomTheme } from "../../../Stores/UI";
+import { handleCustomTheme } from "../../../Stores/Settings";
 
 export default function SettingsThemes() {
     const [isLoaded, setIsLoaded] = useState(false)
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
-    const bottomBar = useSelector((state) => state.ui.customTheme.bottomBar)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
+    const bottomBar = useSelector((state) => state.settings.customTheme.bottomBar)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const dispatch = useDispatch()
 

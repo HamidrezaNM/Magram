@@ -1,13 +1,47 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit'
 import messagesReducer from './Messages'
 import uiReducer from './UI'
 import chatsReducer from './Chats'
+import settingsReducer, { handleCustomTheme, handleToggleDarkMode } from './Settings'
 
-export default configureStore({
+const persistedRaw = localStorage.getItem('magramState')
+const persistedState = persistedRaw ? JSON.parse(persistedRaw) : {}
+
+const preloadedState = {}
+
+if (persistedState.settings) {
+    preloadedState.settings = persistedState.settings
+}
+
+const listenerMiddleware = createListenerMiddleware()
+
+const store = configureStore({
     reducer: {
         messages: messagesReducer,
         chats: chatsReducer,
-        ui: uiReducer
+        ui: uiReducer,
+        settings: settingsReducer
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, })
+    preloadedState,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false
+        }).prepend(listenerMiddleware.middleware)
 })
+
+listenerMiddleware.startListening({
+    matcher: (action) =>
+        action.type === handleCustomTheme.type || action.type === handleToggleDarkMode.type,
+
+    effect: async (action, listenerApi) => {
+        const settings = listenerApi.getState().settings
+
+        const resultState = {
+            settings
+        }
+
+        localStorage.setItem('magramState', JSON.stringify(resultState))
+    }
+})
+
+export default store

@@ -11,7 +11,7 @@ export default function SettingsAnimations() {
     const [chatAnimations, setChatAnimations] = useState(window.Animations?.ChatAnimations)
     const [autoPlayGIFs, setAutoPlayGIFs] = useState(window.Animations?.AutoPlayGIFs)
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 

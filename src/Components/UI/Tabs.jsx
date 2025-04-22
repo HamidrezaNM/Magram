@@ -58,7 +58,7 @@ function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
         }} ref={scrollDiv} onScroll={onScroll}>
             <div style={{
                 display: 'flex',
-                width: tabCount * 100 + '%'
+                width: (tabCount || 1) * 100 + '%'
             }}>
                 {children}
             </div>

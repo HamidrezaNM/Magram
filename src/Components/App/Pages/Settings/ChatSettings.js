@@ -5,11 +5,11 @@ import { BackArrow, Icon, Switch } from "../../common";
 import { UserContext } from "../../../Auth/Auth";
 import { Slider } from "@mui/material";
 import Message from "../../Message";
-import { handleToggleDarkMode } from "../../../Stores/UI";
 import SettingsAnimations from "./Animations";
 import Transition from "../../Transition";
 import buildClassName from "../../../Util/buildClassName";
 import SettingsThemes from "./Themes";
+import { handleToggleDarkMode } from "../../../Stores/Settings";
 
 export default function SettingsChatSettings() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -18,8 +18,8 @@ export default function SettingsChatSettings() {
     const User = useContext(UserContext)
 
     const subPage = useSelector((state) => state.ui.subPage)
-    const darkMode = useSelector((state) => state.ui.darkMode)
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const darkMode = useSelector((state) => state.settings.darkMode)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 

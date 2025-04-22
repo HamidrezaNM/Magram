@@ -24,7 +24,7 @@ import ChatContextProvider, { ChatContext } from "./ChatContext";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "../Stores/store";
 import { handleCachedMessages, handleMessageError, messageAdded, setMessages, updateMessageId, updateMessageMediaUploadProgress, updateMessageSeen, updateMessageText } from "../Stores/Messages";
-import { handleBackground, handleCall, handleCloseCall, handleContextMenu, handleEditMessage, handlePage, handlePageClose, handlePinnedMessage, handleReplyToMessage, handleThread, handleToggleDarkMode, handleTopbarTitleChange, handleUserProfile, setActiveChat, updateActiveChatPermissions } from "../Stores/UI";
+import { handleBackground, handleCall, setActiveChat, updateActiveChatPermissions } from "../Stores/UI";
 import { chatAdded, handleCachedChats, setChat, setChats, updateLastMessage, updateTypingStatus } from "../Stores/Chats";
 import EmojiData from '@emoji-mart/data/sets/14/apple.json'
 import Picker from '@emoji-mart/react'
@@ -58,6 +58,7 @@ import Toasts from "../UI/Toasts";
 import Dialogs from "../UI/Dialogs";
 import UpdateManager from "./UpdateManager";
 import buildClassName from "../Util/buildClassName";
+import { handleToggleDarkMode } from "../Stores/Settings";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -94,8 +95,8 @@ function Home() {
     const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
     const background = useSelector((state) => state.ui.background)
     const mediaPreview = useSelector((state) => state.ui.mediaPreview)
-    const darkMode = useSelector((state) => state.ui.darkMode)
-    const customTheme = useSelector((state) => state.ui.customTheme)
+    const darkMode = useSelector((state) => state.settings.darkMode)
+    const customTheme = useSelector((state) => state.settings.customTheme)
 
     const themeOptions = Object.keys(customTheme).filter(key => customTheme[key]);
 
@@ -104,7 +105,7 @@ function Home() {
             homeRef.current.classList.remove('animate')
         })
 
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches !== darkMode) {
+        if (darkMode === undefined && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches !== darkMode) {
             dispatch(handleToggleDarkMode())
         }
     }, [])
@@ -223,6 +224,8 @@ function Home() {
 
     useEffect(() => {
         document.querySelector('.App').classList.toggle('Dark', darkMode)
+
+        document.querySelector('meta[name=theme-color]').setAttribute('content', darkMode ? '#000000' : '#ffffff')
     }, [darkMode])
 
     function notify(title, options) {

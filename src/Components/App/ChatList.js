@@ -119,7 +119,7 @@ function ChatList() {
 
     return <div className="ChatList" ref={ChatListRef}>
         <Tabs index={folderTabIndex} setIndex={setFolderTabIndex} tabs={<>
-            {folders?.length > 1 && folders.map((folder, index) =>
+            {folders.map((folder, index) =>
                 <div className={buildClassName(
                     "Tab",
                     folderTabIndex === index &&

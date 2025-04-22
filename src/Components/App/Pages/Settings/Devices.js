@@ -15,7 +15,7 @@ function SettingsDevices() {
     const [currentSession, setCurrentSession] = useState()
     const [sessions, setSessions] = useState()
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 

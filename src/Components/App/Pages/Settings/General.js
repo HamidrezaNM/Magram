@@ -10,7 +10,7 @@ export default function SettingsGeneral() {
     const [groups, setGroups] = useState(false)
     const [channels, setChannels] = useState(false)
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
 

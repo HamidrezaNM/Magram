@@ -36,7 +36,7 @@ function Settings() {
     const usernameMenu = useRef()
 
     const subPage = useSelector((state) => state.ui.subPage)
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const logOut = async () => {
         await client.invoke(new Api.auth.LogOut())

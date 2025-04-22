@@ -38,8 +38,8 @@ export default function ChatProfile() {
     const subPage = useSelector((state) => state.ui.subPage)
     const activeChat = useSelector((state) => state.ui.activeChat)
     const fullChat = useSelector((state) => state.ui.activeFullChat)
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const chatType = getChatType(activeChat?.entity)
 

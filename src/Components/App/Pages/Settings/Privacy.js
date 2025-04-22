@@ -7,7 +7,7 @@ import { UserContext } from "../../../Auth/Auth";
 export default function SettingsPrivacy() {
     const [isLoaded, setIsLoaded] = useState(false)
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)

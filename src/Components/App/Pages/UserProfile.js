@@ -36,8 +36,8 @@ function UserProfile() {
     const page = useRef()
 
     const userProfile = useSelector((state) => state.ui.userProfile)
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
 
     useEffect(() => {
@@ -51,14 +51,14 @@ function UserProfile() {
 
             // Get Media Messages
             const getMedia = await client.getMessages(userProfile.id, {
-                limit: 20,
+                limit: 100,
                 filter: Api.InputMessagesFilterPhotoVideo,
             })
 
             setMedia(getMedia)
 
             const getGIFs = await client.getMessages(userProfile.id, {
-                limit: 20,
+                limit: 100,
                 filter: Api.InputMessagesFilterGif,
             })
 

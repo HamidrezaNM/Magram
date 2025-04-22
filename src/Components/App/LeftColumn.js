@@ -15,7 +15,7 @@ import DropdownMenu from "../UI/DropdownMenu";
 import Menu from "../UI/Menu";
 import ChatList from "./ChatList";
 import { Icon } from "./common";
-import { handleToggleDarkMode } from "../Stores/UI";
+import { handleToggleDarkMode } from "../Stores/Settings";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 

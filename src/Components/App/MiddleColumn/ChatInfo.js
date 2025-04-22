@@ -31,7 +31,7 @@ function ChatInfo() {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
     const typingStatus = useSelector((state) => state.chats.value[activeChat.id.value]?.typing)
     const thread = useSelector((state) => state.ui.thread)
-    const centerTopBar = useSelector((state) => state.ui.customTheme.centerTopBar)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const isSavedMessages = activeChat.id.value === User.id.value
     const chatType = getChatType(activeChat.entity)

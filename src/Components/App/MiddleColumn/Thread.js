@@ -26,7 +26,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
 
     const messages = useSelector((state) => state.messages.value[chatId])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const dispatch = useDispatch()
 

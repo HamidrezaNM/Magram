@@ -38,7 +38,7 @@ export default function Search() {
     const placeholderRef = useRef()
 
     const subPage = useSelector((state) => state.ui.subPage)
-    const centerTopBar = useSelector((state) => state.ui.customTheme)
+    const centerTopBar = useSelector((state) => state.settings.customTheme)
 
     useEffect(() => {
         setIsLoaded(true)

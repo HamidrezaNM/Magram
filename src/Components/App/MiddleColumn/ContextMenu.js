@@ -6,7 +6,7 @@ import Transition from "../Transition";
 function ContextMenu({ type }) {
 
     const contextMenu = useSelector((state) => state.ui.contextMenu)
-    const isiOS = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const isiOS = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const isMobile = document.body.clientWidth <= 480
 

@@ -39,7 +39,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const editMessage = useSelector((state) => state.ui.editMessage)
     const replyToMessage = useSelector((state) => state.ui.replyToMessage)
     const sendBotCommand = useSelector((state) => state.ui.sendBotCommand)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const ikUploadRefTest = useRef()
     const messageInputEl = useRef();

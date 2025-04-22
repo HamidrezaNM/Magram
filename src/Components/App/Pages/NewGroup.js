@@ -14,7 +14,7 @@ export default function NewGroup() {
     const [username, setUsername] = useState('')
     const [bio, setBio] = useState('')
 
-    const centerTopBar = useSelector((state) => state.ui.customTheme)
+    const centerTopBar = useSelector((state) => state.settings.customTheme)
 
     const dispatch = useDispatch()
     const User = useContext(UserContext)

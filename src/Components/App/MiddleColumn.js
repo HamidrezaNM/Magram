@@ -23,7 +23,7 @@ function MiddleColumn({ }) {
     const activeChat = useSelector((state) => state.ui.activeChat)
     const chats = useSelector((state) => state.chats.value)
     const thread = useSelector((state) => state.ui.thread)
-    const darkMode = useSelector((state) => state.ui.darkMode)
+    const darkMode = useSelector((state) => state.settings.darkMode)
 
     const maskPattern = darkMode
 

@@ -8,7 +8,7 @@ import { socket } from "../../App";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Skeleton, Slide, Zoom } from "@mui/material";
 import { ChatContext } from "./ChatContext";
 import { useDispatch, useSelector } from "react-redux";
-import { handleCall, handleContextMenu, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleUnpinMessage } from "../Stores/UI";
+import { handleCall, handleContextMenu, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleToast, handleUnpinMessage } from "../Stores/UI";
 import MessageContextMenu from "./MessageContextMenu";
 import { EmojiConvertor } from "emoji-js";
 import MessageText, { getMessageText } from "./MessageText";
@@ -121,7 +121,14 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
     }, [data])
 
     const handleCopy = useCallback(() => {
-        copyTextToClipboard(data.text); handleContextMenuClose()
+        copyTextToClipboard(data.text);
+
+        handleContextMenuClose()
+
+        dispatch(handleToast({
+            icon: 'content_copy',
+            title: 'Message copied to clipboard.'
+        }))
     }, [data.text])
 
     const handleSave = useCallback(() => {

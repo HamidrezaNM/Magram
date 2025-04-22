@@ -29,13 +29,7 @@ export const uiSlice = createSlice({
         mediaPreview: null,
         toasts: [],
         dialogs: [],
-        customTheme: {
-            centerTopBar: true,
-            bottomBar: true,
-            iOSTheme: true
-        },
-        background: null,
-        darkMode: true
+        background: null
     },
     reducers: {
         handleContextMenu: (state, action) => {
@@ -159,12 +153,6 @@ export const uiSlice = createSlice({
         },
         handleBackground: (state, action) => {
             state.background = action.payload
-        },
-        handleCustomTheme: (state, action) => {
-            state.customTheme = { ...state.customTheme, ...action.payload }
-        },
-        handleToggleDarkMode: (state) => {
-            state.darkMode = !state.darkMode
         }
     },
 })
@@ -201,9 +189,7 @@ export const {
     handleMediaPreviewClose,
     handleToast,
     handleDialog,
-    handleBackground,
-    handleCustomTheme,
-    handleToggleDarkMode
+    handleBackground
 } = uiSlice.actions
 
 export default uiSlice.reducer

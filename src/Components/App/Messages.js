@@ -22,7 +22,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
     const messages = useSelector((state) => state.messages.value[activeChat.id.value])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
-    const iOSTheme = useSelector((state) => state.ui.customTheme.iOSTheme)
+    const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const dispatch = useDispatch()
 
