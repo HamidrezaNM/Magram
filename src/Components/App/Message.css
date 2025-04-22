@@ -271,6 +271,7 @@
     margin: -0.575rem;
     margin-bottom: 0.285rem;
     border-radius: 8px;
+    min-height: 80px;
     position: relative;
     display: flex;
     align-items: center;
@@ -392,11 +393,13 @@
     justify-content: center;
 }
 
-.message-loading-progress {
+.message-loading-progress,
+.StreamAudio {
     position: absolute;
     padding: 3px;
     width: 54px;
     height: 54px;
+    flex: none;
     background-color: #0009;
     color: var(--text-color);
     display: flex;
@@ -433,7 +436,7 @@
 
 .message-media .Document {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 12px;
     gap: 16px;
     flex: 1;
@@ -443,7 +446,12 @@
     display: flex;
     flex-direction: column;
     direction: ltr;
-    gap: 6px;
+    gap: 2px;
+}
+
+.message-media .Document .details .title {
+    color: var(--primary);
+    font-weight: 500;
 }
 
 .message-media .Document .details .subtitle {
@@ -452,6 +460,43 @@
 
 .message-media .Document .message-loading-progress {
     position: static;
+}
+
+.message-media .Document .StreamAudio {
+    position: relative;
+}
+
+.message-media .Document .StreamAudio .Play {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-media .Document .StreamAudio img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.message-media .Document .StreamAudio .Play>.icon {
+    font-size: 36px !important;
+    position: absolute;
+}
+
+.message-media .Document .StreamAudio .message-loading-progress {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    bottom: -4px;
+    right: -4px;
+    padding: 0;
+}
+
+.message-media .Document .StreamAudio .message-loading-progress .icon {
+    font-size: 18px !important;
 }
 
 .CustomEmoji {
@@ -482,13 +527,17 @@
 
 .Code::before {
     content: '';
-    background-color: #fff;
+    background-color: var(--primary);
     width: 3px;
     height: 100%;
     display: block;
     position: absolute;
     left: 0;
     top: 0;
+}
+
+.Dark .Code::before {
+    background-color: #ffffff;
 }
 
 .Code pre {

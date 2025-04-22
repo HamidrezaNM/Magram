@@ -63,7 +63,7 @@ export function isDocumentSticker(document) {
 }
 
 export function isDocumentAudio(document) {
-    return document.attributes?.find(i => i.className === 'DocumentAttributeAudio')
+    return document?.attributes?.find(i => i.className === 'DocumentAttributeAudio')
 }
 
 export function isDocumentVoice(document) {

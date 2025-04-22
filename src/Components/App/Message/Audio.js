@@ -5,6 +5,7 @@ import { Icon } from "../common"
 import { MAX_EMPTY_WAVEFORM_POINTS, renderWaveform } from "../../Helpers/waveform"
 import { decodeWaveform, interpolateArray } from "../../Util/waveform"
 import { getDocumentAudioAttributes } from "../../Helpers/messages"
+import { Api } from "telegram"
 
 export const TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 375px)');
 export const WITH_AVATAR_TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 410px)');
@@ -12,6 +13,7 @@ const AVG_VOICE_DURATION = 10;
 
 const Audio = forwardRef(({ children, media, isVoice = false, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [content, setContent] = useState()
+    const [thumb, setThumb] = useState()
     const [loaded, setLoaded] = useState()
     const [isPlaying, setIsPlaying] = useState(false)
     const [playProgress, setPlayProgress] = useState(0)
@@ -53,6 +55,21 @@ const Audio = forwardRef(({ children, media, isVoice = false, details, size, noA
     }, [uploading])
 
     useEffect(() => {
+        if (thumb) return
+
+        (async () => {
+            const thumbSize = media.document.thumbs ? media.document.thumbs[1] : undefined
+            if (!thumbSize) return
+            const result = await downloadMedia(media, { thumb: thumbSize }, (e) => { }, true, false)
+
+            console.log(result)
+            if (!result) return
+            setThumb(result.data)
+
+        })()
+    }, [media])
+
+    useEffect(() => {
         if (!media.document?.id && media.document?.fileReference) {
             const buffer = media.document.fileReference
 
@@ -81,12 +98,13 @@ const Audio = forwardRef(({ children, media, isVoice = false, details, size, noA
 
     return <>
         <div className="Document">
-            {children}
-            {isLoaded &&
-                <div className="message-loading-progress" onClick={() => isPlaying ? audio.current.pause() : audio.current.play()}>
+            <div className="StreamAudio">
+                <div className="Play" onClick={() => isPlaying ? audio.current.pause() : audio.current.play()}>
+                    {thumb && <img src={thumb} width={90} />}
                     <Icon name={isPlaying ? "pause" : "play_arrow"} size={28} className="IconFill" />
                 </div>
-            }
+                {children}
+            </div>
             <audio ref={audio} src={content} loop={autoplay} onTimeUpdate={e => setPlayProgress(e.target.currentTime / e.target.duration)} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
             {isVoice ? <div className="details">
                 <div

@@ -63,6 +63,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
 
         if (isMobile) {
             if (isiOS) {
+                MessageEl.current.oncontextmenu = e => e.preventDefault()
                 MessageEl.current.ontouchstart = e => {
                     if (
                         e.target.closest('.message-reply') ||
@@ -79,7 +80,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
                         holdTimeout = setTimeout(() => {
                             MessageEl.current.classList.remove('hold')
                             messageMenu(e)
-                        }, 500);
+                        }, 360);
                     }, 40);
                 }
                 MessageEl.current.ontouchend = MessageEl.current.ontouchmove = () => {
