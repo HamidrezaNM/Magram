@@ -500,6 +500,7 @@
 .profile {
   width: 3.175rem;
   height: 3.175rem;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -578,6 +579,7 @@
   background-color: var(--surface-color);
   position: absolute;
   min-width: 13.5rem;
+  max-width: 16rem;
   border-radius: 10px;
   z-index: 4;
   margin: 4px;
@@ -640,6 +642,7 @@
 
 .MenuItem>div~div {
   margin: 0;
+  overflow: hidden;
 }
 
 .MenuItem:hover {
@@ -673,6 +676,8 @@
 .MenuItem .title {
   font-family: Roboto, Vazirmatn;
   font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .MenuItem .subtitle {
@@ -1002,10 +1007,14 @@
   overflow: hidden;
 }
 
-.Page .Items.Media .MediaItem>* {
+.Page .Items.Media .MediaItem * {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.Page .Items.Media .MediaItem .MediaDetails {
+  display: none;
 }
 
 .Page .Items.Media .MediaItem .blurred {

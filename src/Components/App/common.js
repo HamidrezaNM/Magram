@@ -27,9 +27,18 @@ export function Profile({ entity, image, name, id, size = 48, isSavedMessages })
         }
     }, [])
 
-    return <div className={"profile" + (id ? ' peer-color-' + getPeerColorIndexById(id) : '')} style={{ width: size + 'px', height: size + 'px', fontSize: size / 2 + 'px' }}>
+    return <div
+        className={buildClassName(
+            "profile",
+            'peer-color-' + getPeerColorIndexById(id))}
+        style={{
+            width: size + 'px',
+            height: size + 'px',
+            fontSize: size / 2 + 'px'
+        }}>
         {isSavedMessages ? <Icon name="bookmark" size={28} /> :
-            <><span>{name ? name.toString().charAt(0).toUpperCase() : ''}</span>
+            <>
+                <span>{name ? Array.from(name.toString())[0].toUpperCase() : ''}</span>
                 <Transition state={!!photo}>
                     <img ref={img} style={{ width: size + 'px', height: size + 'px' }} src={photo} />
                 </Transition>

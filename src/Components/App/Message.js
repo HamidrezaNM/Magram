@@ -44,8 +44,10 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
 
     const MessageEl = useRef()
     const Bubble = useRef()
+    const BubbleContent = useRef()
     const messageText = useRef()
     const messageMedia = useRef()
+    const bubbleDimensions = useRef({})
 
     const dispatch = useDispatch()
 
@@ -56,6 +58,10 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
     const isMobile = document.body.clientWidth <= 480
 
     console.log('Message Rerendered')
+
+    useEffect(() => {
+        bubbleDimensions.current = BubbleContent.current.getBoundingClientRect()
+    }, [])
 
     useEffect(() => {
         var isLongPressTimeout
@@ -97,6 +103,37 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
     }, [data.message, isPinned.current])
 
     useEffect(() => {
+        const dimensions = BubbleContent.current.getBoundingClientRect()
+
+        if (BubbleContent.current &&
+            (
+                dimensions.width !== bubbleDimensions.current?.width ||
+                dimensions.height !== bubbleDimensions.current?.height
+            )) {
+
+            BubbleContent.current.style.width = bubbleDimensions.current.width + 'px'
+            BubbleContent.current.style.height = bubbleDimensions.current.height + 'px'
+
+            BubbleContent.current.classList.add('sizeAnimating')
+
+            requestAnimationFrame(() => {
+                BubbleContent.current.style.width = dimensions.width + 'px'
+                BubbleContent.current.style.height = dimensions.height + 'px'
+            })
+
+            setTimeout(() => {
+                BubbleContent.current.current?.classList.remove('sizeAnimating')
+
+                BubbleContent.current.style.width = ''
+                BubbleContent.current.style.height = ''
+            }, 300);
+
+            bubbleDimensions.current = dimensions
+
+            console.log('Message Update Transition');
+        }
+
+
         (async () => {
             if (data.replyTo && !data.replyToMessage) {
                 const reply = await data.getReplyMessage()
@@ -402,7 +439,7 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
                 className={buildClassName("bubble",
                     noAvatar && 'noAvatar')}
             >
-                <div className="bubble-content">
+                <div className="bubble-content" ref={BubbleContent}>
                     <div className="body" style={{ width: mediaWidth ?? '' }}>
                         {(!isOutMessage.current && !noAvatar) &&
                             (!isSameFromPrevMsg && !data.media) &&
@@ -420,14 +457,18 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
                                 "message-forward",
                                 (data.media && 'withMargin')
                             )}
-                                onClick={() =>
-                                    viewChat(generateChatWithPeer(data._forward._chat), dispatch)}>
+                                onClick={() => {
+                                    if (data._forward._chat || data._forward._sender)
+                                        viewChat(generateChatWithPeer(data._forward._chat ?? data._forward._sender), dispatch)
+                                    else
+                                        dispatch(handleToast({ icon: 'error', title: 'The account was hidden by the user.' }))
+                                }}>
                                 <div className="title">
                                     <div>
                                         Forward from - {`${getDate(data.fwdFrom.date * 1000, true, true)} ${formatTime(data.fwdFrom.date * 1000)}`}
                                     </div>
                                     <div>
-                                        {data._forward?._chat?.title ?? data._forward?._sender?.firstName}
+                                        {data.fwdFrom.fromName ?? data._forward?._chat?.title ?? data._forward?._sender?.firstName}
                                     </div>
                                 </div>
                             </div>}

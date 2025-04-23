@@ -109,7 +109,7 @@ export default function ChatProfile() {
                 <div className="section Info">
                     <div className="User">
                         <Profile entity={activeChat?.entity} name={activeChat?.title} id={activeChat?.entity?.id.value} />
-                        <div className="FlexColumn">
+                        <div className="FlexColumn" style={{ width: '100%' }}>
                             <div className="name"><FullNameTitle chat={activeChat} isSavedMessages={false} /></div>
                             <div className="subtitle" style={{ fontSize: 14 }}>{getChatSubtitle(fullChat ?? activeChat.entity, getChatType(activeChat.entity))}</div>
                         </div>

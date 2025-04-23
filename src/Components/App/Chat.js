@@ -1,7 +1,7 @@
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import { viewChat } from "./ChatList";
 import { ChatContext } from "./ChatContext";
-import { Profile } from "./common";
+import { Icon, Profile } from "./common";
 import MessageText from "./MessageText";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import MessageSeen from "./Message/MessageSeen";
@@ -119,6 +119,10 @@ function Chat({ info, isActive }) {
             </div>
             <div className="subtitle">
                 <div className="last-message" dir="auto">{info.message ? <MessageText data={info.message} includeFrom={info.isGroup} /> : 'Loading...'}</div>
+                {info.unreadMentionsCount ? info.unreadMentionsCount > 0 &&
+                    <div className="unread" style={{ padding: 0 }}>
+                        <Icon name="alternate_email" size={16} />
+                    </div> : null}
                 {info.unreadCount ? info.unreadCount > 0 && <div className={buildClassName('unread', info.dialog?.notifySettings?.muteUntil && 'muted')}>{info.unreadCount}</div> : null}
             </div>
         </div>

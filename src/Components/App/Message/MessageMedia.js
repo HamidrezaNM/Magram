@@ -445,7 +445,9 @@ export const Video = forwardRef(({ children, media, details, size, width, height
 
     return <>
         {!content ?
-            <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
+            <Transition state={true}>
+                <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
+            </Transition>
             :
             <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={isLoaded && autoplay} loop={autoplay} />
         }

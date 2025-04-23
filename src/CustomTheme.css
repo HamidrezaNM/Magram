@@ -132,7 +132,7 @@
 
 .iOSTheme .Message>*,
 .iOSTheme .Chat>*,
-.iOSTheme .MediaItem>* {
+.iOSTheme .MediaItem * {
     top: 0;
     transition: all .3s ease;
 }
@@ -381,6 +381,11 @@
 
     .iOSTheme .ContextMenu.animate {
         transform: scale(0.5);
+    }
+
+    .iOSTheme .DropdownMenu .profile,
+    .iOSTheme .ContextMenu .profile {
+        margin-right: 0;
     }
 
     .iOSTheme .MenuItem {

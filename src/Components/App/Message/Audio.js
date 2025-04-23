@@ -67,10 +67,8 @@ const Audio = forwardRef(({ children, messageId, chatId, media, isVoice = false,
             if (!thumbSize) return
             const result = await downloadMedia(media, { thumb: thumbSize }, (e) => { }, true, false)
 
-            console.log(result)
             if (!result) return
             setThumb(result.data)
-
         })()
     }, [media])
 
@@ -100,8 +98,6 @@ const Audio = forwardRef(({ children, messageId, chatId, media, isVoice = false,
 
         })()
     }, [media, size])
-
-    console.log('Audio Rerendered', messageId)
 
     const handlePlay = () => {
         if (isPlaying) {

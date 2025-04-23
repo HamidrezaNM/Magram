@@ -24,6 +24,8 @@ function ContextMenu({ type }) {
                 }, 300);
                 activeElement.current.style = ''
                 Array.from(activeElement.current.children).forEach(item => {
+                    if (item.className === 'Transition')
+                        item = item.firstElementChild
                     item.style.top = '0'
                 })
             }
@@ -68,6 +70,8 @@ function ContextMenu({ type }) {
             if (contextMenu.activeElement) {
                 contextMenu.activeElement.style.minHeight = height + 'px'
                 Array.from(contextMenu.activeElement.children).forEach(item => {
+                    if (item.className === 'Transition')
+                        item = item.firstElementChild
                     item.style.position = 'relative'
                     item.style.top = `${clientY - top}px`
                 })

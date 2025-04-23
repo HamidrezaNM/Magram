@@ -82,9 +82,20 @@ export const messagesSlice = createSlice({
         },
         updateMessage: (state, action) => {
             if (state.value[action.payload.chatId]) {
+                const data = Object.fromEntries(
+                    Object.entries(action.payload.message).filter(([key, value]) => !!value && key !== '_entities'))
+
+                console.log(data)
+
                 let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.id)
+
                 if (messageIndex)
-                    state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], ...action.payload.message }
+                    state.value[action.payload.chatId][messageIndex] = {
+                        ...state.value[action.payload.chatId][messageIndex],
+                        ...data
+                    }
+
+                console.log(state.value[action.payload.chatId][messageIndex])
             }
         },
         updateMessageSeen: (state, action) => {

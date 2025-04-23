@@ -85,8 +85,23 @@ export function getMediaType(media) {
             return 'Document'
         case 'MessageMediaPoll':
             return 'Poll'
+        case 'MessageMediaInvoice':
+            return 'Invoice'
         default:
             return 'Media'
+    }
+}
+
+export function getMediaTitle(media) {
+    const type = getMediaType(media)
+
+    switch (type) {
+        case 'RoundVideo':
+            return 'Video message'
+        case 'Invoice':
+            return media.title ?? 'Invoice'
+        default:
+            return type
     }
 }
 

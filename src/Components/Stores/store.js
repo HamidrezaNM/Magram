@@ -3,6 +3,9 @@ import messagesReducer from './Messages'
 import uiReducer from './UI'
 import chatsReducer from './Chats'
 import settingsReducer, { handleCustomTheme, handlePlayerVolume, handleToggleDarkMode } from './Settings'
+import { enableMapSet } from 'immer';
+
+enableMapSet();
 
 const persistedRaw = localStorage.getItem('magramState')
 const persistedState = persistedRaw ? JSON.parse(persistedRaw) : {}

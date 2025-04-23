@@ -3,6 +3,7 @@ import { downloadMedia } from "../../Util/media";
 import { calculateMediaDimensions } from "./MessageMedia";
 import Lottie from "react-lottie";
 import { client } from "../../../App";
+import Transition from "../Transition";
 
 const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, autoPlay = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
@@ -72,6 +73,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                     //     });
                     // }
                 });
+                setData(true)
             }
 
             // setSrc(data)
@@ -85,12 +87,13 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
         }
     }, [media, size])
 
-    return <>
+    return <Transition state={true}>
+        {!data && <span className="Loading"></span>}
         {isWebp ? <img width={20} height={20} src={data} /> :
             isWebm ? <video width={20} height={20} src={data} autoPlay={autoPlay} loop /> :
                 <div className="RLottie" ref={img}></div>
         }
-    </>
+    </Transition>
 })
 
 

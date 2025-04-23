@@ -140,7 +140,7 @@ function UserProfile() {
             <div className="section Info">
                 <div className="User">
                     <Profile entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
-                    <div className="FlexColumn">
+                    <div className="FlexColumn" style={{ width: '100%' }}>
                         <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
                         <div className="subtitle" style={{ fontSize: 14 }}>{userInfoSubtitle()}</div>
                     </div>
@@ -268,9 +268,15 @@ export const MediaVideo = memo(({ media }) => {
 const mediaMenu = (e, element, messageId, dispatch) => {
     e.preventDefault()
 
+    const onShowInChat = () => {
+        dispatch(handleGoToMessage(messageId))
+        dispatch(handleContextMenu())
+        PageClose(dispatch)
+    }
+
     const items = (
         <>
-            <MenuItem icon="chat" title="Show in chat" onClick={() => dispatch(handleGoToMessage(messageId))} />
+            <MenuItem icon="chat" title="Show in chat" onClick={onShowInChat} />
         </>
     )
 
