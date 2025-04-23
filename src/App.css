@@ -517,6 +517,12 @@
   position: absolute;
   width: 48px;
   height: 48px;
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+
+.profile img.animate {
+  opacity: 0;
 }
 
 .scrollable {
@@ -1102,6 +1108,7 @@ a {
   cursor: pointer;
   text-decoration: none;
   position: relative;
+  -webkit-user-drag: none;
 }
 
 a:hover {
@@ -1214,6 +1221,10 @@ a:hover {
   overflow: hidden;
 }
 
+.subtitle.secondary {
+  color: var(--secondary-text);
+}
+
 .MediaPreview {
   position: fixed;
   top: 0;
@@ -1276,6 +1287,71 @@ a:hover {
 
 .MediaPreview.animate .Content {
   transform: scale(0.95);
+}
+
+.MusicPlayer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  height: 72px;
+  /* color: var(--text-color); */
+  padding: 0 12px;
+  align-items: center;
+  border-radius: 20px 20px 0 0;
+  background-color: var(--surface-color);
+  backdrop-filter: blur(10px);
+}
+
+.Dark .MusicPlayer {
+  /* background-color: #300067; */
+}
+
+.MusicPlayer .FlexColumn {
+  flex: 1 auto;
+}
+
+.MusicPlayer .FlexColumn .title {
+  font-weight: 500;
+}
+
+.MusicPlayer .FlexColumn .subtitle {
+  color: #0008;
+}
+
+.Dark .MusicPlayer .FlexColumn .subtitle {
+  color: #fff8;
+}
+
+.MusicPlayer .Cover {
+  border-radius: 12px;
+  overflow: hidden;
+  width: 54px;
+  height: 54px;
+}
+
+.MusicPlayer .Cover>* {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.MusicPlayer .Cover .NoCover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--active-primary);
+}
+
+.MusicPlayer .Cover .NoCover .icon {
+  margin: 0;
+  padding: 0;
+}
+
+.MusicPlayer .Controls {
+  display: flex;
 }
 
 .BackButton {

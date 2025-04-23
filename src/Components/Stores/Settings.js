@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState: {
+        playerVolume: 1,
         customTheme: {
             centerTopBar: true,
             bottomBar: true,
@@ -11,6 +12,9 @@ export const settingsSlice = createSlice({
         darkMode: undefined
     },
     reducers: {
+        handlePlayerVolume: (state, action) => {
+            state.playerVolume = action.payload
+        },
         handleCustomTheme: (state, action) => {
             state.customTheme = { ...state.customTheme, ...action.payload }
         },
@@ -22,6 +26,7 @@ export const settingsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+    handlePlayerVolume,
     handleCustomTheme,
     handleToggleDarkMode
 } = settingsSlice.actions

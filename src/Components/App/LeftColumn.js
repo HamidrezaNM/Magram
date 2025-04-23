@@ -16,6 +16,7 @@ import Menu from "../UI/Menu";
 import ChatList from "./ChatList";
 import { Icon } from "./common";
 import { handleToggleDarkMode } from "../Stores/Settings";
+import MusicPlayer from "./MiddleColumn/MusicPlayer";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -26,6 +27,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
     const topbarTitle = useSelector((state) => state.ui.topbarTitle)
     const callMinimal = useSelector((state) => state.ui.callMinimal)
     const showCall = useSelector((state) => state.ui.showCall)
+    const musicPlayer = useSelector((state) => state.ui.musicPlayer)
 
     const User = useContext(UserContext)
 
@@ -91,7 +93,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         <div className="Chats scrollable">
             <ChatList />
         </div>
-        {(!showPage && !callMinimal) && <div className="fab quickChatButton">
+        {(!showPage && !callMinimal && !musicPlayer) && <div className="fab quickChatButton">
             <Menu icon="edit" ref={fabQuickChatMenu}>
                 <DropdownMenu>
                     <MenuItem icon="group_add" title="New Group" onClick={showNewGroup} />
@@ -104,6 +106,10 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         </div>}
         <Transition state={callMinimal && showCall}>
             <CallMinimal Call={CallRef} CallStream={CallStream} CallState={callState} />
+        </Transition>
+
+        <Transition state={musicPlayer?.active} eachElement>
+            <MusicPlayer />
         </Transition>
         {/* <div className="BottomBar">
             <div className="Item">

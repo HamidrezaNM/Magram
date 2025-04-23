@@ -6,17 +6,22 @@ import { MAX_EMPTY_WAVEFORM_POINTS, renderWaveform } from "../../Helpers/wavefor
 import { decodeWaveform, interpolateArray } from "../../Util/waveform"
 import { getDocumentAudioAttributes } from "../../Helpers/messages"
 import { Api } from "telegram"
+import { useDispatch, useSelector } from "react-redux"
+import { handleMusicPlayer, handleMusicPlayerTogglePlaying } from "../../Stores/UI"
 
 export const TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 375px)');
 export const WITH_AVATAR_TINY_SCREEN_WIDTH_MQL = window.matchMedia('(max-width: 410px)');
 const AVG_VOICE_DURATION = 10;
 
-const Audio = forwardRef(({ children, media, isVoice = false, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+const Audio = forwardRef(({ children, messageId, chatId, media, isVoice = false, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [content, setContent] = useState()
     const [thumb, setThumb] = useState()
     const [loaded, setLoaded] = useState()
-    const [isPlaying, setIsPlaying] = useState(false)
     const [playProgress, setPlayProgress] = useState(0)
+
+    const isPlaying = useSelector(state => state.ui.musicPlayer.activeMessage === messageId && state.ui.musicPlayer.playing === true)
+
+    const dispatch = useDispatch()
 
     const audio = useRef()
     const seekerRef = useRef()
@@ -96,16 +101,29 @@ const Audio = forwardRef(({ children, media, isVoice = false, details, size, noA
         })()
     }, [media, size])
 
+    console.log('Audio Rerendered', messageId)
+
+    const handlePlay = () => {
+        if (isPlaying) {
+            dispatch(handleMusicPlayerTogglePlaying())
+        } else {
+            dispatch(handleMusicPlayer({
+                messageId,
+                chatId,
+                document: media.document
+            }))
+        }
+    }
+
     return <>
         <div className="Document">
             <div className="StreamAudio">
-                <div className="Play" onClick={() => isPlaying ? audio.current.pause() : audio.current.play()}>
+                <div className="Play" onClick={handlePlay}>
                     {thumb && <img src={thumb} width={90} />}
                     <Icon name={isPlaying ? "pause" : "play_arrow"} size={28} className="IconFill" />
                 </div>
                 {children}
             </div>
-            <audio ref={audio} src={content} loop={autoplay} onTimeUpdate={e => setPlayProgress(e.target.currentTime / e.target.duration)} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
             {isVoice ? <div className="details">
                 <div
                     className="waveform"
@@ -119,7 +137,7 @@ const Audio = forwardRef(({ children, media, isVoice = false, details, size, noA
                 : <div className="details">
                     <div className="title">{details.title}</div>
                     <div className="subtitle">{details.performer}</div>
-                    <div className="subtitle"><span>{fancyTimeFormat(details?.duration)}</span>{!isLoaded && ' - ' + (loaded ? formatBytes(loaded) + ' / ' : '') + formatBytes(details?.size)}</div>
+                    <div className="subtitle secondary"><span>{fancyTimeFormat(details?.duration)}</span>{!isLoaded && ' - ' + (loaded ? formatBytes(loaded) + ' / ' : '') + formatBytes(details?.size)}</div>
                 </div>
             }
         </div>

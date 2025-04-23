@@ -64,6 +64,7 @@
 
 .ChatInfo .info .body .subtitle {
     font-size: 14px;
+    line-height: 1.2;
 }
 
 .TopBar .ChatInfo .info .body .subtitle.typing {

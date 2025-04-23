@@ -1,17 +1,18 @@
 import { useDispatch, useSelector } from "react-redux"
 import { Icon, Profile } from "./common"
-import { memo } from "react"
+import { memo, useCallback, useEffect, useRef } from "react"
 import { handleMediaPreviewClose } from "../Stores/UI"
 import { getDocumentVideoAttributes, getPhotoDimensions, isDocumentVideo } from "../Helpers/messages"
 import { formatTime } from "../Util/dateFormat"
 import { getDate } from "./Message"
+import { handlePlayerVolume } from "../Stores/Settings"
 
 const MediaPreview = () => {
     const data = useSelector((state) => state.ui.mediaPreview)
 
     const dispatch = useDispatch()
 
-    const getMediaLayout = () => {
+    const getMediaLayout = useCallback(() => {
         switch (data.media.className) {
             case 'MessageMediaPhoto':
                 const dimensions = getPhotoDimensions(data.media.photo)
@@ -21,7 +22,7 @@ const MediaPreview = () => {
                 if (isDocumentVideo(data.media?.document)) {
                     const dimensions = getDocumentVideoAttributes(data.media.document)
 
-                    return <video src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} autoPlay controls />
+                    return <VideoPlayer dispatch={dispatch} src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} />
                 }
             default:
                 // if (data.media[0].videoCodec) {
@@ -29,7 +30,7 @@ const MediaPreview = () => {
                 return;
             // return <Document ref={image} path={media[0].filePath} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} />
         }
-    }
+    }, [data])
 
     const calculateMediaDimensions = (width, height) => {
         const aspectRatio = height / width;
@@ -75,5 +76,38 @@ const MediaPreview = () => {
         </div>
     </>
 }
+
+const VideoPlayer = memo(({ src, width, dispatch }) => {
+    const playerVolume = useSelector((state) => state.settings.playerVolume)
+
+    const player = useRef()
+    const volume = useRef()
+
+    const onVolumeChange = () => {
+        volume.current = player.current.volume
+    }
+
+    useEffect(() => {
+        if (playerVolume)
+            player.current.volume = playerVolume
+
+        return () => {
+            if (volume.current !== playerVolume) {
+                dispatch(handlePlayerVolume(volume.current))
+                console.log('volume changed', volume.current)
+            }
+        }
+    }, [])
+
+
+    return <video
+        ref={player}
+        src={src}
+        width={width}
+        autoPlay
+        controls
+        onVolumeChange={onVolumeChange}
+    />
+})
 
 export default memo(MediaPreview)

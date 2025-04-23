@@ -73,7 +73,7 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
         }
     } else if (!isInChat) {
         if (data.media) {
-            return (includeFrom ? data.sender?.firstName + ': ' : '') + (getMediaType(data.media) ?? 'Media')
+            return <span>{includeFrom ? data.sender?.firstName + ': ' : ''}<span style={{ fontWeight: 500 }}>{getMediaType(data.media) ?? 'Media'}</span></span>
         } else if (data.type === 'call') {
             var output = ''
             switch (data.call?.status) {

@@ -27,6 +27,26 @@ export const uiSlice = createSlice({
         callMaximized: false,
         voiceOutputVolume: 50,
         mediaPreview: null,
+        musicPlayer: {
+            data: {},
+            chatId: null,
+            activeMessage: null,
+            playing: false,
+            active: false
+        },
+        // musicPlayer: {
+        //     data: [{
+        //         messageId,
+        //         document,
+        //     }]
+        //     queue: [
+        //         ...messageIds
+        //     ],
+        //     currentIndex: 0,
+        //     chatId: 0,
+        //     activeMessage: 0,
+        //     playing: true,
+        // },
         toasts: [],
         dialogs: [],
         background: null
@@ -145,6 +165,28 @@ export const uiSlice = createSlice({
         handleMediaPreviewClose: (state) => {
             state.mediaPreview.active = false;
         },
+        handleMusicPlayer: (state, action) => {
+            const { messageId, chatId, document } = action.payload
+            const _musicPlayer = state.musicPlayer || {}
+            const _data = state.musicPlayer?.data || {}
+
+            state.musicPlayer = {
+                ..._musicPlayer,
+                data: _data,
+                chatId,
+                activeMessage: messageId,
+                playing: true,
+                active: true
+            }
+
+            state.musicPlayer.data[messageId] = document
+        },
+        handleMusicPlayerTogglePlaying: (state, action) => {
+            if (action.payload !== undefined)
+                state.musicPlayer.playing = action.payload
+            else
+                state.musicPlayer.playing = !state.musicPlayer.playing
+        },
         handleToast: (state, action) => {
             state.toasts.push({ icon: action.payload.icon, title: action.payload.title })
         },
@@ -187,6 +229,8 @@ export const {
     handleVoiceOutputVolume,
     handleMediaPreview,
     handleMediaPreviewClose,
+    handleMusicPlayer,
+    handleMusicPlayerTogglePlaying,
     handleToast,
     handleDialog,
     handleBackground

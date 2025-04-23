@@ -25,13 +25,6 @@ function UpdateManager() {
                     channel: update._entities.entries().next().value
                 })
                 break;
-            case 'UpdateReadChannelOutbox':
-                chatHandler.current.onUpdate({
-                    type: 'UpdateReadHistoryOutbox',
-                    peer: update.channelId,
-                    ...update
-                })
-                break;
             case 'UpdateReadHistoryOutbox':
             case 'UpdateReadHistoryInbox':
                 chatHandler.current.onUpdate({
@@ -39,6 +32,7 @@ function UpdateManager() {
                     ...update
                 })
                 break;
+            case 'UpdateReadChannelOutbox':
             case 'UpdateReadChannelInbox':
                 chatHandler.current.onUpdate({
                     type: 'UpdateReadHistory',

@@ -134,7 +134,7 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
                 }
                 if (isDocumentAudio(media.document)) {
                     const audioAttributes = getDocumentAudioAttributes(media.document)
-                    return <Audio ref={image} media={media} details={{ title: audioAttributes?.title, performer: audioAttributes?.performer, duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
+                    return <Audio ref={image} messageId={data.id} chatId={data.chatId} media={media} details={{ title: audioAttributes?.title, performer: audioAttributes?.performer, duration: audioAttributes?.duration, size: Number(media.document.size?.value) }} size={size} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading}>{downloadButton}</Audio>
                 }
                 return <Document ref={image} media={media} details={{ name: getDocumentFileName(media.document), size: Number(media.document.size?.value) }} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc}>{downloadButton}</Document>
             case 'MessageMediaPoll':

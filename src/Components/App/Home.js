@@ -59,6 +59,7 @@ import Dialogs from "../UI/Dialogs";
 import UpdateManager from "./UpdateManager";
 import buildClassName from "../Util/buildClassName";
 import { handleToggleDarkMode } from "../Stores/Settings";
+import MusicPlayer from "./MiddleColumn/MusicPlayer";
 
 export const urlEndpoint = '';
 export const publicKey = '';

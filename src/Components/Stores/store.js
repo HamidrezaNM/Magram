@@ -2,7 +2,7 @@ import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit'
 import messagesReducer from './Messages'
 import uiReducer from './UI'
 import chatsReducer from './Chats'
-import settingsReducer, { handleCustomTheme, handleToggleDarkMode } from './Settings'
+import settingsReducer, { handleCustomTheme, handlePlayerVolume, handleToggleDarkMode } from './Settings'
 
 const persistedRaw = localStorage.getItem('magramState')
 const persistedState = persistedRaw ? JSON.parse(persistedRaw) : {}
@@ -31,7 +31,9 @@ const store = configureStore({
 
 listenerMiddleware.startListening({
     matcher: (action) =>
-        action.type === handleCustomTheme.type || action.type === handleToggleDarkMode.type,
+        action.type === handleCustomTheme.type ||
+        action.type === handleToggleDarkMode.type ||
+        action.type === handlePlayerVolume.type,
 
     effect: async (action, listenerApi) => {
         const settings = listenerApi.getState().settings
