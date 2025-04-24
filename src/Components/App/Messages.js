@@ -1,4 +1,4 @@
-import { forwardRef, memo, useContext, useEffect, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Message from "./Message";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages, unshiftMessages } from "../Stores/Messages";
@@ -246,6 +246,32 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         };
     }, [handleKeyUp, messages]);
 
+    const getGroupedMessages = useGroupedMessages(messages, messageStartIndex);
+
+    const renderMessage = (item, index) => {
+        let groupedMessages
+
+        if (item.groupedId) {
+            groupedMessages = getGroupedMessages(item, index)
+            if (groupedMessages === false) return
+        }
+
+        return <Message
+            key={activeChat.id?.value + '_' + item?.id}
+            data={item}
+            seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
+            prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
+            prevMsgDate={messages[messageStartIndex + index - 1]?.date}
+            nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
+            groupedMessages={item.groupedId && groupedMessages}
+            unreadFrom={
+                item.id === activeChat?.dialog?.readInboxMaxId &&
+                item.id !== activeChat?.dialog.topMessage
+            }
+            chatType={chatType}
+            isiOS={iOSTheme} />
+    }
+
     console.log('Messages Rerender')
 
     return <div className={buildClassName(
@@ -262,19 +288,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             {messages && messages
                 .slice(Math.max(messages.length - messagesRenderCount, 0))
                 .map((item, index) =>
-                    <Message
-                        key={activeChat.id?.value + '_' + item?.id}
-                        data={item}
-                        seen={activeChat?.dialog?.readOutboxMaxId >= item?.id}
-                        prevMsgFrom={messages[messageStartIndex + index - 1]?._senderId?.value}
-                        prevMsgDate={messages[messageStartIndex + index - 1]?.date}
-                        nextMsgFrom={messages[messageStartIndex + index + 1]?._senderId?.value}
-                        unreadFrom={
-                            item.id === activeChat?.dialog?.readInboxMaxId &&
-                            item.id !== activeChat?.dialog.topMessage
-                        }
-                        chatType={chatType}
-                        isiOS={iOSTheme} />
+                    renderMessage(item, index)
                 )
             }
         </> :
@@ -296,5 +310,34 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     </div>
 
 })
+
+function useGroupedMessages(messages, messageStartIndex) {
+    const cacheRef = useRef(new Map());
+
+    const getGroupedMessages = useCallback((message, index) => {
+        if (!message?.groupedId || !message?.id || !messages[messageStartIndex + index + 1]?.groupedId || Number(messages[messageStartIndex + index - 1]?.groupedId) === Number(message.groupedId)) return false;
+
+        const cacheKey = message.id;
+
+        if (cacheRef.current.has(cacheKey)) {
+            return cacheRef.current.get(cacheKey);
+        }
+
+        let items = [];
+
+        for (let i = 1; i < 10; i++) {
+            const item = messages[messageStartIndex + index + i];
+            if (item && Number(item.groupedId) === Number(message.groupedId))
+                items.push(item);
+            else
+                break;
+        }
+
+        cacheRef.current.set(cacheKey, items);
+        return items;
+    }, [messageStartIndex, messages]);
+
+    return getGroupedMessages;
+}
 
 export default memo(Messages)

@@ -271,6 +271,19 @@
     line-height: 0.75rem;
 }
 
+.Album {
+    display: flex;
+    gap: 2px;
+    margin: -0.475rem;
+    margin-bottom: 0.285rem;
+    position: relative;
+}
+
+.Album .message-media {
+    margin: 0 !important;
+    min-height: 0;
+}
+
 .message-media {
     overflow: hidden;
     margin: -0.575rem;
@@ -294,7 +307,8 @@
     margin-top: 0.285rem;
 }
 
-.Message.transparent .message-media {
+.Message.transparent .message-media,
+.Message.transparent .Album {
     margin-bottom: -0.575rem;
 }
 

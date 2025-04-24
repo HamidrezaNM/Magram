@@ -53,6 +53,10 @@
     color: var(--dyn-text-color) !important;
 }
 
+.LeftColumn .TopBar .Title {
+    font-weight: 500;
+}
+
 .LeftColumn .Chats {
     height: calc(100% - 54px);
 }
@@ -177,7 +181,7 @@
     padding: 0 7px;
     font-size: 14px;
     font-weight: 500;
-    line-height: 1.7;
+    line-height: 1.6;
     display: inline-flex;
     justify-content: center;
     background-color: var(--primary);

@@ -1,4 +1,4 @@
-import { forwardRef, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./Message.css";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import { goToMessage, toDoubleDigit } from "./Home";
@@ -27,8 +27,20 @@ import buildClassName from "../Util/buildClassName";
 import InlineButtons from "./Message/InlineButtons";
 import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
+import { calculateAlbumLayout } from "../Helpers/calculateAlbumLayout";
 
-function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, isThread = false, isiOS, unreadFrom }) {
+function Message({
+    data,
+    seen,
+    prevMsgFrom,
+    nextMsgFrom,
+    prevMsgDate,
+    groupedMessages,
+    chatType,
+    isThread = false,
+    isiOS,
+    unreadFrom
+}) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -56,6 +68,10 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
     const msgTime = new Date(data.date * 1000);
     const mediaPosition = data.media && getMediaPosition(data.media)
     const isMobile = document.body.clientWidth <= 480
+
+    const isAlbum = data.groupedId && !!groupedMessages
+
+    const albumLayout = isAlbum ? calculateAlbumLayout(isOutMessage.current, true, [data, ...groupedMessages]) : undefined;
 
     console.log('Message Rerendered')
 
@@ -304,6 +320,46 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
         }
     }, [data, isPinned.current])
 
+    const renderAlbum = () => {
+        if (!data.groupedId || !groupedMessages) return
+
+        return <div className="Album" style={{ height: albumLayout.containerStyle.height + 'px' }}>
+            <MessageMedia
+                media={data.media}
+                data={data}
+                dimensions={albumLayout.layout[0].dimensions}
+                className={buildClassName(
+                    !data.message &&
+                    (!data.reactions || data.reactions.results?.length == 0) &&
+                    'NoCaption',
+                    'media-position-' + mediaPosition
+                )}
+                noAvatar={noAvatar}
+                ref={messageMedia}
+            />
+            {groupedMessages.map((item, index) =>
+                <div style={{
+                    position: 'absolute',
+                    top: albumLayout.layout[index + 1].dimensions.y,
+                    left: albumLayout.layout[index + 1].dimensions.x
+                }}>
+                    <MessageMedia
+                        media={item.media}
+                        data={item}
+                        dimensions={albumLayout.layout[index + 1].dimensions}
+                        className={buildClassName(
+                            !data.message &&
+                            (!data.reactions || data.reactions.results?.length == 0) &&
+                            'NoCaption',
+                            'media-position-' + mediaPosition
+                        )}
+                        noAvatar={noAvatar}
+                        ref={messageMedia}
+                    />
+                </div>)}
+        </div>
+    }
+
     const renderReactionAndMeta = () => {
         const meta = <MessageMeta
             edited={data.editDate && !data.editHide}
@@ -391,7 +447,10 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
     let mediaWidth
 
     if (data.media) {
-        mediaWidth = getMediaDimensions(data.media, noAvatar)?.width - 18.4
+        if (isAlbum)
+            mediaWidth = albumLayout.containerStyle.width - 18.4
+        else
+            mediaWidth = getMediaDimensions(data.media, noAvatar)?.width - 18.4
     }
 
     return <>
@@ -493,20 +552,20 @@ function Message({ data, seen, prevMsgFrom, nextMsgFrom, prevMsgDate, chatType, 
                                 </div>
                             </div>}
                         <div className="message-text" dir="auto">
-                            {data.media &&
-                                mediaPosition === 'top' &&
-                                <MessageMedia
-                                    media={data.media}
-                                    data={data}
-                                    className={buildClassName(
-                                        !data.message &&
-                                        (!data.reactions || data.reactions.results?.length == 0) &&
-                                        'NoCaption',
-                                        'media-position-' + mediaPosition
-                                    )}
-                                    noAvatar={noAvatar}
-                                    ref={messageMedia}
-                                />
+                            {data.media && mediaPosition === 'top' &&
+                                (data.groupedId && groupedMessages ? renderAlbum() :
+                                    <MessageMedia
+                                        media={data.media}
+                                        data={data}
+                                        className={buildClassName(
+                                            !data.message &&
+                                            (!data.reactions || data.reactions.results?.length == 0) &&
+                                            'NoCaption',
+                                            'media-position-' + mediaPosition
+                                        )}
+                                        noAvatar={noAvatar}
+                                        ref={messageMedia}
+                                    />)
                             }
 
                             <MessageText data={data} isInChat="true" />

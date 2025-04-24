@@ -13,7 +13,7 @@ import buildClassName from "../../Util/buildClassName";
 import WebPage from "./WebPage";
 import { Api } from "telegram";
 
-const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, ref) => {
+const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
     const [progress, setProgress] = useState()
     const [isLoaded, setIsLoaded] = useState(false)
@@ -28,7 +28,7 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
 
     const dispatch = useDispatch()
 
-    const mediaDimensions = getMediaDimensions(media)
+    const mediaDimensions = dimensions ?? getMediaDimensions(media)
 
     useEffect(() => {
         if (mediaDimensions) {
@@ -110,7 +110,21 @@ const MessageMedia = forwardRef(({ media, data, className, noAvatar = false }, r
 
         switch (media.className) {
             case 'MessageMediaPhoto':
-                return <Image ref={image} media={media} size={size} _width={getPhotoDimensions(media.photo)?.w} _height={getPhotoDimensions(media.photo)?.h} noAvatar={noAvatar} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} uploading={uploading} setIsDownloading={setIsDownloading}>{downloadButton}</Image>
+                return <Image
+                    ref={image}
+                    media={media}
+                    size={size}
+                    _width={getPhotoDimensions(media.photo)?.w}
+                    _height={getPhotoDimensions(media.photo)?.h}
+                    dimensions={mediaDimensions}
+                    noAvatar={noAvatar}
+                    isLoaded={isLoaded}
+                    setIsLoaded={setIsLoaded}
+                    setProgress={setProgress}
+                    setSrc={setSrc}
+                    uploading={uploading}
+                    setIsDownloading={setIsDownloading}
+                >{downloadButton}</Image>
             case 'MessageMediaDocument':
                 if (isDocumentVideo(media.document)) {
                     const videoAttributes = getDocumentVideoAttributes(media.document)
@@ -235,6 +249,17 @@ function getMaxMessageWidthRem(noAvatar = false) {
     return noAvatar ? cachedMaxWidthNoAvatar : cachedMaxWidth
 }
 
+export function getAvailableWidth(
+    fromOwnMessage,
+    isWebPageMedia = false,
+    noAvatars
+) {
+    const extraPaddingRem = isWebPageMedia ? 1.625 : 0;
+    const availableWidthRem = getMaxMessageWidthRem(fromOwnMessage, noAvatars, isMobile) - extraPaddingRem;
+
+    return availableWidthRem * REM;
+}
+
 export const calculateMediaDimensions = (width, height, noAvatar = false) => {
     const aspectRatio = height / width;
     const availableWidthRem = getMaxMessageWidthRem(noAvatar) * 16;
@@ -286,15 +311,26 @@ export function getMediaPosition(media) {
     return 'top'
 }
 
-export const Image = forwardRef(({ children, media, size, _width, _height, noAvatar = false, setProgress, isLoaded, setIsLoaded, setSrc, uploading, setIsDownloading }, ref) => {
+export const Image = forwardRef(({ children,
+    media,
+    size,
+    _width,
+    _height,
+    dimensions,
+    noAvatar = false,
+    setProgress,
+    isLoaded,
+    setIsLoaded,
+    setSrc,
+    uploading,
+    setIsDownloading
+}, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
 
-    const aspectRatio = height / width
-    const dimensions = calculateMediaDimensions(width, height, noAvatar)
+    // const dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
     const img = useRef()
     const isLowQualityLoaded = useRef(false)
-    const request = useRef()
 
     const onClick = (e) => {
         const { x, y } = img.current.getBoundingClientRect()

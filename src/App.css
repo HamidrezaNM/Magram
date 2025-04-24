@@ -889,6 +889,7 @@
   background-color: var(--secondary);
   padding: 8px;
   border-radius: 8px;
+  font-weight: 500;
   transition: all .3s ease;
   cursor: pointer;
   user-select: none;
