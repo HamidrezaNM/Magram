@@ -25,6 +25,7 @@ export const uiSlice = createSlice({
         callLeftPanelClose: false,
         callMinimal: false,
         callMaximized: false,
+        deleteEffect: null,
         voiceOutputVolume: 50,
         mediaPreview: null,
         musicPlayer: {
@@ -195,6 +196,9 @@ export const uiSlice = createSlice({
         },
         handleBackground: (state, action) => {
             state.background = action.payload
+        },
+        handleDeleteMessageEffect: (state, action) => {
+            state.deleteEffect = action.payload
         }
     },
 })
@@ -233,7 +237,8 @@ export const {
     handleMusicPlayerTogglePlaying,
     handleToast,
     handleDialog,
-    handleBackground
+    handleBackground,
+    handleDeleteMessageEffect
 } = uiSlice.actions
 
 export default uiSlice.reducer

@@ -60,6 +60,7 @@ import UpdateManager from "./UpdateManager";
 import buildClassName from "../Util/buildClassName";
 import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
+import DeleteEffect from "../common/DeleteEffect";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -98,6 +99,7 @@ function Home() {
     const mediaPreview = useSelector((state) => state.ui.mediaPreview)
     const darkMode = useSelector((state) => state.settings.darkMode)
     const customTheme = useSelector((state) => state.settings.customTheme)
+    const deleteEffect = useSelector((state) => state.ui.deleteEffect)
 
     const themeOptions = Object.keys(customTheme).filter(key => customTheme[key]);
 
@@ -293,6 +295,7 @@ function Home() {
 
                     <Toasts />
                     <Dialogs />
+                    {deleteEffect && <DeleteEffect />}
                     {background &&
                         <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
                 </div>

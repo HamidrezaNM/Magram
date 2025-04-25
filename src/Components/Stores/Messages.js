@@ -66,6 +66,11 @@ export const messagesSlice = createSlice({
                 })
             }
         },
+        handleDeleteMessage: (state, action) => {
+            let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
+            if (messageIndex)
+                state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], deleted: true }
+        },
         updateMessageId: (state, action) => {
             if (state.value[action.payload.chatId]) {
                 let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
@@ -141,6 +146,7 @@ export const { messageAdded,
     unshiftMessages,
     removeMessage,
     removeMessages,
+    handleDeleteMessage,
     updateMessageId,
     updateMessage,
     updateMessageSeen,

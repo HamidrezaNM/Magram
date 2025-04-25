@@ -403,6 +403,7 @@
 .sticky-date span {
     padding: 0 8px;
     line-height: 1.75;
+    font-weight: 500;
     background-color: var(--surface-color);
     border-radius: 50px;
 }

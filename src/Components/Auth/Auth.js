@@ -7,8 +7,9 @@ import Register from "./Register";
 import Password from "./Password";
 import Home from "../App/Home";
 import { client } from "../../App";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "../Stores/store";
+import { handleToast } from "../Stores/UI";
 
 export const AuthContext = createContext();
 export const UserContext = createContext();
@@ -80,9 +81,9 @@ export function Auth() {
 
         setAuthState("authorizationStateReady");
 
-        await client.connect()
-
         try {
+            await client.connect()
+
             const getMe = await client.getMe()
 
             client.addEventHandler((update) => console.log(update));
@@ -92,7 +93,9 @@ export function Auth() {
 
             setAuthState("authorizationStateReady");
         } catch (error) {
-            if (error.errorMessage === 'AUTH_KEY_UNREGISTERED') {
+            alert('Auth Error ' + error.errorMessage)
+            if (error.errorMessage === 'AUTH_KEY_UNREGISTERED' ||
+                error.errorMessage === 'AUTH_KEY_DUPLICATED') {
                 localStorage.removeItem('auth_key')
                 setAuthState("Welcome")
             }

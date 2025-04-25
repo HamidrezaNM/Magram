@@ -8,7 +8,7 @@ import { socket } from "../../App";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Skeleton, Slide, Zoom } from "@mui/material";
 import { ChatContext } from "./ChatContext";
 import { useDispatch, useSelector } from "react-redux";
-import { handleCall, handleContextMenu, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleToast, handleUnpinMessage } from "../Stores/UI";
+import { handleCall, handleContextMenu, handleDeleteMessageEffect, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleToast, handleUnpinMessage } from "../Stores/UI";
 import MessageContextMenu from "./MessageContextMenu";
 import { EmojiConvertor } from "emoji-js";
 import MessageText, { getMessageText } from "./MessageText";
@@ -79,6 +79,16 @@ function Message({
         bubbleDimensions.current = BubbleContent.current.getBoundingClientRect()
     }, [])
 
+    const handleDeleteEffect = () => {
+        dispatch(handleDeleteMessageEffect(MessageEl.current))
+    }
+
+    useEffect(() => {
+        if (data.deleted) {
+            handleDeleteEffect()
+        }
+    }, [data])
+
     useEffect(() => {
         var isLongPressTimeout
         var holdTimeout
@@ -130,11 +140,12 @@ function Message({
             BubbleContent.current.style.width = bubbleDimensions.current.width + 'px'
             BubbleContent.current.style.height = bubbleDimensions.current.height + 'px'
 
-            BubbleContent.current.classList.add('sizeAnimating')
-
             requestAnimationFrame(() => {
-                BubbleContent.current.style.width = dimensions.width + 'px'
-                BubbleContent.current.style.height = dimensions.height + 'px'
+                BubbleContent.current.classList.add('sizeAnimating')
+                requestAnimationFrame(() => {
+                    BubbleContent.current.style.width = dimensions.width + 'px'
+                    BubbleContent.current.style.height = dimensions.height + 'px'
+                })
             })
 
             setTimeout(() => {
@@ -447,7 +458,7 @@ function Message({
     let mediaWidth
 
     if (data.media) {
-        if (isAlbum)
+        if (isAlbum && albumLayout)
             mediaWidth = albumLayout.containerStyle.width - 18.4
         else
             mediaWidth = getMediaDimensions(data.media, noAvatar)?.width - 18.4

@@ -20,12 +20,6 @@ function getRatios(messages) {
     const allMedia = messages.map(message => message.media);
     return allMedia.map(
         (media) => {
-            //   const dimensions = calculateMediaDimensions({
-            //     media,
-            //     isOwn: isOutgoing,
-            //     isMobile,
-            //   });
-
             const mediaDimensions = getMediaDimensions(media, isOutgoing)
 
             const dimensions = calculateMediaDimensions(mediaDimensions.width, mediaDimensions.height, isOutgoing)

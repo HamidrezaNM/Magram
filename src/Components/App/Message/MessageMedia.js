@@ -28,7 +28,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
 
     const dispatch = useDispatch()
 
-    const mediaDimensions = dimensions ?? getMediaDimensions(media)
+    const mediaDimensions = dimensions ?? getMediaDimensions(media, noAvatar)
 
     useEffect(() => {
         if (mediaDimensions) {
@@ -133,7 +133,26 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
                         return <RoundVideo ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</RoundVideo>
                     }
 
-                    return <Video ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</Video>
+                    return <Video
+                        ref={image}
+                        media={media}
+                        details={{
+                            name: getDocumentFileName(media.document),
+                            duration: videoAttributes?.duration,
+                            size: Number(media.document.size?.value)
+                        }}
+                        size={size}
+                        width={videoAttributes?.w}
+                        height={videoAttributes?.h}
+                        dimensions={mediaDimensions}
+                        noAvatar={noAvatar}
+                        uploading={uploading}
+                        isLoaded={isLoaded}
+                        setIsLoaded={setIsLoaded}
+                        setProgress={setProgress}
+                        setSrc={setSrc}
+                        setIsDownloading={setIsDownloading}
+                        autoplay={videoAttributes?.nosound}>{downloadButton}</Video>
                 }
                 if (isDocumentSticker(media.document)) {
                     const attributes = getDocumentImageAttributes(media.document)
@@ -402,13 +421,13 @@ export const Image = forwardRef(({ children,
     </>
 })
 
-export const Video = forwardRef(({ children, media, details, size, width, height, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+export const Video = forwardRef(({ children, media, details, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [thumb, setThumb] = useState()
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
 
     const aspectRatio = height / width
-    const dimensions = calculateMediaDimensions(width, height, noAvatar)
+    // const dimensions = calculateMediaDimensions(width, height, noAvatar)
     const video = useRef()
     const thumbnail = useRef()
     const isLowQualityLoaded = useRef(false)

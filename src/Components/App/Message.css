@@ -91,6 +91,21 @@
     transition: all .3s ease;
 }
 
+.Message.deleteEffect {
+    opacity: 0;
+    min-height: 0px !important;
+    overflow: hidden;
+    transition: opacity .3s ease, min-height 1s ease !important;
+}
+
+.Message.clip .bubble-content {
+    background-color: #fffffbdd;
+}
+
+.Dark .Message.clip .bubble-content {
+    background-color: #000000;
+}
+
 .Message.Action {
     justify-content: center;
 }

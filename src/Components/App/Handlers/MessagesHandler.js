@@ -1,5 +1,5 @@
 import { forwardRef, memo, useContext, useEffect, useImperativeHandle } from "react"
-import { messageAdded, removeMessage, removeMessages, setMessages, updateMessage, updateMessageSeen, updateMessageText } from "../../Stores/Messages"
+import { handleDeleteMessage, messageAdded, removeMessage, removeMessages, setMessages, updateMessage, updateMessageSeen, updateMessageText } from "../../Stores/Messages"
 import { chatAdded, updateLastMessage } from "../../Stores/Chats"
 import { useDispatch, useSelector } from "react-redux"
 import { UserContext } from "../../Auth/Auth"
@@ -131,7 +131,14 @@ const MessagesHandler = forwardRef(({ }, ref) => {
         else
             updateChatLastMessage(data.messages[0])
 
-        dispatch(removeMessages({ chatId, messages: data.messages }))
+        if (chatId && Number(chatId) === Number(activeChat?.id)) {
+            dispatch(handleDeleteMessage({ chatId: chatId, messageId: data.messages[0] }))
+            setTimeout(() => {
+                dispatch(removeMessages({ chatId, messages: data.messages }))
+            }, 2000);
+        } else {
+            dispatch(removeMessages({ chatId, messages: data.messages }))
+        }
     }
 
     return;
