@@ -102,9 +102,11 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
 
     const getMediaLayout = () => {
         const downloadButton = <Transition state={!isLoaded}>
-            <div className="message-loading-progress" onClick={downloadMedia}>
-                <Icon name={(isDownloading || data.isUploading) ? "close" : "arrow_downward"} size={28} />
-                {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
+            <div className="MessageDownload" onClick={downloadMedia}>
+                <div className="message-loading-progress">
+                    <Icon name={(isDownloading || data.isUploading) ? "close" : "arrow_downward"} size={28} />
+                    {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
+                </div>
             </div>
         </Transition>
 

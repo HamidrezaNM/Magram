@@ -432,6 +432,15 @@
     justify-content: center;
 }
 
+.MessageDownload {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
 .message-loading-progress,
 .StreamAudio {
     position: absolute;
