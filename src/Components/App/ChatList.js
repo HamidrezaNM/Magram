@@ -130,7 +130,7 @@ function ChatList() {
             )}
         </>
         }>
-            <TabContent state={folderTabIndex === 0 || true}>
+            <TabContent state={folderTabIndex === 0 || true} key={1}>
                 {archives?.length > 0 && <div className="Archives">
                     <div className={buildClassName("Chat showAnim", showArchives && 'active')} onClick={() => { setShowArchives(!showArchives); ChatListRef.current.classList.add('Animating') }}>
                         <div className="body">
@@ -154,7 +154,7 @@ function ChatList() {
             </TabContent>
             {folders.map((folder, index) =>
                 index !== 0 &&
-                <TabContent state={folderTabIndex === index || true}>
+                <TabContent state={folderTabIndex === index || true} key={folder.id}>
                     {renderFolderChats(index)}
                     {Object.keys(chats).length === 0 &&
                         <ChatsLoading />
@@ -169,7 +169,7 @@ function ChatList() {
 export default memo(ChatList)
 
 export function viewChat(data, dispatch) {
-    dispatch(setActiveChat(data));
+    dispatch(setActiveChat({ data, whenNeeded: true }));
     if (data.id?.value) {
         window.location.hash = data.id.value
     }

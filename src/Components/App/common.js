@@ -3,15 +3,26 @@ import { client } from "../../App"
 import { profilePhoto } from "../Util/profilePhoto"
 import buildClassName from "../Util/buildClassName"
 import Transition from "./Transition"
+import { handleMediaPreview } from "../Stores/UI"
+import { useDispatch } from "react-redux"
 
 export function Icon({ name, size = 24, color = null, onClick, className = null }) {
     return <div className={"icon" + (className ? ' ' + className : '')} style={{ fontSize: size + 'px' }} onClick={onClick}>{name}</div>
 }
 
-export function Profile({ entity, image, name, id, size = 48, isSavedMessages }) {
+export function Profile({ entity, image, name, id, size = 48, isSavedMessages, showPreview = false }) {
     const [photo, setPhoto] = useState()
 
+    const profile = useRef()
     const img = useRef()
+
+    const dispatch = useDispatch()
+
+    const handlePreview = () => {
+        if (!showPreview || !photo) return
+
+        dispatch(handleMediaPreview({ from: entity, media: entity.photo, mediaSrc: photo, date: entity.date, element: profile.current }))
+    }
 
     useEffect(() => {
         if (entity && entity.photo?.photoId) {
@@ -28,14 +39,16 @@ export function Profile({ entity, image, name, id, size = 48, isSavedMessages })
     }, [])
 
     return <div
+        ref={profile}
         className={buildClassName(
             "profile",
             'peer-color-' + getPeerColorIndexById(id))}
         style={{
             width: size + 'px',
             height: size + 'px',
-            fontSize: size / 2 + 'px'
-        }}>
+            fontSize: size / 2 + 'px',
+            cursor: showPreview && 'pointer'
+        }} onClick={handlePreview}>
         {isSavedMessages ? <Icon name="bookmark" size={28} /> :
             <>
                 <span>{name ? Array.from(name.toString())[0].toUpperCase() : ''}</span>

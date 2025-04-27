@@ -76,7 +76,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
         if (media.className === 'MessageMediaPhoto' || isDocumentVideo(media.document)) {
             const mediaSrc = src
 
-            dispatch(handleMediaPreview({ message: data, media, mediaSrc }))
+            dispatch(handleMediaPreview({ from: data._sender, media, mediaSrc, date: data.date, element: messageMedia.current }))
         }
         //  else {
         //     var link = document.createElement("a");
@@ -102,7 +102,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
 
     const getMediaLayout = () => {
         const downloadButton = <Transition state={!isLoaded}>
-            <div className="MessageDownload" onClick={downloadMedia}>
+            <div className="MediaDownload" onClick={downloadMedia}>
                 <div className="message-loading-progress">
                     <Icon name={(isDownloading || data.isUploading) ? "close" : "arrow_downward"} size={28} />
                     {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
@@ -220,7 +220,7 @@ const Document = forwardRef(({ children, media, details, setProgress, isLoaded, 
     return <div className="Document">
         {children}
         <div className="details">
-            <div className="title">{details.name && extractFileName(details.name)}</div>
+            <div className="title">{details.name && (details.name)}</div>
             <div className="subtitle">{formatBytes(details.size)}</div>
         </div>
     </div>
@@ -349,7 +349,7 @@ export const Image = forwardRef(({ children,
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
 
-    // const dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
+    dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
     const img = useRef()
     const isLowQualityLoaded = useRef(false)
 
@@ -429,7 +429,7 @@ export const Video = forwardRef(({ children, media, details, size, width, height
     const [loaded, setLoaded] = useState()
 
     const aspectRatio = height / width
-    // const dimensions = calculateMediaDimensions(width, height, noAvatar)
+    dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
     const video = useRef()
     const thumbnail = useRef()
     const isLowQualityLoaded = useRef(false)

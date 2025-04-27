@@ -127,7 +127,7 @@ function Settings() {
             </PageHeader>
             <div className="section Info">
                 <div className="User">
-                    <Profile entity={User} name={User.firstName} id={User.id?.value} />
+                    <Profile showPreview entity={User} name={User.firstName} id={User.id?.value} />
                     <div className="name"><FullNameTitle chat={User} /></div>
                 </div>
                 <div className="Items">

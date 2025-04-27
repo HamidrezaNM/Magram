@@ -55,7 +55,7 @@ export function isDocumentRoundVideo(document) {
 }
 
 export function isDocumentGIF(document) {
-    return document.attributes?.find(i => i.className === 'DocumentAttributeAnimated')
+    return document?.attributes?.find(i => i.className === 'DocumentAttributeAnimated')
 }
 
 export function isDocumentSticker(document) {

@@ -201,7 +201,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     }, [messagesRenderCount])
 
     useEffect(() => {
-        if (_goToMessage) {
+        if (_goToMessage && messages) {
             const index = messages.indexOf(messages.filter((item) => item.id === _goToMessage)[0])
 
             if (messages.length - index < messagesRenderCount) {
@@ -214,7 +214,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             }
             dispatch(handleGoToMessage())
         }
-    }, [_goToMessage])
+    }, [_goToMessage, messages])
 
     const handlePinnedMessages = async () => {
         const pinned = await client.getMessages(

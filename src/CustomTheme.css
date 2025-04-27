@@ -62,23 +62,31 @@
 }
 
 .iOSTheme .bottom .Composer {
-    height: 42px;
+    min-height: 42px;
 }
 
 .iOSTheme .bottom .message-input {
-    height: 32px;
+    min-height: 32px;
     background-color: var(--theme);
-    border-radius: 50px;
+    border-radius: 16px;
+    max-height: 120px;
+    height: auto;
+    min-height: 32px;
     margin-left: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    align-items: flex-end;
 }
 
 .iOSTheme .bottom .message-input .input {
     width: calc(100% - 36px);
-    padding: 0 10px;
+    max-height: 120px;
+    padding: 6px 10px;
+    overflow: overlay;
 }
 
 .iOSTheme .bottom .message-input .placeholder {
-    padding: 0 12px;
+    padding: 6px 12px;
 }
 
 .iOSTheme .bottom .attach-button {
@@ -94,10 +102,12 @@
 .iOSTheme .bottom .emoji-button {
     position: absolute;
     right: 0;
+    height: 32px;
 }
 
 .iOSTheme .bottom .emoji-button .icon {
     margin: 0;
+    height: 32px;
 }
 
 .iOSTheme .bottom .send-button .send {
@@ -224,9 +234,9 @@
 
 .iOSTheme .Page .User .profile,
 .iOSTheme .Page .User .profile img {
-    width: 80px !important;
-    height: 80px !important;
-    font-size: 40px !important;
+    width: 96px !important;
+    height: 96px !important;
+    font-size: 48px !important;
 }
 
 .iOSTheme .Page .User .name {

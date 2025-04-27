@@ -139,7 +139,7 @@ function UserProfile() {
             </PageHeader>
             <div className="section Info">
                 <div className="User">
-                    <Profile entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
+                    <Profile showPreview entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
                     <div className="FlexColumn" style={{ width: '100%' }}>
                         <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
                         <div className="subtitle" style={{ fontSize: 14 }}>{userInfoSubtitle()}</div>
@@ -200,7 +200,7 @@ function UserProfile() {
                     {media?.length > 0 && <TabContent state={true}>
                         <div className="Items Media">
                             {media && media.map(item =>
-                                <MediaItem key={item.id} messageId={item.id} dispatch={dispatch}>
+                                <MediaItem key={item.id} messageId={item.id} chat={userProfile} dispatch={dispatch}>
                                     {renderMedia(item.media)}
                                 </MediaItem>
                             )}
@@ -235,11 +235,11 @@ export const showUserProfile = (user, dispatch) => {
     PageHandle(dispatch, 'UserProfile', '')
 }
 
-export const MediaItem = memo(({ children, messageId, dispatch }) => {
+export const MediaItem = memo(({ children, messageId, chat, dispatch }) => {
     const element = useRef()
 
     const onContextMenu = e =>
-        mediaMenu(e, element.current, messageId, dispatch)
+        mediaMenu(e, element.current, messageId, chat, dispatch)
 
     useEffect(() => {
         element.current.removeEventListener('contextmenu', onContextMenu)
@@ -265,10 +265,11 @@ export const MediaVideo = memo(({ media }) => {
     return <Video media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={16} width={50} height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={() => { }} autoplay={false} />
 })
 
-const mediaMenu = (e, element, messageId, dispatch) => {
+const mediaMenu = (e, element, messageId, chat, dispatch) => {
     e.preventDefault()
 
     const onShowInChat = () => {
+        viewChat(generateChatWithPeer(chat), dispatch)
         dispatch(handleGoToMessage(messageId))
         dispatch(handleContextMenu())
         PageClose(dispatch)

@@ -139,4 +139,8 @@
     .MiddleColumn .ChatInfo .BackButton span {
         left: 28px;
     }
+
+    .Home:has(.MediaPreview.zoom) .MiddleColumn.focused {
+        transform: scale(1.1);
+    }
 }

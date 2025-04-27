@@ -1,7 +1,7 @@
 import { Api } from "telegram"
 import { client } from "../../App"
 import { updateChatUnreadCount } from "../Stores/Chats"
-import { removeMessage, updateMessagePoll } from "../Stores/Messages"
+import { handleDeleteMessage, removeMessage, updateMessagePoll } from "../Stores/Messages"
 
 export async function readHistory(peerId, dispatch) {
     await client.markAsRead(peerId)
@@ -12,10 +12,25 @@ export async function readHistory(peerId, dispatch) {
 export async function deleteMessage(peerId, messageId, dispatch) {
     await client.deleteMessages(peerId, [messageId], { revoke: true })
 
-    dispatch(removeMessage({
+    dispatch(handleDeleteMessage({
         chatId: peerId,
         messageId
     }))
+
+    setTimeout(() => {
+        dispatch(removeMessage({
+            chatId: peerId,
+            messageId
+        }))
+    }, 2000);
+}
+
+export async function saveGIF(documentId, unsave = false) {
+    const result = await client.invoke(new Api.messages.SaveGif({
+        id: documentId,
+        unsave
+    }))
+    return result;
 }
 
 export async function retractVote(peerId, messageId, dispatch) {

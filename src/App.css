@@ -486,7 +486,8 @@
 
 .TopBar .icon:hover,
 .Topbar .icon:hover,
-.Menu .icon:hover {
+.Menu .icon:hover,
+.MusicPlayer .Controls .icon:hover {
   background-color: #ffffff20;
   background-color: var(--icon-hover);
 }
@@ -1215,11 +1216,6 @@ a:hover {
   transform: scale(0.95)
 }
 
-.Toast.hideAnim {
-  /* margin-bottom: 0;
-  transform: translateY(-18px); */
-}
-
 .Toast .icon {
   padding: 0;
   margin: 0;
@@ -1243,6 +1239,7 @@ a:hover {
   height: 100%;
   z-index: 20;
   display: flex;
+  color: var(--text-color);
   flex-direction: column;
   user-select: none;
   transition: all .3s ease;
@@ -1255,6 +1252,7 @@ a:hover {
   width: 100%;
   position: absolute;
   background: linear-gradient(to bottom, #000000dd, transparent);
+  z-index: 1;
 }
 
 .MediaPreview .Topbar>div {
@@ -1289,14 +1287,22 @@ a:hover {
 
 .MediaPreview .Content .Media>* {
   max-width: 100%;
+  object-fit: cover;
 }
 
-.MediaPreview.animate {
+.MediaPreview.animate .Topbar {
   opacity: 0;
 }
 
-.MediaPreview.animate .Content {
-  transform: scale(0.95);
+.MediaPreview .Media {
+  position: fixed;
+  display: flex;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.MediaPreview.animate .Media {
+  border-radius: 16px;
 }
 
 .MusicPlayer {
@@ -1307,7 +1313,6 @@ a:hover {
   display: flex;
   gap: 16px;
   height: 72px;
-  /* color: var(--text-color); */
   padding: 0 12px;
   align-items: center;
   border-radius: 20px 20px 0 0;
@@ -1499,9 +1504,7 @@ a:hover {
   font-family: inherit !important;
 }
 
-.css-et6ef6-MuiSkeleton-root,
-.css-1atqaay-MuiSkeleton-root,
-.css-757fl2-MuiSkeleton-root {
+.MuiSkeleton-root {
   background-color: var(--on-primary) !important;
 }
 

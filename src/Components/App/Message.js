@@ -17,8 +17,8 @@ import MessageMedia, { calculateMediaDimensions, getMediaPosition } from "./Mess
 import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
-import { getMediaDimensions, getMediaType, isDocumentPhoto } from "../Helpers/messages";
-import { deleteMessage, retractVote } from "../Util/messages";
+import { getMediaDimensions, getMediaType, isDocumentGIF, isDocumentPhoto } from "../Helpers/messages";
+import { deleteMessage, retractVote, saveGIF } from "../Util/messages";
 import { generateChatWithPeer, getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
@@ -200,6 +200,17 @@ function Message({
         messageMedia.current.onSave(); handleContextMenuClose()
     }, [data.media])
 
+
+    const handleSaveGif = useCallback(() => {
+        try {
+            saveGIF(data.media.document)
+            dispatch(handleToast({ icon: 'gif_box', title: 'Added to Favorite GIFs' }))
+        } catch (error) {
+            dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
+        }
+        handleContextMenuClose()
+    }, [data.media])
+
     const handlePin = useCallback(() => {
         // socket.emit('PinMessage', { token: Auth.authJWT, message: data, pin: !isPinned.current ?? true })
         // socket.on('PinMessage', (response) => {
@@ -279,12 +290,14 @@ function Message({
                         canPin={isAdmin && !isPinned.current}
                         canUnpin={isAdmin && isPinned.current}
                         canRetractVote={data.media?.results?.results}
+                        canSaveGif={data.media && isDocumentGIF(data.media.document)}
                         canEdit={User.id.value === data._senderId?.value}
                         canForward={true}
                         canDelete={User.id.value === data._senderId?.value || isAdmin || true}
                         onReply={handleReply}
                         onCopy={handleCopy}
                         onSavePhoto={handleSave}
+                        onSaveGif={handleSaveGif}
                         onPin={handlePin}
                         onRetractVote={handleRetractVote}
                         onEdit={handleEdit}
@@ -333,6 +346,42 @@ function Message({
 
     const renderAlbum = () => {
         if (!data.groupedId || !groupedMessages) return
+
+        const mediaType = getMediaType(data.media)
+
+        if (mediaType !== 'Photo' && mediaType !== 'Video') {
+            return <>
+                <MessageMedia
+                    media={data.media}
+                    data={data}
+                    className={buildClassName(
+                        !data.message &&
+                        (!data.reactions || data.reactions.results?.length == 0) &&
+                        'NoCaption',
+                        'media-position-' + mediaPosition
+                    )}
+                    noAvatar={noAvatar}
+                    ref={messageMedia}
+                />
+                {groupedMessages.map((item) =>
+                    <div key={item.id}>
+                        <MessageMedia
+                            media={item.media}
+                            data={item}
+                            key={item.id}
+                            className={buildClassName(
+                                !data.message &&
+                                (!data.reactions || data.reactions.results?.length == 0) &&
+                                'NoCaption',
+                                'media-position-' + mediaPosition
+                            )}
+                            noAvatar={noAvatar}
+                            ref={messageMedia}
+                        />
+                        <MessageText data={item} isInChat />
+                    </div>)}
+            </>
+        }
 
         return <div className="Album" style={{ height: albumLayout.containerStyle.height + 'px' }}>
             <MessageMedia

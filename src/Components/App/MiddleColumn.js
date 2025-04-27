@@ -34,7 +34,7 @@ function MiddleColumn({ }) {
     useEffect(() => {
         if (thread) {
             (async () => {
-                const linkedChatId = chats[thread.chatId.value].fullChat?.linkedChatId?.value
+                const linkedChatId = chats[thread.chatId.value]?.fullChat?.linkedChatId?.value
 
                 if (linkedChatId) {
                     const discussionChat = await client.getEntity(linkedChatId)

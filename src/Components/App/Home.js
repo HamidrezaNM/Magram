@@ -96,7 +96,6 @@ function Home() {
     const callMaximized = useSelector((state) => state.ui.callMaximized)
     const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
     const background = useSelector((state) => state.ui.background)
-    const mediaPreview = useSelector((state) => state.ui.mediaPreview)
     const darkMode = useSelector((state) => state.settings.darkMode)
     const customTheme = useSelector((state) => state.settings.customTheme)
     const deleteEffect = useSelector((state) => state.ui.deleteEffect)
@@ -289,9 +288,7 @@ function Home() {
                         <MiddleColumn />
                     </div>
 
-                    <Transition state={mediaPreview?.active} eachElement>
-                        <MediaPreview />
-                    </Transition>
+                    <MediaPreview />
 
                     <Toasts />
                     <Dialogs />

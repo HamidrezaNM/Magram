@@ -30,7 +30,6 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
             if (activeAction)
                 activeAction()
             requestAnimationFrame(() => {
-
                 if (eachElement) {
                     const items = element.current.querySelectorAll('.Transition>*')
 

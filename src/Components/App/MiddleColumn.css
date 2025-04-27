@@ -235,7 +235,7 @@
 
 .MiddleColumn .bottom .Composer {
     width: 100%;
-    height: 48px;
+    min-height: 48px;
     display: flex;
     align-items: center;
     color: var(--dyn-text-color);
@@ -262,7 +262,7 @@
     font-family: inherit;
     font-size: 16px;
     color: var(--dyn-text-color);
-    position: absolute;
+    /* position: absolute; */
     background: transparent;
     cursor: text;
     z-index: 1;
@@ -379,9 +379,8 @@
 .MiddleColumn .bottom .Button {
     text-transform: uppercase;
     display: flex;
-    flex: 1;
     width: 100%;
-    height: 100%;
+    height: 48px;
     font-weight: 500;
     align-items: center;
     justify-content: center;

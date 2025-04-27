@@ -114,10 +114,10 @@ function ChatInfo() {
                         <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
                         {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}
                     </div>
-                    <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
+                    <div className="meta"><Profile showPreview entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                 </>
                     : <>
-                        <div className="meta"><Profile entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
+                        <div className="meta"><Profile showPreview entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                         <div className="body">
                             <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
                             {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}

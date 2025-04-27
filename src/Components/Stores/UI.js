@@ -119,8 +119,15 @@ export const uiSlice = createSlice({
             state.userProfile = action.payload
         },
         setActiveChat: (state, action) => {
-            state.activeChat = action.payload
-            console.log('active chat setted')
+            if (action.payload?.whenNeeded) {
+                if (Number(action.payload.data?.id) !== Number(state.activeChat?.id)) {
+                    state.activeChat = action.payload.data
+                } else {
+                    console.log('chat already set')
+                }
+            } else {
+                state.activeChat = action.payload
+            }
         },
         updateActiveChatPermissions: (state, action) => {
             state.activeChat.permissions = action.payload
