@@ -53,8 +53,8 @@ function MiddleColumn({ }) {
         var length = background.current.clientWidth, angle = 0;
         var grd = ctx.createLinearGradient(0, 0, 0 + Math.cos(angle) * length, 0 + Math.sin(angle) * length);
 
-        grd.addColorStop(0, "#3d2471");
-        grd.addColorStop(1, "#002b29");
+        grd.addColorStop(0, "#002b29");
+        grd.addColorStop(1, "#3d2471");
         // grd.addColorStop(.66, "#962fbf");
         // grd.addColorStop(1, "#4f5bd5");
 

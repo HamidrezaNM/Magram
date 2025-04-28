@@ -147,6 +147,22 @@
     transition: all .3s ease;
 }
 
+.Dark .Message .bubble .bubble-content {
+    background: linear-gradient(300deg, hsl(259 52% 16% / 1), hsl(177 100% 4% / 1));
+    background-attachment: fixed;
+}
+
+.Dark .Message.Out .bubble .bubble-content {
+    background: linear-gradient(0deg, rgb(101, 115, 248), rgb(118, 68, 203), rgb(136, 73, 180), rgb(167, 81, 168));
+    background-attachment: fixed;
+    color: #fff;
+}
+
+.Dark .Message.Out .bubble .message-details,
+.Dark .Message.Out .message-details .message-time {
+    color: var(--text-color);
+}
+
 .iOSTheme .ContextMenuBG {
     backdrop-filter: blur(50px);
     /* opacity: unset; */
