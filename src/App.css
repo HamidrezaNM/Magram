@@ -1007,6 +1007,9 @@
   height: 100%;
   aspect-ratio: 1;
   overflow: hidden;
+  background-image: linear-gradient(90deg, #ffffff10, #ffffff30, #ffffff10);
+  background-size: 200%;
+  animation: ItemLoading 1s linear infinite;
 }
 
 .Page .Items.Media .MediaItem * {

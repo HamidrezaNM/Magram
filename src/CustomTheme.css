@@ -149,14 +149,48 @@
 
 .Dark .Message .bubble .bubble-content {
     background: linear-gradient(300deg, hsl(259 52% 16% / 1), hsl(177 100% 4% / 1));
-    background-attachment: fixed;
 }
 
 .Dark .Message.Out .bubble .bubble-content {
+    background: linear-gradient(300deg, rgb(118, 68, 203), rgb(136, 73, 180));
+    color: var(--text-color);
+}
+
+.Dark .Message.Out .bubble .bubble-content .message-forward {
+    color: var(--text-color);
+}
+
+.Dark .Message.Out .bubble .bubble-content a {
+    color: var(--text-color);
+    text-decoration: underline;
+}
+
+.Dark .gradientMessage .Message .bubble .bubble-content {
+    background: linear-gradient(300deg, hsl(259 52% 16% / 1), hsl(177 100% 4% / 1));
+    background-attachment: fixed;
+}
+
+.Dark .gradientMessage .Message.Out .bubble .bubble-content {
     background: linear-gradient(0deg, rgb(101, 115, 248), rgb(118, 68, 203), rgb(136, 73, 180), rgb(167, 81, 168));
     background-attachment: fixed;
-    color: #fff;
 }
+
+/* 
+.Dark .gradientMessage .Message .bubble .bubble-content {
+    position: relative;
+    overflow: hidden;
+    background: none;
+}
+
+.Dark .gradientMessage .Message .bubble .bubble-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    background: linear-gradient(0deg, rgb(101, 115, 248), rgb(118, 68, 203), rgb(136, 73, 180), rgb(167, 81, 168));
+    z-index: -1;
+    transform: translateY(var(--offset, 0px));
+} */
 
 .Dark .Message.Out .bubble .message-details,
 .Dark .Message.Out .message-details .message-time {

@@ -31,23 +31,30 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
                 activeAction()
             requestAnimationFrame(() => {
                 if (eachElement) {
+                    if (!element.current) return
+
                     const items = element.current.querySelectorAll('.Transition>*')
 
                     items.forEach((item) => {
                         item.classList.add('animate', 'showAnim')
                     })
                     requestAnimationFrame(() => {
+                        if (!element.current) return
                         element.current.classList.remove('hidden')
                         items.forEach((item) => {
                             item.classList.remove('animate', 'showAnim')
                         })
                     })
                 } else {
+                    if (!element.current) return
+
                     element.current.firstElementChild.style.transition = 'none'
                     element.current.firstElementChild.classList.add('animate', 'showAnim')
                     requestAnimationFrame(() => {
+                        if (!element.current) return
                         element.current.classList.remove('hidden')
                         requestAnimationFrame(() => {
+                            if (!element.current) return
                             element.current.firstElementChild.style.transition = ''
                             element.current.firstElementChild.classList.remove('animate', 'showAnim')
                         });

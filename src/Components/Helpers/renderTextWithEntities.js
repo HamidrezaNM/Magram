@@ -74,6 +74,8 @@ export default function renderTextWithEntities(text, entities, allowClick = true
                 return <strong>{entityContent}</strong>
             case 'MessageEntityMention':
                 return <MentionLink username={entityContent} allowClick={allowClick}>{entityContent}</MentionLink>
+            case 'MessageEntityMentionName':
+                return <MentionLink username={entityContent} allowClick={allowClick}>{entityContent}</MentionLink>
             case 'MessageEntityTextUrl':
             case 'MessageEntityUrl':
                 return <Link url={entity.url ?? entityContent} allowClick={allowClick}>{entityContent}</Link>

@@ -11,6 +11,7 @@ function Reaction({ messageId, chatId, emoticon, emojiId, isPaid, count, isActiv
 
     const onClick = async () => {
         const _active = !active
+        navigator.vibrate(1)
         setActive(_active)
         await client.invoke(new Api.messages.SendReaction({
             msgId: messageId,

@@ -12,6 +12,7 @@ import Audio from "./Audio";
 import buildClassName from "../../Util/buildClassName";
 import WebPage from "./WebPage";
 import { Api } from "telegram";
+import { isElementInViewport } from "../Message";
 
 const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
@@ -21,6 +22,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
     const [waitForSave, setWaitForSave] = useState(false)
     const [src, setSrc] = useState(false)
     const [uploading, setUploading] = useState()
+    const [visible, setVisible] = useState(true)
 
     const image = useRef()
     const messageMedia = useRef()
@@ -35,6 +37,24 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
             messageMedia.current.style.height = mediaDimensions?.height > 0 ? mediaDimensions.height + 'px' : ''
         }
     }, [])
+
+    useEffect(() => {
+        const messagesEl = document.querySelector('.MiddleColumn .Messages')
+
+        let inView = true
+
+        const handleHideWhenNotInView = () => {
+            inView = isElementInViewport(messageMedia.current)
+
+            if (inView != visible) {
+                setVisible(inView)
+            }
+        }
+
+        messagesEl.addEventListener('scroll', () => handleHideWhenNotInView())
+
+        return () => messagesEl.removeEventListener('scroll', () => handleHideWhenNotInView())
+    }, [visible])
 
     useEffect(() => {
         if (data.progress) {
@@ -126,17 +146,19 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
                     setSrc={setSrc}
                     uploading={uploading}
                     setIsDownloading={setIsDownloading}
+                    visible={visible}
                 >{downloadButton}</Image>
             case 'MessageMediaDocument':
                 if (isDocumentVideo(media.document)) {
                     const videoAttributes = getDocumentVideoAttributes(media.document)
 
                     if (videoAttributes?.roundMessage) {
-                        return <RoundVideo ref={image} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</RoundVideo>
+                        return <RoundVideo ref={image} visible={visible} media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size.value) }} size={size} width={videoAttributes?.w} height={videoAttributes?.h} noAvatar={noAvatar} uploading={uploading} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={setProgress} setSrc={setSrc} setIsDownloading={setIsDownloading} autoplay={videoAttributes?.nosound}>{downloadButton}</RoundVideo>
                     }
 
                     return <Video
                         ref={image}
+                        visible={visible}
                         media={media}
                         details={{
                             name: getDocumentFileName(media.document),
@@ -154,7 +176,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
                         setProgress={setProgress}
                         setSrc={setSrc}
                         setIsDownloading={setIsDownloading}
-                        autoplay={videoAttributes?.nosound}>{downloadButton}</Video>
+                        autoplay={window.Animations?.AutoPlayGIFs && videoAttributes?.nosound}>{downloadButton}</Video>
                 }
                 if (isDocumentSticker(media.document)) {
                     const attributes = getDocumentImageAttributes(media.document)
@@ -332,7 +354,8 @@ export function getMediaPosition(media) {
     return 'top'
 }
 
-export const Image = forwardRef(({ children,
+export const Image = memo(forwardRef(({ children,
+    visible,
     media,
     size,
     _width,
@@ -348,6 +371,7 @@ export const Image = forwardRef(({ children,
 }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
+    const [content, setContent] = useState()
 
     dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
     const img = useRef()
@@ -364,7 +388,7 @@ export const Image = forwardRef(({ children,
         onSave() {
             var link = document.createElement("a");
             link.download = 'image.jpg';
-            link.href = img.current.src;
+            link.href = content;
             link.click();
         }
     }))
@@ -387,7 +411,7 @@ export const Image = forwardRef(({ children,
             var blob = new Blob([buffer]);
             var data = window.URL.createObjectURL(blob)
 
-            img.current.src = data;
+            setContent(data)
 
             if (setSrc)
                 setSrc(data)
@@ -403,13 +427,11 @@ export const Image = forwardRef(({ children,
             const sizes = getPhotoDimensions(media.photo)?.sizes
             const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: sizes[sizes?.length - 1] }), size, true, 'image/jpg')
             if (!result) return
-            if (img.current) {
-                let src = result.data
-                img.current.src = src;
+            let src = result.data
+            setContent(src)
 
-                if (setSrc)
-                    setSrc(src)
-            }
+            if (setSrc)
+                setSrc(src)
             if (!result.thumbnail)
                 setIsLoaded(true)
             else
@@ -417,13 +439,13 @@ export const Image = forwardRef(({ children,
         })()
     }, [media, size])
 
-    return <>
-        <img ref={img} width={width > 0 ? dimensions.width : ''} className={isLoaded ? '' : 'blurred'} />
+    return visible && <>
+        <img ref={img} src={content} width={width > 0 ? dimensions.width : ''} className={isLoaded ? '' : 'blurred'} />
         {children}
     </>
-})
+}))
 
-export const Video = forwardRef(({ children, media, details, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+export const Video = memo(forwardRef(({ children, visible, media, details, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [thumb, setThumb] = useState()
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
@@ -500,13 +522,13 @@ export const Video = forwardRef(({ children, media, details, size, width, height
         })()
     }, [media, size])
 
-    return <>
+    return visible && <>
         {!content ?
             <Transition state={true}>
                 <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
             </Transition>
             :
-            <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={isLoaded && autoplay} loop={autoplay} />
+            <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={autoplay && isLoaded} loop={autoplay} />
         }
         <div className="MediaDetails">
             <div className="FlexColumn">
@@ -518,7 +540,7 @@ export const Video = forwardRef(({ children, media, details, size, width, height
         </div>
         {children}
     </>
-})
+}))
 
 const RoundVideo = forwardRef(({ children, media, details, size, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
     const [content, setContent] = useState()

@@ -12,6 +12,7 @@ export default function SettingsThemes() {
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const bottomBar = useSelector((state) => state.settings.customTheme.bottomBar)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
+    const gradientMessage = useSelector((state) => state.settings.customTheme.gradientMessage)
 
     const dispatch = useDispatch()
 
@@ -29,6 +30,10 @@ export default function SettingsThemes() {
 
     const setIOSTheme = (value) => {
         dispatch(handleCustomTheme({ iOSTheme: value }))
+    }
+
+    const setGradientMessage = (value) => {
+        dispatch(handleCustomTheme({ gradientMessage: value }))
     }
 
     return <div className={buildClassName("SettingsThemes", !isLoaded && 'fadeThrough')}>
@@ -54,6 +59,9 @@ export default function SettingsThemes() {
                 </div>
                 <div className="Item"><span>iOS Theme</span> {/*Temporary*/}
                     <Switch checked={iOSTheme} setChecked={setIOSTheme} />
+                </div>
+                <div className="Item"><span>Gradient Background in Messages</span>
+                    <Switch checked={gradientMessage} setChecked={setGradientMessage} />
                 </div>
             </div>
         </div>

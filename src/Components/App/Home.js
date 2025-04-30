@@ -97,6 +97,7 @@ function Home() {
     const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
     const background = useSelector((state) => state.ui.background)
     const darkMode = useSelector((state) => state.settings.darkMode)
+    const animations = useSelector((state) => state.settings.animations)
     const customTheme = useSelector((state) => state.settings.customTheme)
     const deleteEffect = useSelector((state) => state.ui.deleteEffect)
 
@@ -111,6 +112,10 @@ function Home() {
             dispatch(handleToggleDarkMode())
         }
     }, [])
+
+    useEffect(() => {
+        window.Animations = animations
+    }, [animations])
 
     useEffect(() => {
         setTimeout(() => {

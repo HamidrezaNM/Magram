@@ -4,7 +4,19 @@
     display: flex;
     /* transition: background-color .3s ease; */
     transition: all .3s ease;
+    /* content-visibility: auto; */
+    /* contain-intrinsic-size: 100px; */
 }
+
+/* .Message {
+    position: relative;
+    left: -100vw;
+}
+
+.Message.inView {
+    left: auto;
+    width: auto;
+} */
 
 .Message.animate {
     transform: scale(0.9);

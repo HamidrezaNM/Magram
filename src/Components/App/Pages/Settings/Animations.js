@@ -1,15 +1,16 @@
-import { memo, useCallback, useContext, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PageClose, PageHeader } from "../../Page";
 import { BackArrow, Icon, Switch } from "../../common";
-import { UserContext } from "../../../Auth/Auth";
 import buildClassName from "../../../Util/buildClassName";
+import { handleAnimationsOptions } from "../../../Stores/Settings";
 
 export default function SettingsAnimations() {
     const [isLoaded, setIsLoaded] = useState(false)
-    const [animatedStickers, setAnimatedStickers] = useState(window.Animations?.AnimatedStickers)
-    const [chatAnimations, setChatAnimations] = useState(window.Animations?.ChatAnimations)
-    const [autoPlayGIFs, setAutoPlayGIFs] = useState(window.Animations?.AutoPlayGIFs)
+
+    const animatedStickers = useSelector((state) => state.settings.animations?.AnimatedStickers)
+    const chatAnimations = useSelector((state) => state.settings.animations?.ChatAnimations)
+    const autoPlayGIFs = useSelector((state) => state.settings.animations?.AutoPlayGIFs)
 
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
@@ -19,18 +20,17 @@ export default function SettingsAnimations() {
         setIsLoaded(true)
     }, [])
 
-    useEffect(() => {
-        if (!window.Animations) window.Animations = {}
-        window.Animations.AnimatedStickers = animatedStickers
-    }, [animatedStickers])
-    useEffect(() => {
-        if (!window.Animations) window.Animations = {}
-        window.Animations.ChatAnimations = chatAnimations
-    }, [chatAnimations])
-    useEffect(() => {
-        if (!window.Animations) window.Animations = {}
-        window.Animations.AutoPlayGIFs = autoPlayGIFs
-    }, [autoPlayGIFs])
+    const setAnimatedStickers = (value) => {
+        dispatch(handleAnimationsOptions({ AnimatedStickers: value }))
+    }
+
+    const setChatAnimations = (value) => {
+        dispatch(handleAnimationsOptions({ ChatAnimations: value }))
+    }
+
+    const setAutoPlayGIFs = (value) => {
+        dispatch(handleAnimationsOptions({ AutoPlayGIFs: value }))
+    }
 
     return <div className={buildClassName("SettingsAnimations", !isLoaded && 'fadeThrough')}>
         <PageHeader>

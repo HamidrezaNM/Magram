@@ -32,7 +32,7 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
         //         return `<a href="${href}" target="_blank">${x}</a>`;
         //     })
         // output = new DOMParser().parseFromString(output, "text/html").documentElement.textContent;
-        return renderTextWithEntities(data.message, data.entities, isInChat, includeFrom && (data._sender?.firstName ?? data._sender?.title), isInChat)
+        return renderTextWithEntities(data.message, data.entities, isInChat, includeFrom && (data._sender?.firstName ?? data._sender?.title ?? data._chat?.title), isInChat)
     } else if (data.action) {
         switch (data.action.className) {
             case 'MessageActionChannelCreate':
@@ -73,7 +73,7 @@ export const getMessageText = (data, userId, isInChat = false, includeFrom = fal
         }
     } else if (!isInChat) {
         if (data.media) {
-            return <span>{includeFrom ? data.sender?.firstName + ': ' : ''}<span style={{ fontWeight: 500 }}>{getMediaTitle(data.media) ?? 'Media'}</span></span>
+            return <span>{includeFrom ? (data.sender?.firstName ?? data._sender?.title ?? data._chat?.title) + ': ' : ''}<span style={{ fontWeight: 500 }}>{getMediaTitle(data.media) ?? 'Media'}</span></span>
         } else if (data.type === 'call') {
             var output = ''
             switch (data.call?.status) {
