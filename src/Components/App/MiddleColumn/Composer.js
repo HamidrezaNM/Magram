@@ -1,5 +1,5 @@
 import { Picker } from "emoji-mart";
-import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import ContentEditable from "../../common/WrappedContentEditable";
 import { IKUpload } from "imagekitio-react";
 import { Icon } from "../common";
@@ -20,6 +20,7 @@ import { returnBigInt } from "telegram/Helpers";
 import MenuItem from "../../UI/MenuItem";
 import DropdownMenu from "../../UI/DropdownMenu";
 import Menu from "../../UI/Menu";
+import TurndownService from "turndown";
 
 function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
@@ -47,15 +48,21 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const sendButton = useRef();
     const attachButton = useRef();
 
+    const input = messageInputEl.current?.querySelector('.input')
+
     const dispatch = useDispatch()
     const emoji = new EmojiConvertor()
+
+    TurndownService.prototype.escape = e => e
 
     const sendMessage = useCallback(async (text) => {
         if (!text && (!messageInputHandled || messageInputHandled.trim().length === 0)) {
             console.log('message is empty', messageInputHandled)
             return false;
         }
-        const messageText = text?.trim() ?? messageInputHandled.replace(/&nbsp;/g, ' ').trim()
+        let messageText = text?.trim() ?? messageInputHandled.replace(/&nbsp;/g, ' ').trim()
+        messageText = handleInputTurndown(messageText)
+
         if (editMessage) {
             await client.invoke(new Api.messages.EditMessage({
                 id: editMessage.id,
@@ -136,20 +143,36 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         }
     }, [messageInputHandled]);
 
+    const handlePaste = (e) => {
+        e.preventDefault();
+
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+
+        if (document.activeElement !== input) return;
+
+        if (document.queryCommandSupported('insertText')) {
+            document.execCommand('insertText', false, text);
+        } else {
+            input.innerText += text;
+        }
+    };
+
     const changeMessageInputHandler = useCallback(e => {
         if (e === null) e = ''
         var value = e.target ? e.target.value : e;
         if (value === '<br>')
             value = ''
 
-        emoji.replace_mode = 'img';
-        emoji.img_sets.apple.path = 'https://cdnjs.cloudflare.com/ajax/libs/emoji-datasource-apple/15.0.1/img/apple/64/'
-        emoji.allow_native = true;
-        emoji.include_title = true
-        var output = emoji.replace_colons(value);
-        emoji.colons_mode = true
-        var input = emoji.replace_unified(value)
-        input = input.replaceAll(/<img.*?title="(.*?)"(\/?)>/g, ":$1:")
+        // emoji.replace_mode = 'img';
+        // emoji.img_sets.apple.path = 'https://cdnjs.cloudflare.com/ajax/libs/emoji-datasource-apple/15.0.1/img/apple/64/'
+        // emoji.allow_native = true;
+        // emoji.include_title = true
+        // var output = emoji.replace_colons(value);
+        // emoji.colons_mode = true
+        // var input = emoji.replace_unified(value)
+        // input = input.replaceAll(/<img.*?title="(.*?)"(\/?)>/g, ":$1:")
+        var output = value
+        var input = value
 
         const sendIcon = iOSTheme ? 'north' : 'send'
 
@@ -235,17 +258,29 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         setMessageInputHandled(input)
     }, [messageInput])
 
+    const handleInputTurndown = (value) => {
+        var turndownService = new TurndownService()
+
+        turndownService.addRule('div', {
+            filter: ['div'],
+            replacement: function (content) {
+                return '\n' + content + '\n'
+            }
+        })
+
+        return turndownService.turndown(value)
+    }
+
     const htmlDecode = (input) => {
         var doc = new DOMParser().parseFromString(input, "text/html");
         return doc.documentElement.textContent;
     }
 
+    const isMobile = detectMobile()
+
     const handleKeyDown = (e) => {
-        setTimeout(() => {
-            // changeMessageInputHandler(event);
-            // handleMessageInput()
-        }, 0);
-        if (!e.shiftKey && e.keyCode == 13) {
+
+        if (!e.shiftKey && e.keyCode == 13 && !isMobile) {
             e.preventDefault();
             handleMessageInput()
             sendMessage();
@@ -342,6 +377,13 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         sendMessage('/start')
         setBotStarted(true)
     }
+
+    useEffect(() => {
+        if (!input) return;
+
+        input.addEventListener('paste', handlePaste);
+        return () => input.removeEventListener('paste', handlePaste);
+    }, [input])
 
     useEffect(() => {
         if (isTyping) {
@@ -479,6 +521,22 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             </div>
         </>}
     </>
+}
+
+function detectMobile() {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
 }
 
 export default memo(Composer)

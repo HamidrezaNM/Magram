@@ -61,8 +61,14 @@
     background-color: var(--primary-container);
 }
 
+.iOSTheme .MiddleColumn .bottom {
+    padding-bottom: 8px;
+}
+
 .iOSTheme .bottom .Composer {
-    min-height: 42px;
+    min-height: auto;
+    padding-top: 4px;
+    align-items: flex-end;
 }
 
 .iOSTheme .bottom .message-input {
@@ -70,11 +76,10 @@
     background-color: var(--theme);
     border-radius: 16px;
     max-height: 120px;
+    margin-block: 2px;
     height: auto;
     min-height: 32px;
     margin-left: 8px;
-    margin-top: 4px;
-    margin-bottom: 4px;
     align-items: flex-end;
 }
 

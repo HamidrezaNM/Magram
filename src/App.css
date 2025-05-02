@@ -754,6 +754,7 @@
   bottom: 56px;
   right: 0;
   margin: 16px;
+  cursor: pointer;
   backdrop-filter: blur(2.5rem);
   transition: background-color .3s ease, bottom .3s ease, opacity .3s ease;
 }
@@ -1348,6 +1349,7 @@ a:hover {
   overflow: hidden;
   width: 54px;
   height: 54px;
+  flex: none;
 }
 
 .MusicPlayer .Cover>* {

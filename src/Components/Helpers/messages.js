@@ -79,7 +79,7 @@ export function getMediaType(media) {
             if (isDocumentSticker(media.document)) return 'Sticker'
             if (isDocumentRoundVideo(media.document)) return 'RoundVideo'
             if (isDocumentVideo(media.document)) return 'Video'
-            if (isDocumentPhoto(media.document)) return 'Photo'
+            if (isDocumentPhoto(media.document)) return 'DocumentPhoto'
             if (isDocumentVoice(media.document)) return 'Voice'
             if (isDocumentAudio(media.document)) return 'Music'
             return 'Document'

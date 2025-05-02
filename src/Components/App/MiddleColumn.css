@@ -264,6 +264,7 @@
     color: var(--dyn-text-color);
     /* position: absolute; */
     background: transparent;
+    line-height: 1.2;
     cursor: text;
     z-index: 1;
 }
