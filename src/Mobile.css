@@ -143,4 +143,66 @@
     .Home:has(.MediaPreview.zoom) .MiddleColumn.focused {
         /* transform: scale(1.1); */
     }
+
+    .bottom .MobileKeyboardFiller {
+        transition: all .2s ease;
+    }
+
+    .bottom .MobileKeyboardFiller.active {
+        transition: none;
+    }
+
+    .MiddleColumn:has(.bottom .MobileKeyboardFiller.active) .EmojiPicker {
+        transition: none;
+    }
+
+    .MiddleColumn .bottom .EmojiPicker {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-top: 4px;
+        width: 100%;
+        height: 256px;
+        overflow: hidden;
+        transition: all .3s ease;
+    }
+
+    .MiddleColumn .bottom .EmojiPicker.animate {
+        height: 0px;
+    }
+
+    .MiddleColumn .bottom .EmojiPicker .Backspace {
+        display: block;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        background-color: var(--secondary);
+        z-index: 1;
+    }
+
+    .MiddleColumn:has(.bottom .EmojiPicker) .bottom {
+        padding-bottom: 0;
+    }
+
+    .EmojiPicker .Tabs {
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .bottom .EmojiPicker .Tab {
+        padding: 4px;
+        flex: none;
+        font-size: 14px;
+    }
+
+    .EmojiPicker .Tab.active span::after {
+        display: none;
+    }
+
+    em-emoji-picker {
+        min-height: auto;
+        height: 217px;
+        width: 100%;
+        --background-rgb: 85, 170, 255;
+    }
 }

@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react"
 import Transition from "../App/Transition"
 
-function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
+function Tabs({ tabs, children, index, setIndex, showOneTab = false, bottom = false }) {
     const containerRef = useRef()
     const prevIndex = useRef()
     const scrollDiv = useRef()
@@ -44,11 +44,13 @@ function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
         }
     }
 
+    const TabsButtons = ((showOneTab && tabCount > 0) || tabCount > 1) &&
+        <div className="Tabs">
+            {tabs}
+        </div>
+
     return <div className="TabContainer" ref={containerRef}>
-        {((showOneTab && tabCount > 0) || tabCount > 1) &&
-            <div className="Tabs">
-                {tabs}
-            </div>}
+        {!bottom && TabsButtons}
         <div style={{
             overflowX: 'auto',
             scrollSnapType: 'x mandatory',
@@ -63,6 +65,7 @@ function Tabs({ tabs, children, index, setIndex, showOneTab = false }) {
                 {children}
             </div>
         </div>
+        {bottom && TabsButtons}
     </div>
 }
 

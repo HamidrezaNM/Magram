@@ -1,4 +1,3 @@
-import { Picker } from "emoji-mart";
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import ContentEditable from "../../common/WrappedContentEditable";
 import { IKUpload } from "imagekitio-react";
@@ -21,6 +20,8 @@ import MenuItem from "../../UI/MenuItem";
 import DropdownMenu from "../../UI/DropdownMenu";
 import Menu from "../../UI/Menu";
 import TurndownService from "turndown";
+import Picker from "./Composer/Picker";
+import Transition from "../Transition";
 
 function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
@@ -40,6 +41,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const editMessage = useSelector((state) => state.ui.editMessage)
     const replyToMessage = useSelector((state) => state.ui.replyToMessage)
     const sendBotCommand = useSelector((state) => state.ui.sendBotCommand)
+    const darkMode = useSelector((state) => state.settings.darkMode)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
     const ikUploadRefTest = useRef()
@@ -47,6 +49,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     const placeholderRef = useRef();
     const sendButton = useRef();
     const attachButton = useRef();
+    const mobileKeyboardFiller = useRef();
 
     const input = messageInputEl.current?.querySelector('.input')
 
@@ -216,7 +219,6 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     useEffect(() => {
         if (replyToMessage || editMessage) {
             setTimeout(() => {
-                document.querySelector(".PreviewMessage").classList.remove("animate");
                 setTimeout(() => {
                     scrollToBottom.current.classList.add('hidden')
                 }, 300);
@@ -386,6 +388,28 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     }, [input])
 
     useEffect(() => {
+        const listener = () => {
+            const MIN_KEYBOARD_HEIGHT = 200
+
+            const isMobile = window.innerWidth < 768
+            const isKeyboardOpen = isMobile
+                && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height
+
+            if (isKeyboardOpen) {
+                mobileKeyboardFiller.current.classList.add('active')
+                mobileKeyboardFiller.current.style.height = window.innerHeight - window.visualViewport.height + 'px'
+                setShowEmojiPicker(false)
+            } else {
+                mobileKeyboardFiller.current.classList.remove('active')
+                mobileKeyboardFiller.current.style.height = '0px'
+            }
+        }
+
+        window.visualViewport.addEventListener('resize', listener)
+        return () => window.visualViewport.removeEventListener('resize', listener)
+    }, [mobileKeyboardFiller])
+
+    useEffect(() => {
         if (isTyping) {
             // socket.emit('SendMessageAction', { token: Auth.authJWT, chatId: chat._id, action: 'typing' })
 
@@ -423,13 +447,13 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     </div>
 
     return <>
-        {replyToMessage && (
-            <div key={replyToMessage.id} className="PreviewMessage animate">
+        <Transition state={!!replyToMessage}>
+            <div className="PreviewMessage">
                 <Icon name="reply" className="meta" />
                 <div className="body">
                     <div className="title">Reply message</div>
                     <div className="subtitle" dir="auto">
-                        <MessageText data={replyToMessage} includeFrom />
+                        {replyToMessage && <MessageText data={replyToMessage} includeFrom />}
                     </div>
                 </div>
                 <div
@@ -439,13 +463,13 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                     close
                 </div>
             </div>
-        )}
-        {editMessage && (
-            <div className="PreviewMessage animate">
+        </Transition>
+        <Transition state={!!editMessage}>
+            <div className="PreviewMessage">
                 <Icon name="edit" className="meta" />
                 <div className="body">
                     <div className="title">Edit message</div>
-                    <div className="subtitle" dir="auto"><MessageText data={editMessage} /></div>
+                    {editMessage && <div className="subtitle" dir="auto"><MessageText data={editMessage} /></div>}
                 </div>
                 <div
                     className="close icon"
@@ -457,7 +481,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                     close
                 </div>
             </div>
-        )}
+        </Transition>
         {renderComposerButton() ?? <>
             <div className="Composer">
                 {getChatType(chat?.entity) === 'Bot' &&
@@ -488,9 +512,6 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 {
                     iOSTheme ? Attach : Emoji
                 }
-                {showEmojiPicker && <div style={{ position: 'absolute', bottom: 50 }}>
-                    <Picker onEmojiSelect={(e) => { changeMessageInputHandler(messageInput + e.shortcodes) }} theme="dark" set="apple" previewPosition="none" data={EmojiData} />
-                </div>}
                 <div className="message-input" ref={messageInputEl}>
                     {allowSendingText() ? <>
                         <ContentEditable
@@ -519,6 +540,12 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                     <span className="icon">mic</span>
                 </div>
             </div>
+            <div className="MobileKeyboardFiller" ref={mobileKeyboardFiller}></div>
+            <Picker
+                show={showEmojiPicker}
+                onEmojiSelect={e => { changeMessageInputHandler(messageInput + e.native) }}
+                onBackspace={() => { changeMessageInputHandler(Array.from(messageInput).slice(0, -1).join('')) }}
+            />
         </>}
     </>
 }

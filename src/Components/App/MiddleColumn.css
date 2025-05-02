@@ -226,6 +226,7 @@
     border-radius: 16px;
     box-shadow: 0 0 2px #00000088;
     align-items: center;
+    position: relative;
     -webkit-user-select: none;
     user-select: none;
     z-index: 1;
@@ -275,6 +276,21 @@
     margin: 0 1px -5px;
     vertical-align: 0;
     pointer-events: none;
+}
+
+.bottom .EmojiPicker {
+    position: absolute;
+    bottom: 50px;
+    right: 8px;
+    transition: all .3s ease;
+}
+
+.bottom .EmojiPicker.animate {
+    opacity: 0;
+}
+
+.bottom .EmojiPicker .Backspace {
+    display: none;
 }
 
 .MiddleColumn .bottom .message-input .placeholder,

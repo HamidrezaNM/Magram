@@ -291,7 +291,7 @@ function Message({
                         canUnpin={isAdmin && isPinned.current}
                         canRetractVote={data.media?.results?.results}
                         canSaveGif={data.media && isDocumentGIF(data.media.document)}
-                        canEdit={User.id.value === data._senderId?.value}
+                        canEdit={Number(User.id) === Number(data._senderId)}
                         canForward={true}
                         canDelete={User.id.value === data._senderId?.value || isAdmin || true}
                         onReply={handleReply}

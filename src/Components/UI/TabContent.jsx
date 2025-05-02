@@ -2,11 +2,11 @@ import { memo } from "react"
 import Transition from "../App/Transition"
 
 function TabContent({ state, children }) {
-    return <Transition state={state}>
-        <div className="TabContent">
+    return <div className="TabContent">
+        <Transition state={state}>
             {children}
-        </div>
-    </Transition>
+        </Transition>
+    </div>
 }
 
 export default memo(TabContent)
