@@ -282,6 +282,10 @@
     position: absolute;
     bottom: 50px;
     right: 8px;
+    width: 22rem;
+    height: 30.375rem;
+    border-radius: 10px;
+    overflow: hidden;
     transition: all .3s ease;
 }
 
@@ -291,6 +295,24 @@
 
 .bottom .EmojiPicker .Backspace {
     display: none;
+}
+
+.EmojiPicker .GIFs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.EmojiPicker .GIFs .GIF {
+    flex: 1;
+    display: flex;
+    cursor: pointer;
+}
+
+.EmojiPicker .GIFs .GIF * {
+    flex: 1;
+    object-fit: cover;
+    max-height: 120px;
 }
 
 .MiddleColumn .bottom .message-input .placeholder,

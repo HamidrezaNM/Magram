@@ -20,7 +20,8 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
             if (onDeactivate)
                 onDeactivate()
             setTimeout(() => {
-                setIsActive(false)
+                if (!state)
+                    setIsActive(false)
             }, 300);
         }
     }, [state])

@@ -254,7 +254,16 @@ export const MediaItem = memo(({ children, messageId, chat, dispatch }) => {
 export const MediaImage = memo(({ media }) => {
     const [isLoaded, setIsLoaded] = useState(false)
 
-    return <Image media={media} size={16} _width={50} _height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={() => { }} />
+    return <Image
+        media={media}
+        visible={true}
+        size={16}
+        _width={50}
+        _height={50}
+        noAvatar={true}
+        isLoaded={isLoaded}
+        setIsLoaded={setIsLoaded}
+        setProgress={() => { }} />
 })
 
 export const MediaVideo = memo(({ media }) => {
@@ -262,7 +271,19 @@ export const MediaVideo = memo(({ media }) => {
 
     const videoAttributes = getDocumentVideoAttributes(media.document)
 
-    return <Video media={media} details={{ name: getDocumentFileName(media.document), duration: videoAttributes?.duration, size: Number(media.document.size?.value) }} size={16} width={50} height={50} noAvatar={true} isLoaded={isLoaded} setIsLoaded={setIsLoaded} setProgress={() => { }} autoplay={false} />
+    return <Video
+        media={media}
+        visible={true}
+        details={{
+            name: getDocumentFileName(media.document),
+            duration: videoAttributes?.duration,
+            size: Number(media.document.size?.value)
+        }}
+        size={16} width={50} height={50} noAvatar={true}
+        isLoaded={isLoaded}
+        setIsLoaded={setIsLoaded}
+        setProgress={() => { }}
+        autoplay={false} />
 })
 
 const mediaMenu = (e, element, messageId, chat, dispatch) => {

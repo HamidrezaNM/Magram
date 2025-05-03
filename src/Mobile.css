@@ -165,6 +165,7 @@
         height: 256px;
         overflow: hidden;
         transition: all .3s ease;
+        /* transition: none !important; */
     }
 
     .MiddleColumn .bottom .EmojiPicker.animate {

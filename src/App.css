@@ -911,11 +911,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .TabContent {
   left: 0;
   width: 100%;
+  overflow: hidden;
   scroll-snap-align: center;
   transition: left .3s ease;
 }
@@ -1019,7 +1021,8 @@
   object-fit: cover;
 }
 
-.Page .Items.Media .MediaItem .MediaDetails {
+.Page .Items.Media .MediaItem .MediaDetails,
+.GIFs .GIF .MediaDetails {
   display: none;
 }
 

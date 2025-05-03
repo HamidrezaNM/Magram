@@ -514,6 +514,11 @@ export const Video = memo(forwardRef(({ children, visible, media, details, size,
             if (!result.thumbnail) {
                 setContent(result.data)
                 setIsLoaded(true)
+                if (!autoplay) {
+                    const getThumb = await downloadMedia(media, param, (e) => { }, true, false)
+
+                    setThumb(getThumb.data)
+                }
             }
             else {
                 setThumb(result.data)
@@ -523,7 +528,7 @@ export const Video = memo(forwardRef(({ children, visible, media, details, size,
     }, [media, size])
 
     return visible && <>
-        {!content ?
+        {!content || (!autoplay && thumb) ?
             <Transition state={true}>
                 <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
             </Transition>

@@ -19,7 +19,8 @@ export async function downloadMedia(media, param, progressCallback, isThumbnail 
     if (!cachedMedia && isThumbnail) {
         resultIsThumb = true
         cachedMedia = await medias.match(`${window.location.origin}/${mediaType}${mediaId}-thumb`)
-    }
+    } else if (!loadWhenExist)
+        resultIsThumb = true
 
     var data
 
