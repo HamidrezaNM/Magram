@@ -32,6 +32,26 @@
     transform-origin: left bottom;
 }
 
+.Message {
+    --primary-text: #fff;
+}
+
+.Dark .Message.Out {
+    --primary: #fff;
+    --primary-text: #000;
+}
+
+.Dark .Message.Out .peer-color-0,
+.Dark .Message.Out .peer-color-1,
+.Dark .Message.Out .peer-color-2,
+.Dark .Message.Out .peer-color-3,
+.Dark .Message.Out .peer-color-4,
+.Dark .Message.Out .peer-color-5,
+.Dark .Message.Out .peer-color-6 {
+    --accent-color: #fff;
+    --accent-bg: #ffffff1a;
+}
+
 .Messages.MessagesAnimating .Message {
     opacity: 0;
     transform: scale(.9);
@@ -251,6 +271,7 @@
     font-weight: 500;
     color: var(--bc);
     padding: 2px 4px;
+    margin: -4px;
 }
 
 .message-reply:hover,
@@ -778,6 +799,97 @@
 
 .WebPage .body .title {
     font-weight: 500;
+}
+
+.Giveaway {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 24px;
+}
+
+.Giveaway .Meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.Giveaway .Meta .Reward {
+    color: var(--primary-text);
+    padding: 2px 6px;
+    gap: 4px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: var(--primary);
+    border: 1px solid var(--secondary);
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.Giveaway.Stars .Meta .Reward {
+    background-color: #ffbc2e;
+    color: #fff;
+}
+
+.Giveaway .Meta .RLottie {
+    position: relative;
+    width: 160px;
+    height: 120px;
+}
+
+.Giveaway .Meta .StarIcon {
+    --color-fill: #fff;
+}
+
+.Giveaway .Meta .RLottie canvas {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.Giveaway .Body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+}
+
+.Giveaway .Body .title {
+    font-weight: 500;
+}
+
+.Giveaway .Body .subtitle {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.Giveaway .Body .Channels {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.Giveaway .Body .Channel {
+    color: var(--accent-color);
+    background-color: var(--accent-bg);
+    font-weight: 500;
+    border-radius: 16px;
+    font-size: 14px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+.Giveaway .Body .Channel .title {
+    padding: 0 10px;
 }
 
 .Message .Comments {

@@ -78,7 +78,7 @@ const MediaPreview = () => {
                 if (isDocumentVideo(data.media?.document)) {
                     const dimensions = getDocumentVideoAttributes(data.media.document)
 
-                    return <VideoPlayer dispatch={dispatch} src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} />
+                    return <VideoPlayer dispatch={dispatch} src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} height={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.height} />
                 }
             default:
                 <div>This media is not supported.</div>
@@ -135,7 +135,7 @@ const MediaPreview = () => {
     </Transition>
 }
 
-const VideoPlayer = memo(({ src, width, dispatch }) => {
+const VideoPlayer = memo(({ src, width, height, dispatch }) => {
     const playerVolume = useSelector((state) => state.settings.playerVolume)
 
     const player = useRef()
@@ -162,6 +162,7 @@ const VideoPlayer = memo(({ src, width, dispatch }) => {
         ref={player}
         src={src}
         width={width}
+        style={{ aspectRatio: width / height }}
         autoPlay
         controls
         onVolumeChange={onVolumeChange}

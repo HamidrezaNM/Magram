@@ -36,7 +36,7 @@ export function Profile({ entity, image, name, id, size = 48, isSavedMessages, s
                 }
             })()
         }
-    }, [])
+    }, [entity?.photo])
 
     return <div
         ref={profile}
