@@ -3,6 +3,7 @@ import { getUserStatus } from "../App/MiddleColumn/ChatInfo";
 import { Api, utils } from "telegram";
 import { returnBigInt } from "telegram/Helpers";
 import { client } from "../../App";
+import { numberWithCommas } from "../Util/numbers";
 
 export function getChatTitle(chat) {
     return chat?.title;
@@ -58,16 +59,16 @@ export function getChatSubtitle(chat, type) {
         case 'Group':
             const participantsCount = chat.participantsCount
 
-            const participantsText = participantsCount ? (participantsCount > 1 ? participantsCount + ' members' : '1 member') : 'group'
+            const participantsText = participantsCount ? (participantsCount > 1 ? numberWithCommas(participantsCount) + ' members' : '1 member') : 'group'
 
             return participantsText
         case 'Channel':
             const subscribersCount = chat.participantsCount
             if (chat.megagroup) {
-                return subscribersCount ? (subscribersCount > 1 ? subscribersCount + ' members' : '1 member') : 'group'
+                return subscribersCount ? (subscribersCount > 1 ? numberWithCommas(subscribersCount) + ' members' : '1 member') : 'group'
             }
 
-            const subscribersText = subscribersCount ? (subscribersCount > 1 ? subscribersCount + ' subscribers' : '1 subscriber') : 'channel'
+            const subscribersText = subscribersCount ? (subscribersCount > 1 ? numberWithCommas(subscribersCount) + ' subscribers' : '1 subscriber') : 'channel'
 
             return subscribersText
         default:

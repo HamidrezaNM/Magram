@@ -8,6 +8,7 @@ import { client } from "../../../App";
 import { useDispatch } from "react-redux";
 import { viewChat } from "../ChatList";
 import { generateChatWithPeer } from "../../Helpers/chats";
+import { numberWithCommas } from "../../Util/numbers";
 
 function Giveaway({ media }) {
     const [channels, setChannels] = useState()
@@ -18,10 +19,6 @@ function Giveaway({ media }) {
     const dispatch = useDispatch()
 
     const isStars = !!media.stars
-
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
 
     useEffect(() => {
         (async () => {

@@ -18,6 +18,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { removeChat } from "../../Stores/Chats"
 import { viewChat } from "../ChatList"
 import buildClassName from "../../Util/buildClassName"
+import { numberWithCommas } from "../../Util/numbers"
 
 function ChatInfo() {
     const [openDeleteChatModal, setOpenDeleteChatModal] = useState(false)
@@ -69,7 +70,7 @@ function ChatInfo() {
                 const participantsCount = fullChat?.participantsCount ?? activeChat.entity?.participantsCount
                 const onlineCount = fullChat?.onlineCount
 
-                const participantsText = participantsCount ? (participantsCount > 1 ? participantsCount + ' members' : '1 member') : 'Updating...'
+                const participantsText = participantsCount ? (participantsCount > 1 ? numberWithCommas(participantsCount) + ' members' : '1 member') : 'Updating...'
                 const onlineText = onlineCount && (onlineCount > 1 ? onlineCount + ' online' : '')
 
                 return participantsText + (onlineText ? ', ' + onlineText : '')
@@ -77,7 +78,7 @@ function ChatInfo() {
                 console.log(fullChat, activeChat)
                 const subscribersCount = fullChat?.participantsCount ?? activeChat.entity?.participantsCount
 
-                const subscribersText = subscribersCount ? (subscribersCount > 1 ? subscribersCount + ' subscribers' : '1 subscriber') : 'channel'
+                const subscribersText = subscribersCount ? (subscribersCount > 1 ? numberWithCommas(subscribersCount) + ' subscribers' : '1 subscriber') : 'channel'
 
                 return subscribersText
             default:

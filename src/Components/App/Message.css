@@ -2,10 +2,14 @@
     padding: 0 8px;
     width: 100%;
     display: flex;
-    /* transition: background-color .3s ease; */
     transition: all .3s ease;
     /* content-visibility: auto; */
     /* contain-intrinsic-size: 100px; */
+}
+
+.Message {
+    position: relative;
+    left: 0;
 }
 
 /* .Message {
@@ -87,6 +91,31 @@
 
 .Message .message-from-profile.hidden .profile {
     display: none;
+}
+
+.QuickReply {
+    position: absolute;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    right: -30px;
+    transition: all .3s ease;
+}
+
+.QuickReply.animate {
+    transform: scale(.8);
+}
+
+.QuickReply .Container {
+    background-color: var(--active-primary);
+    border-radius: 50px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .Message .bubble {
@@ -799,6 +828,18 @@
 
 .WebPage .body .title {
     font-weight: 500;
+}
+
+.WebPage .body .description {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    max-height: 120px;
+}
+
+.WebPage .body .message-media {
+    margin: 0;
 }
 
 .Giveaway {

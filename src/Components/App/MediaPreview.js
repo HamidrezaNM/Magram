@@ -116,11 +116,13 @@ const MediaPreview = () => {
         <div className="MediaPreview animate" ref={previewMedia}>
             <div className="Topbar">
                 <div className="SenderInfo">
-                    <div className="meta"><Profile entity={data.from} name={data.from?.firstName ?? data.from?.title ?? 'Anonymous'} id={data.from?.id} /></div>
-                    <div className="body">
-                        <div className="title">{data.from?.firstName ?? data.from?.title ?? 'Anonymous'}</div>
-                        <div className="subtitle">{data.date && `${getDate(new Date(data.date * 1000))}, ${formatTime(new Date(data.date) * 1000)}`}</div>
-                    </div>
+                    {(data.from || data.date) && <>
+                        <div className="meta"><Profile entity={data.from} name={data.from?.firstName ?? data.from?.title ?? 'Anonymous'} id={data.from?.id} /></div>
+                        <div className="body">
+                            <div className="title">{data.from?.firstName ?? data.from?.title ?? 'Anonymous'}</div>
+                            <div className="subtitle">{data.date && `${getDate(new Date(data.date * 1000))}, ${formatTime(new Date(data.date) * 1000)}`}</div>
+                        </div>
+                    </>}
                 </div>
                 <div className="Action">
                     <Icon name="close" onClick={() => dispatch(handleMediaPreviewClose())} />

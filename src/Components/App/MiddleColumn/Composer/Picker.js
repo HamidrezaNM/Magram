@@ -15,7 +15,7 @@ import { UserContext } from "../../../Auth/Auth";
 import { messageAdded, updateMessageId } from "../../../Stores/Messages";
 
 function Picker({ show, onEmojiSelect, onBackspace }) {
-    const [tabIndex, setTabIndex] = useState(1)
+    const [tabIndex, setTabIndex] = useState(0)
     const [GIFs, setGIFs] = useState([])
 
     const darkMode = useSelector((state) => state.settings.darkMode)

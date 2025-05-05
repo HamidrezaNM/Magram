@@ -1434,6 +1434,11 @@ a:hover {
   z-index: 3;
 }
 
+.Dragging {
+  position: relative;
+  transition: none !important;
+}
+
 .flex {
   display: flex;
   width: 100%;

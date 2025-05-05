@@ -28,6 +28,7 @@ import InlineButtons from "./Message/InlineButtons";
 import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
 import { calculateAlbumLayout } from "../Helpers/calculateAlbumLayout";
+import Transition from "./Transition";
 
 function Message({
     data,
@@ -42,6 +43,7 @@ function Message({
     unreadFrom
 }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [quickReply, setQuickReply] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
 
@@ -77,6 +79,8 @@ function Message({
 
     useEffect(() => {
         bubbleDimensions.current = BubbleContent.current.getBoundingClientRect()
+
+        dragElement(MessageEl.current)
     }, [])
 
     const handleDeleteEffect = () => {
@@ -93,38 +97,49 @@ function Message({
         var isLongPressTimeout
         var holdTimeout
 
+        const ontouchstart = e => {
+            if (
+                e.target.closest('.message-reply') ||
+                e.target.closest('.message-media') ||
+                e.target.closest('.MessageReactions') ||
+                e.target.closest('.Spoiler') ||
+                e.target.closest('.Comments') ||
+                e.target.closest('.InlineButtons') ||
+                e.target.closest('a')
+            ) return
+
+            isLongPressTimeout = setTimeout(() => {
+                MessageEl.current.classList.add('hold')
+                holdTimeout = setTimeout(() => {
+                    MessageEl.current.classList.remove('hold')
+                    messageMenu(e)
+                }, 360);
+            }, 40);
+        }
+
+        const ontouchmove = () => {
+            MessageEl.current.classList.remove('hold')
+            clearTimeout(isLongPressTimeout)
+            clearTimeout(holdTimeout)
+        }
+
         if (isMobile) {
             if (isiOS) {
                 MessageEl.current.oncontextmenu = e => e.preventDefault()
-                MessageEl.current.ontouchstart = e => {
-                    if (
-                        e.target.closest('.message-reply') ||
-                        e.target.closest('.message-media') ||
-                        e.target.closest('.MessageReactions') ||
-                        e.target.closest('.Spoiler') ||
-                        e.target.closest('.Comments') ||
-                        e.target.closest('.InlineButtons') ||
-                        e.target.closest('a')
-                    ) return
-
-                    isLongPressTimeout = setTimeout(() => {
-                        MessageEl.current.classList.add('hold')
-                        holdTimeout = setTimeout(() => {
-                            MessageEl.current.classList.remove('hold')
-                            messageMenu(e)
-                        }, 360);
-                    }, 40);
-                }
-                MessageEl.current.ontouchend = MessageEl.current.ontouchmove = () => {
-                    MessageEl.current.classList.remove('hold')
-                    clearTimeout(isLongPressTimeout)
-                    clearTimeout(holdTimeout)
-                }
+                MessageEl.current.addEventListener('touchstart', ontouchstart)
+                MessageEl.current.addEventListener('touchmove', ontouchmove)
+                MessageEl.current.addEventListener('touchend', ontouchmove)
             } else
                 MessageEl.current.onclick = messageMenu
         } else {
             MessageEl.current.removeEventListener('contextmenu', messageMenu)
             MessageEl.current.addEventListener('contextmenu', messageMenu)
+        }
+
+        return () => {
+            MessageEl.current?.removeEventListener('touchstart', ontouchstart)
+            MessageEl.current?.removeEventListener('touchmove', ontouchmove)
+            MessageEl.current?.removeEventListener('touchend', ontouchmove)
         }
     }, [data.message, isPinned.current])
 
@@ -344,6 +359,70 @@ function Message({
         }
     }, [data, isPinned.current])
 
+    const dragElement = (element) => {
+        var originX = 0, originY, x = 0, y = 0, firstTouch = true;
+        const max = 80;
+
+        element.ontouchstart = dragMouseDown;
+
+        function dragMouseDown(e) {
+            let touch = e.touches[0] || e.changedTouches[0];
+
+            originX = touch.pageX;
+            originY = touch.pageY;
+
+            document.ontouchend = closeDragElement;
+            document.ontouchmove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            let touch = e.touches[0] || e.changedTouches[0];
+
+            x = touch.pageX - originX;
+            y = touch.pageY - originY;
+
+            // Prevent Move Element When Scrolling
+            if (firstTouch) {
+                if (Math.abs(y) > 3) {
+                    closeDragElement()
+                    return
+                }
+                firstTouch = false
+            }
+
+            if (!element.classList.contains('Dragging'))
+                element.classList.add('Dragging')
+
+            if (x > 0) x = 0
+            if (x > max) x = max
+            if (x < -max) x = -max
+
+            if (x < -10) {
+                setQuickReply(true)
+            }
+
+            if (x > -10) {
+                setQuickReply(false)
+            }
+
+            element.style.left = x + "px";
+        }
+
+        function closeDragElement() {
+            element.classList.remove('Dragging')
+            element.style.left = '';
+
+            if (x < -40) handleReply()
+
+            setQuickReply(false)
+
+            firstTouch = true
+
+            document.ontouchend = null;
+            document.ontouchmove = null;
+        }
+    }
+
     const renderAlbum = () => {
         if (!data.groupedId || !groupedMessages) return
 
@@ -532,10 +611,17 @@ function Message({
             id={data.id}
             ref={MessageEl}
             onDoubleClick={e => {
-                if (!e.target.closest('.bubble'))
+                if (!e.target.closest('.bubble') && !isMobile)
                     handleReply()
             }}
         >
+            <Transition state={quickReply}>
+                <div className="QuickReply">
+                    <div className="Container">
+                        <Icon name="reply" size={24} />
+                    </div>
+                </div>
+            </Transition>
             {(!isOutMessage.current && !noAvatar) && (
                 <div className={buildClassName(
                     "message-from-profile",

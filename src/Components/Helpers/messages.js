@@ -5,7 +5,7 @@ const RoundVideoSize = 240
 export function getPhotoDimensions(photo) {
     if (!photo.sizes)
         return
-    return photo.sizes[photo.sizes?.length - 1]
+    return photo.sizes[photo.sizes?.length - 1]?.originalArgs
 }
 
 export function getDocumentFileName(document) {

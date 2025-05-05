@@ -58,13 +58,13 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
     }, [visible])
 
     useEffect(() => {
-        if (data.progress) {
+        if (data?.progress) {
             setProgress(data.progress)
             if (data.progress.loaded === data.progress.total) {
                 setIsLoaded(true)
             }
         }
-    }, [data.progress])
+    }, [data?.progress])
 
     useEffect(() => {
         if (isLoaded && waitForSave) {
@@ -97,7 +97,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
         if (media.className === 'MessageMediaPhoto' || isDocumentVideo(media.document)) {
             const mediaSrc = src
 
-            dispatch(handleMediaPreview({ from: data._sender, media, mediaSrc, date: data.date, element: messageMedia.current }))
+            dispatch(handleMediaPreview({ from: data?._sender, media, mediaSrc, date: data?.date, element: messageMedia.current }))
         }
         //  else {
         //     var link = document.createElement("a");
@@ -125,8 +125,8 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
         const downloadButton = <Transition state={!isLoaded}>
             <div className="MediaDownload" onClick={downloadMedia}>
                 <div className="message-loading-progress">
-                    <Icon name={(isDownloading || data.isUploading) ? "close" : "arrow_downward"} size={28} />
-                    {(isDownloading || data.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
+                    <Icon name={(isDownloading || data?.isUploading) ? "close" : "arrow_downward"} size={28} />
+                    {(isDownloading || data?.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
                 </div>
             </div>
         </Transition>
@@ -427,8 +427,17 @@ export const Image = memo(forwardRef(({ children,
 
         (async () => {
             const param = size ? { thumb: media.photo.sizes[0] } : {}
-            const sizes = getPhotoDimensions(media.photo)?.sizes
-            const result = await downloadMedia(media, param, (e) => setProgress({ loaded: Number(e.value), total: sizes[sizes?.length - 1] }), size, true, 'image/jpg')
+            const photoDimensions = getPhotoDimensions(media.photo)
+            const sizes = photoDimensions?.sizes ?? photoDimensions?.size
+
+            const total = sizes?.length ? sizes[sizes?.length - 1] : sizes
+
+            const result = await downloadMedia(media, param, (e) =>
+                setProgress({
+                    loaded: Number(e.value),
+                    total
+                })
+                , size, true, 'image/jpg')
             if (!result) return
             let src = result.data
             setContent(src)
