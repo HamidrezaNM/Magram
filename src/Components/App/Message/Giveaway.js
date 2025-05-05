@@ -1,8 +1,4 @@
 import { memo, useEffect, useRef, useState } from "react";
-import { Api } from "telegram";
-import AnimatedSticker from "./AnimatedSticker";
-import Gift3 from './../../../assets/tgs/Gift3.json'
-import Gift12 from './../../../assets/tgs/Gift12.json'
 import StarIcon from "../../common/StarIcon";
 import buildClassName from "../../Util/buildClassName";
 import { getDate } from "../Message";
@@ -28,21 +24,27 @@ function Giveaway({ media }) {
     }
 
     useEffect(() => {
-        const options = {
-            container: img.current,
-            loop: false,
-            autoplay: false,
-            stringData: JSON.stringify(isStars ? Gift3 : Gift12),
-            fileId: isStars ? 'gift3' : 'gift12',
-            width: 160,
-            height: 160
-        };
-        window.RLottie.loadAnimation(options, _anim => {
-            anim.current = _anim
-        });
-        return () => {
-            window.RLottie.destroy(anim.current)
-        }
+        (async () => {
+            const sticker = isStars ? 'Gift3.json' : 'Gift12.json'
+            const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker)
+            const data = await res.json()
+
+            const options = {
+                container: img.current,
+                loop: false,
+                autoplay: false,
+                stringData: JSON.stringify(data),
+                fileId: isStars ? 'gift3' : 'gift12',
+                width: 160,
+                height: 160
+            };
+            window.RLottie.loadAnimation(options, _anim => {
+                anim.current = _anim
+            });
+            return () => {
+                window.RLottie.destroy(anim.current)
+            }
+        })()
     }, [])
 
     useEffect(() => {
@@ -58,7 +60,6 @@ function Giveaway({ media }) {
                 if (data) {
                     setChannels(data)
                 }
-                console.log(data, data.entries())
             }
         })()
     }, [media])
