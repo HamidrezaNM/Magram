@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-importScripts('rlottie-wasm.js');
-importScripts('pako-inflate.min.js');
+importScripts('/Magram/rlottie/rlottie-wasm.js');
+importScripts('/Magram/rlottie/pako-inflate.min.js');
 
 function RLottieItem(reqId, jsString, width, height, fps) {
     this.stringOnWasmHeap = null;
