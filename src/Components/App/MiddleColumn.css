@@ -278,6 +278,11 @@
     pointer-events: none;
 }
 
+.message-input .disabled {
+    align-self: center;
+    font-weight: 500;
+}
+
 .bottom .EmojiPicker {
     position: absolute;
     bottom: 50px;

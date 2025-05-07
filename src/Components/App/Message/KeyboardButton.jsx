@@ -17,11 +17,14 @@ function KeyboardButton({ button, messageId, peerId }) {
         try {
             switch (button.className) {
                 case 'KeyboardButtonCallback':
-                    await client.invoke(new Api.messages.GetBotCallbackAnswer({
+                    const result = await client.invoke(new Api.messages.GetBotCallbackAnswer({
                         data: button.data,
                         msgId: messageId,
                         peer: peerId
                     }))
+
+                    if (result.message)
+                        dispatch(handleToast({ icon: 'error', title: result.message }))
                     break;
                 case 'KeyboardButtonUrl':
                     await openUrl(button.url, dispatch)
