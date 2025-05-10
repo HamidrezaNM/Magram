@@ -147,9 +147,14 @@ function Home() {
         }
     }, [activeChat, thread, window.location.hash])
 
+
     const onNewMessage = async (event) => {
         const message = event.message
         const chatId = message.chatId
+
+        dispatch(messageAdded(message));
+
+        console.log(event)
 
         message._sender = await message.getSender()
 
@@ -172,10 +177,8 @@ function Home() {
             }
         }
 
-
-        console.log(event)
         // if (!User._id || User._id === message.fromId && message.type !== 'call') return
-        dispatch(messageAdded(message));
+
         if (thread && (thread.id === message.replyTo?.replyToMsgId || thread.id === message.replyTo?.replyToTopId)) {
             console.log('new comment')
             dispatch(messageAdded({ ...message, chatId: thread.chatId?.value + '_' + thread.id }));

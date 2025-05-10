@@ -12,6 +12,7 @@ import { readHistory } from "../Util/messages";
 import buildClassName from "../Util/buildClassName";
 import { getChatType } from "../Helpers/chats";
 import ContextMenu from "./MiddleColumn/ContextMenu";
+import { UserContext } from "../Auth/Auth";
 
 const Messages = forwardRef(({ MessagesRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -23,6 +24,8 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const messages = useSelector((state) => state.messages.value[activeChat.id.value])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
+
+    const User = useContext(UserContext)
 
     const dispatch = useDispatch()
 
@@ -45,9 +48,9 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
             handlePinnedMessages()
 
-            setTimeout(() => {
-                MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
-            }, 300)
+            // setTimeout(() => {
+            //     MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
+            // }, 300)
 
             readHistory(activeChat.id.value, dispatch)
         } else {
@@ -230,12 +233,12 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     const handleKeyUp = e => {
         if (e.keyCode === 38) {
-            setMessagesRenderCount(messages?.length < messagesRenderCount + 1 ? messages?.length : messagesRenderCount + 1)
+            // setMessagesRenderCount(messages?.length < messagesRenderCount + 1 ? messages?.length : messagesRenderCount + 1)
+            const outMessages = messages.filter(item => Number(item._senderId) === Number(User.id) || item.out)
 
-            // const data = messages[activeChat._id];
-            // if (data.length > 0) {
-            //     dispatch(handleEditMessage(data[data.length - 1]))
-            // }
+            if (outMessages.length > 0) {
+                dispatch(handleEditMessage(outMessages[outMessages.length - 1]))
+            }
         }
     }
 

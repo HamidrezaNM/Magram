@@ -17,6 +17,7 @@ import ChatList from "./ChatList";
 import { Icon } from "./common";
 import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
+import TextTransition from "../common/TextTransition";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -66,7 +67,6 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         }
     }, [page])
 
-
     return <div className={"LeftColumn" + (callLeftPanelClose ? ' Compact' : '')}>
         <div className="TopBar">
             <div>
@@ -84,7 +84,11 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                             <MenuItem profile={User} title={User.firstName + ' ' + (User.lastName ?? '')} onClick={() => { }} />
                         </DropdownMenu>
                     </Menu>
-                    <div className="Title" onDoubleClick={() => window.location.reload()}><span>{connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState}</span></div>
+                    <div className="Title" onDoubleClick={() => window.location.reload()}>
+                        <span>
+                            <TextTransition text={connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState} />
+                        </span>
+                    </div>
                     <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}><Icon name="search" /></div>
                 </>}
             </div>

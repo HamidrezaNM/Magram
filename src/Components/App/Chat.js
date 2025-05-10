@@ -105,7 +105,7 @@ function Chat({ info, isActive }) {
         dispatch(handleContextMenu({ items, type: 'chat', e, activeElement: ChatEl.current }))
     }
 
-    return <><div ref={ChatEl} className={"Chat" + (isActive ? ' active' : '')} onClick={() => viewChat(info, dispatch)}>
+    return <><div ref={ChatEl} className={buildClassName("Chat", isActive && 'active')} onClick={() => viewChat(info, dispatch)}>
         <div className="meta"><Profile entity={info.entity} name={info.title} id={info.entity?.id.value} isSavedMessages={info.id.value === User.id.value} /></div>
         <div className="body">
             <div className="info">

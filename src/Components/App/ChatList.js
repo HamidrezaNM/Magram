@@ -140,7 +140,17 @@ function ChatList() {
                         </div>
                     </div>
                 </div>}
-                {allChats.filter(chat => !!chat.archived === showArchives).map((item) => (
+                <div className="Pinned">
+                    {allChats.filter(chat => chat.dialog?.pinned).map((item) => (
+                        !item.entity?.migratedTo &&
+                        <Chat
+                            key={item.id?.value}
+                            info={item}
+                            isActive={Number(activeChatId) == item.id.value}
+                        />
+                    ))}
+                </div>
+                {allChats.filter(chat => !!chat.archived === showArchives && !chat.dialog?.pinned).map((item) => (
                     !item.entity?.migratedTo &&
                     <Chat
                         key={item.id?.value}

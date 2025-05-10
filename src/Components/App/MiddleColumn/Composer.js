@@ -219,6 +219,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     useEffect(() => {
         if (replyToMessage || editMessage) {
             setTimeout(() => {
+                messageInputEl.current.firstElementChild.focus();
+            }, 10);
+            setTimeout(() => {
                 setTimeout(() => {
                     scrollToBottom.current.classList.add('hidden')
                 }, 300);
@@ -226,9 +229,6 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         }
         if (editMessage) {
             changeMessageInputHandler(editMessage.message);
-            setTimeout(() => {
-                messageInputEl.current.firstElementChild.focus();
-            }, 10);
         }
     }, [replyToMessage, editMessage]) // replyToMessage and editMessage transition
 

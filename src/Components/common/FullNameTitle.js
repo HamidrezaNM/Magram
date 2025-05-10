@@ -6,6 +6,7 @@ import { getUserFullName } from "../Helpers/users";
 function FullNameTitle({ chat, isSavedMessages }) {
     const isUser = chat?.className === 'User';
     const title = isUser ? getUserFullName(chat) : getChatTitle(chat);
+    const fromChat = (chat?.title && chat?.firstName) && getChatTitle(chat)
 
     const specialTitle = () => {
         if (isSavedMessages) {
@@ -22,7 +23,7 @@ function FullNameTitle({ chat, isSavedMessages }) {
     }
 
 
-    return <span>{specialTitle() || title} {emojiStatus()}</span>
+    return <span>{specialTitle() || title} {emojiStatus()}{fromChat && ` - ${fromChat}`}</span>
 }
 
 export default memo(FullNameTitle)

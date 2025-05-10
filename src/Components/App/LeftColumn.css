@@ -199,6 +199,10 @@
     line-height: 1.4;
 }
 
+.ChatList .Pinned {
+    background-color: var(--secondary);
+}
+
 @keyframes menuToBack1 {
     0% {
         transform: rotate(180deg);

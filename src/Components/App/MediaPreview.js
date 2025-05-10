@@ -69,11 +69,11 @@ const MediaPreview = () => {
         switch (data.media.className) {
             case 'ChatPhoto':
             case 'UserProfilePhoto':
-                return <img src={data.mediaSrc} style={{ maxWidth: '640px', width: '100vw' }} />
+                return <img src={data.mediaSrc} style={{ maxWidth: '640px', width: '100vw' }} draggable="false" />
             case 'MessageMediaPhoto':
                 const dimensions = getPhotoDimensions(data.media.photo)
 
-                return <img src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} />
+                return <img src={data.mediaSrc} width={calculateMediaDimensions(dimensions?.w, dimensions?.h)?.width} draggable="false" />
             case 'MessageMediaDocument':
                 if (isDocumentVideo(data.media?.document)) {
                     const dimensions = getDocumentVideoAttributes(data.media.document)

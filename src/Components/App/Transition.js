@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-export default function Transition({ state, alwaysShow = false, onDeactivate, action, activeAction, eachElement = false, children }) {
+export default function Transition({ state, alwaysShow = false, onDeactivate, action, activeAction, eachElement = false, duration = 300, children }) {
     const [isActive, setIsActive] = useState(false)
 
     const element = useRef()
@@ -22,7 +22,7 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
             setTimeout(() => {
                 if (!state)
                     setIsActive(false)
-            }, 300);
+            }, duration);
         }
     }, [state])
 

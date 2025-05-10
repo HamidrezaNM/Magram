@@ -13,6 +13,10 @@ export function getChatIdFromPeer(peer) {
     return utils.getPeerId(peer)
 }
 
+export async function getChatEntity(peerId) {
+    return await client.getEntity(peerId)
+}
+
 export function getPeerId(peer) {
     switch (peer.className) {
         case 'PeerUser':

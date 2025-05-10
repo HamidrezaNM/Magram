@@ -215,7 +215,7 @@ function UserProfile() {
                             )}
                         </div>
                     </TabContent>}
-                    {commonChats?.length && <TabContent state={true}>
+                    {commonChats?.length > 0 && <TabContent state={true}>
                         <div className="Items">
                             {renderCommonChats()}
                         </div>

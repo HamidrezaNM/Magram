@@ -94,13 +94,16 @@ export const messagesSlice = createSlice({
 
                 let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.id)
 
-                if (messageIndex)
+                if (messageIndex) {
                     state.value[action.payload.chatId][messageIndex] = {
                         ...state.value[action.payload.chatId][messageIndex],
                         ...data
                     }
-
-                console.log(state.value[action.payload.chatId][messageIndex])
+                    console.log('message salam shodd', {
+                        ...state.value[action.payload.chatId][messageIndex],
+                        ...data
+                    })
+                }
             }
         },
         updateMessageSeen: (state, action) => {

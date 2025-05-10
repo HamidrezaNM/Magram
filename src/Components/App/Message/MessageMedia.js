@@ -452,7 +452,7 @@ export const Image = memo(forwardRef(({ children,
     }, [media, size])
 
     return visible && <>
-        <img ref={img} src={content} width={width > 0 ? dimensions.width : ''} className={isLoaded ? '' : 'blurred'} />
+        <img ref={img} src={content} width={width > 0 ? dimensions.width : ''} className={isLoaded ? '' : 'blurred'} draggable="false" />
         {children}
     </>
 }))

@@ -19,7 +19,7 @@ import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
 import { getMediaDimensions, getMediaType, isDocumentGIF, isDocumentPhoto } from "../Helpers/messages";
 import { deleteMessage, retractVote, saveGIF } from "../Util/messages";
-import { generateChatWithPeer, getChatType } from "../Helpers/chats";
+import { generateChatWithPeer, getChatEntity, getChatIdFromPeer, getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
 import FullNameTitle from "../common/FullNameTitle";
@@ -51,7 +51,6 @@ function Message({
 
     const emoji = new EmojiConvertor()
 
-    const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
     const isAdmin = useSelector((state) => state.ui.activeChat?.isAdmin) ?? false // TODO: Replace it to Permissions
@@ -178,9 +177,40 @@ function Message({
 
         (async () => {
             if (data.replyTo && !data.replyToMessage) {
-                const reply = await data.getReplyMessage()
-                data.replyToMessage = reply
-                setReplyToMessage(reply)
+                if (!data.replyTo.replyFrom) {
+                    const reply = await data.getReplyMessage()
+
+                    if (data.replyTo.quoteText)
+                        reply.message = data.replyTo.quoteText
+
+                    data.replyToMessage = reply
+                    setReplyToMessage(reply)
+                } else {
+                    let replyChat
+
+                    if (data.replyTo.replyToPeerId) {
+                        replyChat = data._entities.get(getChatIdFromPeer(data.replyTo.replyToPeerId))
+
+                        if (!replyChat)
+                            replyChat = await getChatEntity(data.replyTo.replyToPeerId)
+                    }
+
+                    const replyData = {
+                        id: data.replyTo.replyToMsgId,
+                        chat: replyChat,
+                        _sender: {
+                            title: replyChat?.title,
+                            firstName: data.replyTo.replyFrom.fromName ?? data.replyTo.replyFrom.postAuthor,
+                            className: (data.replyTo.replyFrom.fromName || data.replyTo.replyFrom.postAuthor) ? 'User' : 'Channel'
+                        },
+                        message: data.replyTo.quoteText,
+                        media: data.replyTo.replyMedia
+                    }
+
+                    data.replyToMessage = replyData
+                    setReplyToMessage(replyData)
+                }
+
             }
         })()
     }, [data])
@@ -308,7 +338,11 @@ function Message({
                         canSaveGif={data.media && isDocumentGIF(data.media.document)}
                         canEdit={Number(User.id) === Number(data._senderId)}
                         canForward={true}
-                        canDelete={User.id.value === data._senderId?.value || isAdmin || true}
+                        canDelete={
+                            User.id.value === data._senderId?.value ||
+                            data._chat?.adminRights?.deleteMessages ||
+                            chatType === 'User' ||
+                            chatType === 'Bot'}
                         onReply={handleReply}
                         onCopy={handleCopy}
                         onSavePhoto={handleSave}
@@ -360,7 +394,7 @@ function Message({
     }, [data, isPinned.current])
 
     const dragElement = (element) => {
-        var originX = 0, originY, x = 0, y = 0, firstTouch = true;
+        var originX = 0, originY, x = 0, y = 0, firstTouch = true, vibrate = false;
         const max = 80;
 
         element.ontouchstart = dragMouseDown;
@@ -403,6 +437,12 @@ function Message({
 
             if (x > -10) {
                 setQuickReply(false)
+                vibrate = false
+            }
+
+            if (x < -60 && !vibrate) {
+                navigator.vibrate(1)
+                vibrate = true
             }
 
             element.style.left = x + "px";
@@ -412,11 +452,12 @@ function Message({
             element.classList.remove('Dragging')
             element.style.left = '';
 
-            if (x < -40) handleReply()
+            if (x < -60) handleReply()
 
             setQuickReply(false)
 
             firstTouch = true
+            vibrate = false
 
             document.ontouchend = null;
             document.ontouchmove = null;
@@ -443,7 +484,7 @@ function Message({
                     ref={messageMedia}
                 />
                 {groupedMessages.map((item) =>
-                    <div key={item.id}>
+                    <div key={item.id} id={item.id}>
                         <MessageMedia
                             media={item.media}
                             data={item}
@@ -683,7 +724,10 @@ function Message({
                                 buildClassName("message-reply",
                                     getChatColor(data.replyToMessage?._sender?.id?.value ?? 0),
                                     (data.media && 'withMargin'))}
-                                onClick={() => dispatch(handleGoToMessage(data.replyToMessage?.id))}
+                                onClick={() => {
+                                    if (data.replyToMessage.chat) viewChat(generateChatWithPeer(data.replyToMessage.chat), dispatch);
+                                    dispatch(handleGoToMessage(data.replyToMessage?.id))
+                                }}
                             >
                                 <div className="MessageLine"></div>
                                 <div className="body">
