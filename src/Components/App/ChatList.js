@@ -13,7 +13,7 @@ import { getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 
-function ChatList() {
+function ChatList({ onClick }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
@@ -112,6 +112,7 @@ function ChatList() {
                 key={item.id?.value}
                 info={item}
                 isActive={Number(activeChatId) == item.id.value}
+                onClick={onClick}
             />
         ))
             : null
@@ -147,6 +148,7 @@ function ChatList() {
                             key={item.id?.value}
                             info={item}
                             isActive={Number(activeChatId) == item.id.value}
+                            onClick={onClick}
                         />
                     ))}
                 </div>
@@ -156,6 +158,7 @@ function ChatList() {
                         key={item.id?.value}
                         info={item}
                         isActive={Number(activeChatId) == item.id.value}
+                        onClick={onClick}
                     />
                 ))}
                 {Object.keys(chats).length === 0 &&

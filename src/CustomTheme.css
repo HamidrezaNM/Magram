@@ -152,6 +152,19 @@
     transition: all .3s ease;
 }
 
+.Message.Out .bubble .bubble-content {
+    /* background: linear-gradient(300deg, oklch(.97 0.1 145), oklch(.97 0.08 158.07 / 1)); */
+    background: linear-gradient(300deg, #cbffcc, #c8ffe1)
+}
+
+.Message .bubble .bubble-content {
+    background: #ffffff;
+}
+
+.gradientMessage .Message.Out .bubble .bubble-content {
+    background-attachment: fixed;
+}
+
 .Dark .Message .bubble .bubble-content {
     background: linear-gradient(300deg, hsl(259 52% 16% / 1), hsl(177 100% 4% / 1));
 }

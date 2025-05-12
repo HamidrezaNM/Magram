@@ -29,6 +29,7 @@ import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
 import { calculateAlbumLayout } from "../Helpers/calculateAlbumLayout";
 import Transition from "./Transition";
+import { showForwardMessage } from "./Pages/Forward";
 
 function Message({
     data,
@@ -282,6 +283,10 @@ function Message({
         dispatch(handleEditMessage(data)); handleContextMenuClose()
     }, [data])
 
+    const handleForward = useCallback(() => {
+        showForwardMessage(data, dispatch); handleContextMenuClose()
+    }, [data])
+
     const handleDelete = useCallback(() => {
         setOpenDeleteModal(true); handleContextMenuClose()
     }, [data])
@@ -350,6 +355,7 @@ function Message({
                         onPin={handlePin}
                         onRetractVote={handleRetractVote}
                         onEdit={handleEdit}
+                        onForward={handleForward}
                         onDelete={handleDelete}
                     />
                 </>
@@ -606,6 +612,7 @@ function Message({
 
             if (
                 mediaType === 'Sticker' ||
+                mediaType === 'Dice' ||
                 mediaType === 'RoundVideo' ||
                 ((
                     mediaType === 'Video' ||

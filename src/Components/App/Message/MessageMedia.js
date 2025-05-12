@@ -14,6 +14,7 @@ import WebPage from "./WebPage";
 import { Api } from "telegram";
 import { isElementInViewport } from "../Message";
 import Giveaway from "./Giveaway";
+import Dice from "./Dice";
 
 const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar = false }, ref) => {
     const [size, setSize] = useState(16)
@@ -203,6 +204,8 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
                 return <WebPage media={media} userId={Number(data._senderId)} />
             case 'MessageMediaGiveaway':
                 return <Giveaway media={media} />
+            case 'MessageMediaDice':
+                return <Dice media={media} visible={visible} />
             default:
                 return <span style={{ margin: '0.575rem', fontWeight: '500' }}>This message is currently not supported in this version of Magram.</span>
         }

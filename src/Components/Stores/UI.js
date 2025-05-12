@@ -6,6 +6,7 @@ export const uiSlice = createSlice({
         contextMenu: null,
         replyToMessage: null,
         editMessage: null,
+        forwardMessage: null,
         pinnedMessage: [],
         goToMessage: null,
         sendBotCommand: null,
@@ -61,6 +62,12 @@ export const uiSlice = createSlice({
         },
         handleEditMessage: (state, action) => {
             state.editMessage = action.payload
+        },
+        handleForwardMessage: (state, action) => {
+            state.forwardMessage = action.payload
+        },
+        handleForwardMessageChat: (state, action) => {
+            state.forwardMessage = { ...state.forwardMessage, chat: action.payload }
         },
         handlePinnedMessage: (state, action) => {
             state.pinnedMessage = action.payload
@@ -215,6 +222,8 @@ export const {
     handleContextMenu,
     handleReplyToMessage,
     handleEditMessage,
+    handleForwardMessage,
+    handleForwardMessageChat,
     handlePinnedMessage,
     handlePinMessage,
     handleUnpinMessage,

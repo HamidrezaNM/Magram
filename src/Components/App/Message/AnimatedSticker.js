@@ -5,7 +5,7 @@ import Lottie from "react-lottie";
 import { client } from "../../../App";
 import Transition from "../Transition";
 
-const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, autoPlay = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
+const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, autoPlay = true, loop = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
     const [height, setHeight] = useState(_height)
     const [data, setData] = useState()
@@ -52,7 +52,7 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
             } else {
                 const options = {
                     container: img.current,
-                    loop: true,
+                    loop,
                     autoplay: autoPlay,
                     animationData: data,
                     fileId: media.document.id.value,
@@ -75,6 +75,9 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                 });
                 setData(true)
             }
+
+            if (setIsLoaded)
+                setIsLoaded(true)
 
             // setSrc(data)
             // if (!result.thumbnail)

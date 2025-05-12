@@ -89,6 +89,8 @@ export function getMediaType(media) {
             return 'Invoice'
         case 'MessageMediaGiveaway':
             return 'Giveaway'
+        case 'MessageMediaDice':
+            return 'Dice'
         default:
             return 'Media'
     }

@@ -18,6 +18,7 @@ import { Icon } from "./common";
 import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import TextTransition from "../common/TextTransition";
+import Forward from "./Pages/Forward";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -62,6 +63,8 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                 return <ChatProfile />
             case 'UserProfile':
                 return <UserProfile />
+            case 'Forward':
+                return <Forward />
             default:
                 break;
         }

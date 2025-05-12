@@ -8,7 +8,7 @@ import { handleMessageError, messageAdded, updateMessage, updateMessageId, updat
 import { client, socket } from "../../../App";
 import { chatAdded, setChat, updateLastMessage } from "../../Stores/Chats";
 import { AuthContext, UserContext } from "../../Auth/Auth";
-import { handleEditMessage, handleReplyToMessage, handleSendBotCommand } from "../../Stores/UI";
+import { handleEditMessage, handleForwardMessage, handleReplyToMessage, handleSendBotCommand } from "../../Stores/UI";
 import MessageText from "../MessageText";
 import { EmojiConvertor } from "emoji-js";
 import { Api } from "telegram";
@@ -40,6 +40,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     // const activeChat = useSelector((state) => state.ui.activeChat)
     const editMessage = useSelector((state) => state.ui.editMessage)
     const replyToMessage = useSelector((state) => state.ui.replyToMessage)
+    const forwardMessage = useSelector((state) => state.ui.forwardMessage)
     const sendBotCommand = useSelector((state) => state.ui.sendBotCommand)
     const darkMode = useSelector((state) => state.settings.darkMode)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
@@ -59,7 +60,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     TurndownService.prototype.escape = e => e
 
     const sendMessage = useCallback(async (text) => {
-        if (!text && (!messageInputHandled || messageInputHandled.trim().length === 0)) {
+        if (!text && (!messageInputHandled || messageInputHandled.trim().length === 0) && !forwardMessage?.message) {
             console.log('message is empty', messageInputHandled)
             return false;
         }
@@ -82,22 +83,56 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         const chatId = chat.id.value
         const messageId = Date.now()
 
-        const _message = {
-            chatId: chat.id,
-            date: Date.now() / 1000,
-            forwardId: null,
-            _sender: User,
-            _senderId: User.id,
-            fromId: User.id,
-            out: true,
-            id: messageId,
-            message: messageText,
-            replyTo: replyToMessage ? replyToMessage.id : null,
-            replyToMessage: replyToMessage ?? null,
-            sended: null,
-            type: "text",
-            messageType: "message",
+        let media;
+
+        let isDice = false
+
+        if (messageText === '⚽' || messageText === '🏀' || messageText === '🎲' || messageText === '🎯') {
+            isDice = true
+
+            media = new Api.MessageMediaDice({
+                emoticon: messageText,
+                value: -1
+            })
         }
+
+        let _message;
+
+        if (forwardMessage?.message && forwardMessage?.chat) {
+            _message = {
+                ...forwardMessage.message,
+                chatId: chat.id,
+                date: Date.now() / 1000,
+                _forward: forwardMessage?.message,
+                _sender: User,
+                _senderId: User.id,
+                fromId: User.id,
+                out: true,
+                id: messageId,
+                fwdFrom: { date: forwardMessage.message.date },
+                sended: null,
+            }
+
+            dispatch(handleForwardMessage())
+        } else {
+            _message = {
+                chatId: chat.id,
+                date: Date.now() / 1000,
+                _forward: null,
+                _sender: User,
+                _senderId: User.id,
+                fromId: User.id,
+                out: true,
+                id: messageId,
+                message: !isDice ? messageText : '',
+                media,
+                fwdFrom: null,
+                replyTo: replyToMessage ? replyToMessage.id : null,
+                replyToMessage: replyToMessage ?? null,
+                sended: null
+            }
+        }
+
 
         const message = {
             message: messageText,
@@ -116,7 +151,27 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         handleSendButtonAnimation()
 
         try {
-            const result = await client.sendMessage(chatId, message)
+            let result
+
+            if (forwardMessage?.message && forwardMessage?.chat) {
+                result = (await client.forwardMessages(chatId, { messages: forwardMessage.message }))[0][0]
+            } else if (!isDice)
+                result = await client.sendMessage(chatId, message)
+            else if (isDice) {
+                const dice = await client.invoke(new Api.messages.SendMedia({
+                    peer: chatId,
+                    message: '',
+                    media: new Api.InputMediaDice({
+                        emoticon: messageText
+                    })
+                }))
+
+                result = dice.updates[1].message
+
+                dispatch(updateMessageMedia({ ...result, chatId, id: messageId }))
+            }
+
+            console.log('message result', result)
 
             dispatch(updateMessageId({ messageId, chatId, id: result.id }))
 
@@ -144,7 +199,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             console.error(error)
             dispatch(handleMessageError({ messageId: _message.id, chatId }))
         }
-    }, [messageInputHandled]);
+    }, [messageInputHandled, forwardMessage]);
 
     const handlePaste = (e) => {
         e.preventDefault();
@@ -182,7 +237,7 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
         setMessageInputHandled(output)
         setMessageInput(input);
 
-        if (value !== "") {
+        if (value !== "" || forwardMessage) {
             setIsTyping(true)
 
             placeholderRef.current
@@ -214,10 +269,10 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 sendButton.current.children[0].classList.remove("send");
             }, 150);
         }
-    }, [messageInput]);
+    }, [messageInput, forwardMessage]);
 
     useEffect(() => {
-        if (replyToMessage || editMessage) {
+        if (replyToMessage || editMessage || forwardMessage?.chat) {
             setTimeout(() => {
                 messageInputEl.current.firstElementChild.focus();
             }, 10);
@@ -227,10 +282,13 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                 }, 300);
             }, 0);
         }
+        if (forwardMessage?.chat) {
+            changeMessageInputHandler('')
+        }
         if (editMessage) {
             changeMessageInputHandler(editMessage.message);
         }
-    }, [replyToMessage, editMessage]) // replyToMessage and editMessage transition
+    }, [replyToMessage, editMessage, forwardMessage]) // replyToMessage and editMessage transition
 
     const handleSendButtonAnimation = () => {
         if (!sendButton.current) return;
@@ -254,9 +312,10 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
     }
 
     const handleMessageInput = useCallback(() => {
-        emoji.colons_mode = true
-        var input = emoji.replace_unified(messageInput)
-        input = input.replaceAll(/<img.*?title="(.*?)"(\/?)>/g, ":$1:")
+        var input = messageInput
+        // emoji.colons_mode = true
+        // var input = emoji.replace_unified(messageInput)
+        // input = input.replaceAll(/<img.*?title="(.*?)"(\/?)>/g, ":$1:")
         setMessageInputHandled(input)
     }, [messageInput])
 
@@ -476,6 +535,23 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
                     onClick={() => {
                         dispatch(handleEditMessage())
                         changeMessageInputHandler("");
+                    }}
+                >
+                    close
+                </div>
+            </div>
+        </Transition>
+        <Transition state={!!forwardMessage?.chat} onDeactivate={() => changeMessageInputHandler('')}>
+            <div className="PreviewMessage">
+                <Icon name="forward" className="meta" />
+                <div className="body">
+                    <div className="title">Forward message</div>
+                    {forwardMessage?.message && <div className="subtitle" dir="auto"><MessageText data={forwardMessage?.message} /></div>}
+                </div>
+                <div
+                    className="close icon"
+                    onClick={() => {
+                        dispatch(handleForwardMessage())
                     }}
                 >
                     close

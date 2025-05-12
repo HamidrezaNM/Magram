@@ -32,7 +32,6 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             console.log('channel updated', chat)
                             dispatch(chatAdded(chat))
                             if (Number(activeChat?.id) == chatId) {
-                                console.log('salam shod', peer)
                                 dispatch(setActiveChat({ ...activeChat, entity: { ...activeChat.entity, ...peer } }))
                             }
                         }

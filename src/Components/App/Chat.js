@@ -16,7 +16,7 @@ import { Api } from "telegram";
 import { deleteChat, getChatType, getDeleteChatText } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 
-function Chat({ info, isActive }) {
+function Chat({ info, isActive, onClick }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const Auth = useContext(AuthContext);
@@ -105,7 +105,7 @@ function Chat({ info, isActive }) {
         dispatch(handleContextMenu({ items, type: 'chat', e, activeElement: ChatEl.current }))
     }
 
-    return <><div ref={ChatEl} className={buildClassName("Chat", isActive && 'active')} onClick={() => viewChat(info, dispatch)}>
+    return <><div ref={ChatEl} className={buildClassName("Chat", isActive && 'active')} onClick={() => { viewChat(info, dispatch); if (onClick) onClick(info) }}>
         <div className="meta"><Profile entity={info.entity} name={info.title} id={info.entity?.id.value} isSavedMessages={info.id.value === User.id.value} /></div>
         <div className="body">
             <div className="info">

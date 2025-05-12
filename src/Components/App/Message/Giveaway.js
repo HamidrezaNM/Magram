@@ -9,40 +9,14 @@ import { useDispatch } from "react-redux";
 import { viewChat } from "../ChatList";
 import { generateChatWithPeer } from "../../Helpers/chats";
 import { numberWithCommas } from "../../Util/numbers";
+import RLottie from "../../common/RLottie";
 
 function Giveaway({ media }) {
     const [channels, setChannels] = useState()
 
-    const img = useRef()
-    const anim = useRef()
-
     const dispatch = useDispatch()
 
     const isStars = !!media.stars
-
-    useEffect(() => {
-        (async () => {
-            const sticker = isStars ? 'Gift3.json' : 'Gift12.json'
-            const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker)
-            const data = await res.json()
-
-            const options = {
-                container: img.current,
-                loop: false,
-                autoplay: false,
-                stringData: JSON.stringify(data),
-                fileId: isStars ? 'gift3' : 'gift12',
-                width: 160,
-                height: 160
-            };
-            window.RLottie.loadAnimation(options, _anim => {
-                anim.current = _anim
-            });
-            return () => {
-                window.RLottie.destroy(anim.current)
-            }
-        })()
-    }, [])
 
     useEffect(() => {
         (async () => {
@@ -77,7 +51,7 @@ function Giveaway({ media }) {
 
     return <div className={buildClassName("Giveaway", isStars && 'Stars')}>
         <div className="Meta">
-            <div className="RLottie" ref={img}></div>
+            <RLottie sticker={isStars ? 'Gift3' : 'Gift12'} autoplay={false} width={160} height={160} />
             <div className="Reward">
                 {isStars && <StarIcon type="" size="adaptive" style={{ width: 14, height: 16 }} />}
                 <span className="quantity">{numberWithCommas(isStars ? Number(media.stars) : 'x' + media.quantity)}</span>

@@ -978,6 +978,10 @@
   margin-bottom: -80px;
 }
 
+.Page .Forward {
+  background-color: var(--secondary);
+}
+
 .SubPage {
   top: 0;
 }
@@ -1454,13 +1458,13 @@ a:hover {
 }
 
 .TextTransition span.showAnim {
-  top: -20px;
+  top: -12px;
   opacity: 0;
 }
 
 .TextTransition .prev {
   position: absolute;
-  top: 20px;
+  top: 12px;
   opacity: 0;
 }
 
