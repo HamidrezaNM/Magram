@@ -100,4 +100,4 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
 })
 
 
-export default AnimatedSticker
+export default memo(AnimatedSticker)

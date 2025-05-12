@@ -70,6 +70,9 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     useEffect(() => {
         (async () => {
+
+            window.RLottie.destroyWorkers() // Temporary
+
             if (activeChat) {
                 setIsLoaded(false)
                 setMessagesRenderCount(20)

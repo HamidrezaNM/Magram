@@ -939,6 +939,10 @@
     height: 128px;
 }
 
+.SlotMachine .RLottie {
+    position: absolute;
+}
+
 .Message .Comments {
     border-top: 1px solid var(--active-primary);
     height: 42px;

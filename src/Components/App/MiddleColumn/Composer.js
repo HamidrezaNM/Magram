@@ -87,7 +87,11 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
 
         let isDice = false
 
-        if (messageText === '⚽' || messageText === '🏀' || messageText === '🎲' || messageText === '🎯') {
+        if (messageText === '⚽' ||
+            messageText === '🏀' ||
+            messageText === '🎲' ||
+            messageText === '🎯' ||
+            messageText === '🎰') {
             isDice = true
 
             media = new Api.MessageMediaDice({

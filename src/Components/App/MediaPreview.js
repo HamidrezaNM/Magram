@@ -166,6 +166,7 @@ const VideoPlayer = memo(({ src, width, height, dispatch }) => {
         width={width}
         style={{ aspectRatio: width / height }}
         autoPlay
+        loop
         controls
         onVolumeChange={onVolumeChange}
     />
