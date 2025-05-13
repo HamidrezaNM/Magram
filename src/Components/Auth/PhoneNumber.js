@@ -4,74 +4,69 @@ import { client, socket } from "../../App";
 import { Api } from "telegram";
 
 export default function PhoneNumber() {
-    const [countryCode, setCountryCode] = useState("98");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [formatedPhoneNumber, setFormatedPhoneNumber] = useState("+98");
-    const [isLoading, setIsLoading] = useState(false)
+    const [formatedPhoneNumber, setFormatedPhoneNumber] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const Auth = useContext(AuthContext);
-
-    const phoneNumberRef = useRef()
+    const phoneNumberRef = useRef();
 
     const phoneNumberHandler = (e) => {
-        var value = e.target.value;
-
-        var matches = value
-            .replace(/[^+\d]/g, "")
-            .match(/(\+?)(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})/);
-
-        var _format = "";
-
-        for (let i = 1; i < matches.length; i++) {
-            const match = matches[i];
-
-            i === 1
-                ? (_format = "+")
-                : match !== "" && (_format = _format + (i > 2 ? " " : "") + match);
+        const value = e.target.value;
+        // Remove all non-digit and non-plus characters
+        const cleanNumber = value.replace(/[^+\d]/g, "");
+        
+        // Format the number with spaces after country code and in groups of 3
+        let formattedNumber = cleanNumber;
+        if (cleanNumber.startsWith('+')) {
+            // If number starts with +, add spaces after country code (assuming 1-3 digits)
+            const matches = cleanNumber.match(/^\+(\d{1,3})(\d+)$/);
+            if (matches) {
+                const [_, countryCode, rest] = matches;
+                // Format remaining numbers in groups of 3
+                const formatted = rest.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+                formattedNumber = `+${countryCode} ${formatted}`;
+            }
+        } else if (cleanNumber.length > 0) {
+            // If no +, add it and format
+            formattedNumber = '+' + cleanNumber.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
         }
-        setFormatedPhoneNumber(_format);
-        setPhoneNumber(
-            value
-                .replace(/\D+/g, "")
-                .replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$2$3$4")
-        );
-        setCountryCode(
-            value
-                .replace(/\D+/g, "")
-                .replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1"))
-    }
+
+        setFormatedPhoneNumber(formattedNumber);
+        // Store clean number without spaces and plus
+        setPhoneNumber(cleanNumber.replace(/[^0-9]/g, ''));
+    };
 
     const Validate = async e => {
         e.preventDefault();
 
-        if (countryCode.length > 0 && countryCode.length < 3 && phoneNumber.length === 10) {
-            setIsLoading(true)
-            const sendCode = await sendCodeHandler()
-
-            Auth.setAuthPhoneNumber(phoneNumber)
-            Auth.setAuthCountryCode(countryCode)
-            Auth.setAuthPhoneCodeHash(sendCode.phoneCodeHash)
-            Auth.setAuthState('authorizationStateWaitCode')
-            // socket.on('ValidatePhoneNumber', (response) => {
-            //     console.log(response)
-            //     if (response.ok) {
-            //     } else if (response.errorCode === 404) {
-            //         Auth.setAuthPhoneNumber(phoneNumber)
-            //         Auth.setAuthCountryCode(countryCode)
-            //         Auth.setAuthState('Password')
-            //     }
-            // })
+        // Extract country code and phone number
+        const matches = formatedPhoneNumber.match(/^\+(\d{1,3})([\d\s]+)$/);
+        
+        if (matches && phoneNumber.length >= 5) {  // Ensure minimum length of total number
+            setIsLoading(true);
+            const countryCode = matches[1];
+            const phoneWithoutCode = phoneNumber.slice(countryCode.length);
+            
+            try {
+                const sendCode = await sendCodeHandler(countryCode, phoneWithoutCode);
+                Auth.setAuthPhoneNumber(phoneWithoutCode);
+                Auth.setAuthCountryCode(countryCode);
+                Auth.setAuthPhoneCodeHash(sendCode.phoneCodeHash);
+                Auth.setAuthState('authorizationStateWaitCode');
+            } catch (error) {
+                phoneNumberRef.current.querySelector("label").innerHTML = "Failed to send code";
+                phoneNumberRef.current.classList.add("error");
+                setIsLoading(false);
+            }
         } else {
-            phoneNumberRef.current.querySelector("label").innerHTML =
-                "Invalid Phone number";
+            phoneNumberRef.current.querySelector("label").innerHTML = "Invalid phone number";
             phoneNumberRef.current.classList.add("error");
         }
+    };
 
-    }
-
-    async function sendCodeHandler() {
-        await client.connect() // Connecting to the server
-
+    async function sendCodeHandler(countryCode, phoneNumber) {
+        await client.connect(); // Connecting to the server
         return await client.sendCode({
             apiId: 22692190,
             apiHash: 'd392a9a3f167823d8c42aaa77270c0be'
