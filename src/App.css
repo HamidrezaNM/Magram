@@ -342,7 +342,7 @@
   font-size: 14px;
 }
 
-.ChatProfile .Item .meta {
+.Members .Item .meta {
   align-self: flex-start;
   font-size: 14px;
   color: #888;
@@ -950,7 +950,8 @@
   overflow: hidden;
 }
 
-.Page .User {
+.Page .User,
+.Page .Group {
   display: flex;
   align-items: center;
   padding: 16px 0;

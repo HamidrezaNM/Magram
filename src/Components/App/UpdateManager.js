@@ -4,6 +4,7 @@ import { Api } from "telegram";
 import ChatHandler from "./Handlers/ChatHandler";
 import { UpdateConnectionState } from "telegram/network";
 import MessagesHandler from "./Handlers/MessagesHandler";
+import { getChatIdFromPeer } from "../Helpers/chats";
 
 function UpdateManager() {
     const connectionState = useRef(1)
@@ -22,7 +23,7 @@ function UpdateManager() {
             case 'UpdateChannel':
                 chatHandler.current.onUpdate({
                     type: 'UpdateChannel',
-                    channel: update._entities.entries().next().value
+                    channel: update._entities.get('-100' + update.channelId)
                 })
                 break;
             case 'UpdateReadHistoryOutbox':

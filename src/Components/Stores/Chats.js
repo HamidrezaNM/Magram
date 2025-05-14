@@ -46,6 +46,33 @@ export const chatsSlice = createSlice({
                 state.value[action.payload.id] = { ...chat, participants: action.payload.participants }
             }
         },
+        updateChatDefaultBannedRights: (state, action) => {
+            const chat = state.value[action.payload.id]
+            if (chat) {
+                state.value[action.payload.id] = { ...chat, entity: { ...chat.entity, defaultBannedRights: { ...chat.entity.defaultBannedRights, ...action.payload.bannedRights } } }
+            }
+        },
+        updateChatParticipantAdmin: (state, action) => {
+            const chat = state.value[action.payload.id]
+            if (chat) {
+                state.value[action.payload.id] = {
+                    ...chat,
+                    participants: chat.participants.map(item => {
+                        if (Number(item.id) !== action.payload.userId) return item;
+
+                        return {
+                            ...item,
+                            participant: {
+                                ...item.participant,
+                                adminRights: action.payload.adminRights,
+                            },
+                        };
+                    }),
+                }
+            }
+
+            console.log(state.value[action.payload.id])
+        },
         updateChatRead: (state, action) => {
             const chat = state.value[action.payload.chatId]
             if (chat) {
@@ -100,6 +127,8 @@ export const {
     removeChat,
     setFullChat,
     updateChatParticipants,
+    updateChatDefaultBannedRights,
+    updateChatParticipantAdmin,
     updateChatRead,
     updateLastMessage,
     updateChatUnreadCount,

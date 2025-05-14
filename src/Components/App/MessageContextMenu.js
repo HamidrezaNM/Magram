@@ -1,9 +1,10 @@
 import MenuItem from "../UI/MenuItem";
 
-export default function MessageContextMenu({ canReply, canCopy, isPhoto, canPin, canUnpin, canRetractVote, canSaveGif, canEdit, canForward, canDelete, onReply, onCopy, onSavePhoto, onPin, onRetractVote, onSaveGif, onEdit, onForward, onDelete }) {
+export default function MessageContextMenu({ canReply, canCopy, canCopyLink, isPhoto, canPin, canUnpin, canRetractVote, canSaveGif, canEdit, canForward, canDelete, onReply, onCopy, onCopyLink, onSavePhoto, onPin, onRetractVote, onSaveGif, onEdit, onForward, onDelete }) {
     return <>
         {canReply && <MenuItem icon="reply" title="Reply" onClick={onReply} />}
         {canCopy && <MenuItem icon="content_copy" title="Copy" onClick={onCopy} />}
+        {canCopyLink && <MenuItem icon="link" title="Copy Link" onClick={onCopyLink} />}
         {isPhoto && <MenuItem icon="download" title="Save Photo" onClick={onSavePhoto} />}
         {canPin && <MenuItem icon="keep" title="Pin" onClick={onPin} />}
         {canUnpin && <MenuItem icon="keep" title="Unpin" onClick={onPin} />}

@@ -293,7 +293,8 @@
     background-color: transparent;
 }
 
-.iOSTheme .Page .User {
+.iOSTheme .Page .User,
+.iOSTheme .Page .Group {
     flex-direction: column;
     background-color: transparent;
     padding-top: 0;
@@ -301,7 +302,9 @@
 }
 
 .iOSTheme .Page .User .profile,
-.iOSTheme .Page .User .profile img {
+.iOSTheme .Page .User .profile img,
+.iOSTheme .Page .Group .profile,
+.iOSTheme .Page .Group .profile img {
     width: 96px !important;
     height: 96px !important;
     font-size: 48px !important;
@@ -322,9 +325,23 @@
     font-size: 18px !important;
 }
 
+.iOSTheme .Page .Group {
+    margin: 0;
+    padding: 0;
+}
+
+.iOSTheme .Page .Group .Items {
+    width: 100%;
+}
+
 .iOSTheme .Page .Items {
     background-color: var(--secondary);
     border-radius: 16px;
+}
+
+.iOSTheme .Item.textfield {
+    margin: 0;
+    padding: 0 16px;
 }
 
 .Page .section>.title,
@@ -342,6 +359,11 @@
     margin-inline: 0;
     min-height: 100%;
     overflow: visible;
+}
+
+.centerTopBar .LeftColumn .TopBar button {
+    color: var(--primary);
+    font-weight: 500;
 }
 
 .iOSTheme .Tab {

@@ -136,8 +136,17 @@ export const uiSlice = createSlice({
                 state.activeChat = action.payload
             }
         },
-        updateActiveChatPermissions: (state, action) => {
-            state.activeChat.permissions = action.payload
+        updateActiveChatDefaultBannedRights: (state, action) => {
+            state.activeChat = {
+                ...state.activeChat,
+                entity: {
+                    ...state.activeChat.entity,
+                    defaultBannedRights: {
+                        ...state.activeChat.entity.defaultBannedRights,
+                        ...action.payload
+                    }
+                }
+            }
         },
         setActiveFullChat: (state, action) => {
             state.activeFullChat = action.payload
@@ -238,7 +247,7 @@ export const {
     handlePageAndSubPage,
     handleUserProfile,
     setActiveChat,
-    updateActiveChatPermissions,
+    updateActiveChatDefaultBannedRights,
     setActiveFullChat,
     handleThread,
     handleCall,

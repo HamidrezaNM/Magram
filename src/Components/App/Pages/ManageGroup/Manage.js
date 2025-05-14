@@ -1,62 +1,73 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthContext, UserContext } from "../../../Auth/Auth";
-import { ChatContext } from "../../ChatContext";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../../Page";
-import { Icon, Profile } from "../../common";
-import { showUserProfile } from "../UserProfile";
+import { BackArrow, Icon, Profile } from "../../common";
 import Transition from "../../Transition";
 import Permissions from "./Permissions";
-import { socket } from "../../../../App";
-import { setChat } from "../../../Stores/Chats";
-import { setActiveChat } from "../../../Stores/UI";
+import { client, socket } from "../../../../App";
+import { setChat, setFullChat } from "../../../Stores/Chats";
+import { setActiveChat, setActiveFullChat } from "../../../Stores/UI";
 import Administrators from "./Administrators";
 import Members from "./Members";
-import { getChatData } from "../../Chat";
+import { Api } from "telegram";
 
 export default function ManageGroup() {
     const dispatch = useDispatch()
-    const Auth = useContext(AuthContext)
 
     const subPage = useSelector((state) => state.ui.subPage)
     const activeChat = useSelector((state) => state.ui.activeChat)
+    const fullChat = useSelector((state) => state.ui.activeFullChat)
+    const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
 
     const [isLoaded, setIsLoaded] = useState(false)
     const [hasChanged, setHasChanged] = useState(false)
-    const [firstname, setFirstname] = useState(activeChat.firstname)
-    const [username, setUsername] = useState(activeChat.username)
-    const [bio, setBio] = useState(activeChat.bio)
+    const [title, setTitle] = useState(activeChat.title)
+    const [username, setUsername] = useState(fullChat.username)
+    const [bio, setBio] = useState(fullChat.about)
 
     useEffect(() => {
-        if (firstname === activeChat.firstname && username === activeChat.username && bio === activeChat.bio)
+        if (title === activeChat.title && username === fullChat.username && bio === fullChat.about)
             setHasChanged(false)
         else
             setHasChanged(true)
-    }, [firstname, username, bio])
+    }, [title, username, bio])
 
-    const applyChanges = useCallback(() => {
-        const group = {
-            _id: activeChat._id,
-            firstname,
-            username,
-            bio,
-            profile: []
+    const applyChanges = useCallback(async () => {
+        // Edit Chat Title
+        if (title !== activeChat.title) {
+            const editChatTitle = await client.invoke(new Api.messages.EditChatTitle({
+                chatId: activeChat.entity.id,
+                title
+            }))
+
+            console.log(editChatTitle)
         }
-        socket.emit('UpdateGroup', { token: Auth.authJWT, ...group })
-        socket.on('UpdateGroup', (response) => {
-            if (response.ok) {
-                dispatch(setChat(group))
-                dispatch(setActiveChat({ ...activeChat, ...group }))
-                socket.off('UpdateGroup')
-                PageClose(dispatch, true)
-            }
-        })
-    }, [firstname, username, bio])
+
+        // Edit Chat About
+        if (bio !== fullChat.about) {
+            const editChatAbout = await client.invoke(new Api.messages.EditChatAbout({
+                peer: activeChat.entity.id,
+                about: bio
+            }))
+
+            console.log(editChatAbout)
+        }
+
+        const updatedFullChat = {
+            ...fullChat.fullChat,
+            about: bio
+        }
+
+        dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: updatedFullChat }))
+        dispatch(setActiveFullChat(updatedFullChat))
+
+        PageClose(dispatch, true)
+    }, [title, username, bio])
 
     const getSubPageLayout = useCallback(() => {
         switch (subPage[1]?.page) {
             case 'Reactions':
-                return <></>
+                return <div style={{ display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%', height: '100%' }}>There is nothing here yet :(</div>
             case 'Permissions':
                 return <Permissions />
             case 'Administrators':
@@ -74,18 +85,22 @@ export default function ManageGroup() {
 
     return <>
         <div className={"ManageGroup" + (!isLoaded ? ' fadeThrough' : '') + (subPage[1] ? ' pushUp' : '')}>
-            <PageHeader key={subPage[1] + firstname + username + bio + hasChanged}>
-                <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch, true)} /></div>
+            <PageHeader key={subPage[1] + title + username + bio + hasChanged}>
+                <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span>Manage</span></div>
                 <div className="Meta">
                     <button className={hasChanged ? '' : 'disabled'} onClick={applyChanges}>Apply</button>
                 </div>
             </PageHeader>
-            <div className="section Info">
-                <div className="User">
-                    <Profile name={firstname} id={getChatData(activeChat)._id} />
-                    <div className="textfield"><input type="text" value={firstname} onInput={(e) => setFirstname(e.target.value)} placeholder="Enter group name" /></div>
+            <div className="section">
+                <div className="Group">
+                    <Profile entity={activeChat.entity} name={title} id={activeChat.entity.id} />
+                    <div className="Items">
+                        <div className="Item textfield"><input type="text" value={title} onInput={(e) => setTitle(e.target.value)} placeholder="Enter group name" /></div>
+                    </div>
                 </div>
+            </div>
+            <div className="section Info">
                 <div className="Items">
                     <div className="Item"><Icon name="alternate_email" /><div className="textfield"><input type="text" value={username} onInput={(e) => setUsername(e.target.value)} placeholder="Username (Optional)" /></div></div>
                     <div className="Item"><Icon name="info" /><div className="textfield"><input type="text" value={bio} onInput={(e) => setBio(e.target.value)} placeholder="Bio (Optional)" /></div></div>

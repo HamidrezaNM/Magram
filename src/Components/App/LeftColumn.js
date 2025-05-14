@@ -100,7 +100,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         <div className="Chats scrollable">
             <ChatList />
         </div>
-        {(!showPage && !callMinimal && !musicPlayer) && <div className="fab quickChatButton">
+        {(!showPage && !callMinimal && !musicPlayer?.active) && <div className="fab quickChatButton">
             <Menu icon="edit" ref={fabQuickChatMenu}>
                 <DropdownMenu>
                     <MenuItem icon="group_add" title="New Group" onClick={showNewGroup} />

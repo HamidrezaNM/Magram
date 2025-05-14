@@ -6,19 +6,16 @@ import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
 import Transition from "../Transition";
-import { ChatContext } from "../ChatContext";
 import Menu from "../../UI/Menu";
 import { showUserProfile } from "./UserProfile";
 import ManageGroup from "./ManageGroup/Manage";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { removeChat, updateChatParticipants } from "../../Stores/Chats";
-import { client, socket } from "../../../App";
-import { getChatData } from "../Chat";
+import { client } from "../../../App";
 import FullNameTitle from "../../common/FullNameTitle";
 import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { deleteChat, generateChatWithPeer, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
-import { Api } from "telegram";
 import Tabs from "../../UI/Tabs";
 import buildClassName from "../../Util/buildClassName";
 import TabContent from "../../UI/TabContent";
@@ -92,12 +89,20 @@ export default function ChatProfile() {
 
     return <>
         {activeChat && <>
-            <div className={"ChatProfile" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
+            <div className={buildClassName(
+                "ChatProfile",
+                !isLoaded && 'fadeThrough',
+                subPage[0] && 'pushUp'
+            )} ref={page}>
                 <PageHeader>
                     <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                     <div className="Title"><span></span></div>
                     <div className="Meta">
-                        {activeChat?.adminRights && <button onClick={() => { PageHandle(dispatch, 'Manage', 'Manage', true) }}>Manage</button>}
+                        {(
+                            activeChat?.entity?.adminRights ||
+                            activeChat?.entity?.creator ||
+                            activeChat.participants?.find(item => item.participant?.adminRights)) && // WTH Painor :|
+                            <button onClick={() => { PageHandle(dispatch, 'Manage', 'Manage', true) }}>Manage</button>}
                         <Menu icon="more_vert">
                             <DropdownMenu className="top right withoutTitle">
                                 {chatType === 'Channel' && fullChat?.linkedChatId && <MenuItem icon="chat" title="View Discussion" onClick={viewDiscussion} />}
@@ -150,7 +155,7 @@ export default function ChatProfile() {
                         </div>
                     }>
                         {chatType === 'Group' && <TabContent state={true}>
-                            <div className="Items">
+                            <div className="Items Members">
                                 <div className="Item" onClick={() => { }}><Icon name="person_add" /><span>Add Members</span></div>
                                 {activeChat?.participants && Object.values(activeChat.participants).map((item, index) => (
                                     item.id && <div className="Item" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
@@ -159,7 +164,12 @@ export default function ChatProfile() {
                                             <div className="title"><FullNameTitle chat={item} /></div>
                                             <div className="subtitle">{getUserStatus(item.status, item)}</div>
                                         </div>
-                                        {item.participant?.adminRights && <div className="meta">{item.participant?.rank ?? 'Admin'}</div>}
+                                        {item.participant?.adminRights &&
+                                            <div className="meta">
+                                                {item.participant?.rank ??
+                                                    item.participant?.className === 'ChannelParticipantCreator' ?
+                                                    'Owner' : 'Admin'}
+                                            </div>}
                                     </div>
                                 ))}
                             </div>

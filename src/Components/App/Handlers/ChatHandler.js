@@ -26,12 +26,12 @@ const ChatHandler = forwardRef(({ }, ref) => {
                         break;
                     case 'UpdateChannel':
                         if (update.channel) {
-                            const [chatId, peer] = update.channel
-                            const chat = generateChatWithPeer(peer, returnBigInt(chatId))
+                            const peer = update.channel
+                            const chat = generateChatWithPeer(peer, returnBigInt('-100' + peer.id))
 
                             console.log('channel updated', chat)
                             dispatch(chatAdded(chat))
-                            if (Number(activeChat?.id) == chatId) {
+                            if (Number(activeChat?.id) == '-100' + peer.id) {
                                 dispatch(setActiveChat({ ...activeChat, entity: { ...activeChat.entity, ...peer } }))
                             }
                         }
@@ -78,6 +78,17 @@ const ChatHandler = forwardRef(({ }, ref) => {
 
                             dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullChannel.fullChat }))
                             dispatch(setActiveFullChat(fullChannel.fullChat))
+                        } else {
+                            dispatch(setActiveFullChat(activeChat.fullChat))
+                        }
+                    } else if (activeChat.isGroup) {
+                        if (!activeChat.fullChat) {
+                            const fullChat = await client.invoke(
+                                new Api.messages.GetFullChat({ chatId: activeChat.entity.id })
+                            )
+
+                            dispatch(setFullChat({ chatId: activeChat.id.value, fullChat: fullChat.fullChat }))
+                            dispatch(setActiveFullChat(fullChat.fullChat))
                         } else {
                             dispatch(setActiveFullChat(activeChat.fullChat))
                         }

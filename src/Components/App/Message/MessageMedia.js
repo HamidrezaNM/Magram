@@ -207,7 +207,11 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
             case 'MessageMediaDice':
                 return <Dice media={media} visible={visible} />
             default:
-                return <span style={{ margin: '0.575rem', fontWeight: '500' }}>This message is currently not supported in this version of Magram.</span>
+                return <span style={{ margin: '0.575rem', fontWeight: '500' }}>
+                    <span style={{ fontStyle: 'italic' }}>This message is currently not supported in this version of Magram.</span>
+                    <br /><br />
+                    <code>{media.className}</code>
+                </span>
         }
     }
 

@@ -85,7 +85,7 @@ const SlotMachine = memo(({ value }) => {
         if (isLoaded)
             spinningTimeout = setTimeout(() => {
                 setSpinning(false)
-            }, 2000);
+            }, 1000);
 
         return () => clearTimeout(spinningTimeout)
     }, [isLoaded])

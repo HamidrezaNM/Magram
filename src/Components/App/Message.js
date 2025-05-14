@@ -242,6 +242,17 @@ function Message({
         }))
     }, [data.text])
 
+    const handleCopyLink = useCallback(() => {
+        copyTextToClipboard(`https://t.me/${data._chat.username}/${data.id}`);
+
+        handleContextMenuClose()
+
+        dispatch(handleToast({
+            icon: 'content_copy',
+            title: 'Message copied to clipboard.'
+        }))
+    }, [data.text])
+
     const handleSave = useCallback(() => {
         messageMedia.current.onSave(); handleContextMenuClose()
     }, [data.media])
@@ -336,6 +347,7 @@ function Message({
                     <MessageContextMenu
                         canReply={true}
                         canCopy={true}
+                        canCopyLink={data._chat?.username}
                         isPhoto={data.type === 'media'}
                         canPin={isAdmin && !isPinned.current}
                         canUnpin={isAdmin && isPinned.current}
@@ -350,6 +362,7 @@ function Message({
                             chatType === 'Bot'}
                         onReply={handleReply}
                         onCopy={handleCopy}
+                        onCopyLink={handleCopyLink}
                         onSavePhoto={handleSave}
                         onSaveGif={handleSaveGif}
                         onPin={handlePin}

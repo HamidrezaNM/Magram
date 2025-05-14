@@ -24,7 +24,7 @@ import ChatContextProvider, { ChatContext } from "./ChatContext";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "../Stores/store";
 import { handleCachedMessages, handleMessageError, messageAdded, setMessages, updateMessageId, updateMessageMediaUploadProgress, updateMessageSeen, updateMessageText } from "../Stores/Messages";
-import { handleBackground, handleCall, setActiveChat, updateActiveChatPermissions } from "../Stores/UI";
+import { handleBackground, handleCall, setActiveChat } from "../Stores/UI";
 import { chatAdded, handleCachedChats, setChat, setChats, updateLastMessage, updateTypingStatus } from "../Stores/Chats";
 import EmojiData from '@emoji-mart/data/sets/14/apple.json'
 import Picker from '@emoji-mart/react'
@@ -218,14 +218,14 @@ function Home() {
         }, 1000);
     }
 
-    const handleUpdateGroupPermissions = (response) => {
-        if (response.data) {
-            response = response.data
-        }
-        dispatch(setChat(response))
-        if (response._id === activeChat?._id)
-            dispatch(updateActiveChatPermissions(response.permissions))
-    }
+    // const handleUpdateGroupPermissions = (response) => {
+    //     if (response.data) {
+    //         response = response.data
+    //     }
+    //     dispatch(setChat(response))
+    //     if (response._id === activeChat?._id)
+    //         dispatch(updateActiveChatPermissions(response.permissions))
+    // }
 
     // useEffect(() => {
     //     socket.on('UpdateGroupPermissions', handleUpdateGroupPermissions)
