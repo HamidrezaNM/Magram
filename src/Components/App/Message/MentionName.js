@@ -2,11 +2,11 @@ import { memo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { generateChatWithPeer } from "../../Helpers/chats";
 import { viewChat } from "../ChatList";
-import { resolveUsername } from "../../Util/username";
 import { handleToast } from "../../Stores/UI";
 import Transition from "../Transition";
+import { client } from "../../../App";
 
-function MentionName({ username, children, allowClick }) {
+function MentionName({ userId, children, allowClick }) {
     const [isLoading, setIsLoading] = useState(false)
 
     const dispatch = useDispatch()
@@ -16,14 +16,9 @@ function MentionName({ username, children, allowClick }) {
 
         setIsLoading(true)
 
-        const peer = await resolveUsername(username.substring(1))
+        const peer = await client.getEntity(userId)
 
         setIsLoading(false)
-
-        if (peer === 'USERNAME_NOT_OCCUPIED') {
-            dispatch(handleToast({ icon: 'error', title: 'Username not found' }))
-            return
-        }
 
         viewChat(generateChatWithPeer(peer), dispatch)
     }

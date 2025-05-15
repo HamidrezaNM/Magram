@@ -492,6 +492,7 @@
         border-bottom: 1px solid var(--active-primary);
         border-radius: 0;
         padding: 0 16px;
+        gap: 8px;
         justify-content: space-between;
     }
 
@@ -515,5 +516,20 @@
 
     .iOSTheme .MenuItem:last-child {
         border: none;
+    }
+
+    .iOSTheme .MenuItem .ReadParticipants {
+        display: flex;
+        flex: 1;
+        padding-left: 8px;
+        align-items: center;
+    }
+
+    .iOSTheme .MenuItem .ReadParticipants .title {
+        flex: 1 auto;
+    }
+
+    .MenuItem .ParticipantProfiles {
+        padding-right: 12px;
     }
 }

@@ -206,6 +206,7 @@ function getDateText(date) {
     const _date = new Date(date * 1000)
     const now = new Date()
     if (_date.getFullYear() === now.getFullYear() || (_date.getMonth() > now.getMonth() && _date.getFullYear() + 1 === now.getFullYear())) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         if (_date.getMonth() === now.getMonth()) {
             if (_date.getDate() === now.getDate() || (_date.getDate() + 1 === now.getDate() && _date.getHours() + 6 >= now.getHours())) {
                 return `${_date.getHours().toLocaleString('en-US', { minimumIntegerDigits: 2 })}:${_date.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2 })}`
@@ -213,10 +214,8 @@ function getDateText(date) {
                 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
                 return weekday[_date.getDay()]
             }
-        } else {
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            return `${months[_date.getMonth()]} ${_date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}`
         }
+        return `${months[_date.getMonth()]} ${_date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}`
     } else {
         return `${_date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(_date.getMonth() + 1).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${_date.getFullYear().toString().slice(2, 4)}`
     }

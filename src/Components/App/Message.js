@@ -18,7 +18,7 @@ import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
 import { getMediaDimensions, getMediaType, isDocumentGIF, isDocumentPhoto } from "../Helpers/messages";
-import { deleteMessage, retractVote, saveGIF } from "../Util/messages";
+import { deleteMessage, getMessageReadDate, getMessageReadParticipants, retractVote, saveGIF } from "../Util/messages";
 import { generateChatWithPeer, getChatEntity, getChatIdFromPeer, getChatType } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
@@ -302,6 +302,14 @@ function Message({
         setOpenDeleteModal(true); handleContextMenuClose()
     }, [data])
 
+    const handleGetReadParticipants = useCallback(() => {
+        return getMessageReadParticipants(data.chatId, data.id)
+    }, [data])
+
+    const handleGetReadDate = useCallback(() => {
+        return getMessageReadDate(data.chatId, data.id)
+    }, [data])
+
     const handleViewProfile = useCallback(() => {
         showUserProfile(data._sender, dispatch)
         handleContextMenuClose()
@@ -342,37 +350,38 @@ function Message({
             e.target.closest('.InlineButtons') ||
             e.target.closest('a'))
         ) {
-            const items = (
-                <>
-                    <MessageContextMenu
-                        canReply={true}
-                        canCopy={true}
-                        canCopyLink={data._chat?.username}
-                        isPhoto={data.type === 'media'}
-                        canPin={isAdmin && !isPinned.current}
-                        canUnpin={isAdmin && isPinned.current}
-                        canRetractVote={data.media?.results?.results}
-                        canSaveGif={data.media && isDocumentGIF(data.media.document)}
-                        canEdit={Number(User.id) === Number(data._senderId)}
-                        canForward={true}
-                        canDelete={
-                            User.id.value === data._senderId?.value ||
-                            data._chat?.adminRights?.deleteMessages ||
-                            chatType === 'User' ||
-                            chatType === 'Bot'}
-                        onReply={handleReply}
-                        onCopy={handleCopy}
-                        onCopyLink={handleCopyLink}
-                        onSavePhoto={handleSave}
-                        onSaveGif={handleSaveGif}
-                        onPin={handlePin}
-                        onRetractVote={handleRetractVote}
-                        onEdit={handleEdit}
-                        onForward={handleForward}
-                        onDelete={handleDelete}
-                    />
-                </>
-            )
+            const items =
+                <MessageContextMenu
+                    canReply={true}
+                    canCopy={true}
+                    canCopyLink={data._chat?.username}
+                    isPhoto={data.type === 'media'}
+                    canPin={isAdmin && !isPinned.current}
+                    canUnpin={isAdmin && isPinned.current}
+                    canRetractVote={data.media?.results?.results}
+                    canSaveGif={data.media && isDocumentGIF(data.media.document)}
+                    canEdit={Number(User.id) === Number(data._senderId)}
+                    canForward={true}
+                    canDelete={
+                        User.id.value === data._senderId?.value ||
+                        data._chat?.adminRights?.deleteMessages ||
+                        chatType === 'User' ||
+                        chatType === 'Bot'}
+                    canReadParticipants={chatType === 'Group' && isOutMessage.current && seen}
+                    canReadDate={chatType === 'User' && isOutMessage.current && seen}
+                    onReply={handleReply}
+                    onCopy={handleCopy}
+                    onCopyLink={handleCopyLink}
+                    onSavePhoto={handleSave}
+                    onSaveGif={handleSaveGif}
+                    onPin={handlePin}
+                    onRetractVote={handleRetractVote}
+                    onEdit={handleEdit}
+                    onForward={handleForward}
+                    onDelete={handleDelete}
+                    readParticipants={handleGetReadParticipants}
+                    readDate={handleGetReadDate}
+                />
 
             if (isMobile && isiOS) {
                 const rect = Bubble.current.getBoundingClientRect()
@@ -592,7 +601,7 @@ function Message({
         }
 
         return <div className="Comments" onClick={onClick}>
-            <div className="RecentRepliers">
+            <div className="RecentRepliers ParticipantProfiles">
                 {repliersUsers.map((item) => {
                     return item?.accessHash &&
                         <Profile size={24}

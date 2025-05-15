@@ -301,7 +301,17 @@
     color: var(--bc);
     padding: 2px 4px;
     margin: -4px;
-    width: fit-content;
+    max-width: fit-content;
+}
+
+.message-forward .title {
+    overflow: hidden;
+}
+
+.message-forward .title>* {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .message-reply:hover,
@@ -901,6 +911,7 @@
     align-items: center;
     text-align: center;
     gap: 4px;
+    width: 100%;
 }
 
 .Giveaway .Body .title {
@@ -910,6 +921,10 @@
 .Giveaway .Body .subtitle {
     font-weight: 500;
     font-size: 14px;
+}
+
+.Giveaway .Body .Participants {
+    width: 100%;
 }
 
 .Giveaway .Body .Channels {
@@ -926,12 +941,17 @@
     border-radius: 16px;
     font-size: 14px;
     width: fit-content;
+    max-width: 100%;
     display: flex;
     align-items: center;
+    overflow: hidden;
 }
 
 .Giveaway .Body .Channel .title {
     padding: 0 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .Dice {
@@ -967,20 +987,6 @@
     background-color: var(--on-primary);
     border: 1px solid var(--on-primary);
     border-radius: 8px;
-}
-
-.Message .Comments .RecentRepliers {
-    display: flex;
-    flex-direction: row-reverse;
-}
-
-.Message .Comments .RecentRepliers .profile {
-    border: 2px solid var(--primary-container);
-    margin-left: -10px;
-}
-
-.Message .Comments .RecentRepliers .profile:last-child {
-    margin: 0;
 }
 
 .UnreadMessages {

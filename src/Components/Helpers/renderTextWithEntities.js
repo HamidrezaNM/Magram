@@ -5,6 +5,7 @@ import Spoiler from "../App/Message/Spoiler";
 import CustomEmoji from "../App/Message/CustomEmoji";
 import Pre from "../App/Message/Pre";
 import BotCommand from "../App/Message/BotCommand";
+import MentionName from "../App/Message/MentionName";
 
 export default function renderTextWithEntities(text, entities, allowClick = true, includeFrom, isInChat = true) {
     if (!entities?.length) {
@@ -75,7 +76,7 @@ export default function renderTextWithEntities(text, entities, allowClick = true
             case 'MessageEntityMention':
                 return <MentionLink username={entityContent} allowClick={allowClick}>{entityContent}</MentionLink>
             case 'MessageEntityMentionName':
-                return <MentionLink username={entityContent} allowClick={allowClick}>{entityContent}</MentionLink>
+                return <MentionName userId={entity.userId} allowClick={allowClick}>{entityContent}</MentionName>
             case 'MessageEntityTextUrl':
             case 'MessageEntityUrl':
                 return <Link url={entity.url ?? entityContent} allowClick={allowClick}>{entityContent}</Link>

@@ -43,3 +43,26 @@ export async function retractVote(peerId, messageId, dispatch) {
     const poll = result.updates[0]
     dispatch(updateMessagePoll({ chatId: Number(peerId), messageId, media: { poll: poll.poll, results: poll.results } }))
 }
+
+export async function getMessageReadParticipants(peerId, messageId) {
+    const result = await client.invoke(new Api.messages.GetMessageReadParticipants({
+        peer: peerId,
+        msgId: messageId
+    }))
+
+    const userIds = result.map(item => item.userId)
+    const users = await client.getEntity(userIds)
+
+    const finalData = result.map((item, index) => { return { seenDate: item.date, ...users[index] } })
+
+    return finalData
+}
+
+export async function getMessageReadDate(peerId, messageId) {
+    const result = await client.invoke(new Api.messages.GetOutboxReadDate({
+        peer: peerId,
+        msgId: messageId
+    }))
+
+    return result.date
+}

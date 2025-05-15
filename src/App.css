@@ -527,6 +527,35 @@
   opacity: 0;
 }
 
+.ParticipantProfiles {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.ParticipantProfiles .profile {
+  border: 2px solid var(--primary-container);
+  margin: 0 !important;
+  margin-left: -10px !important;
+}
+
+.ParticipantProfiles .profile:last-child {
+  margin: 0 !important;
+}
+
+.MenuItem .ParticipantProfiles {
+  padding-left: 16px;
+}
+
+.MenuItem .ReadParticipants {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.MenuItem .ReadParticipants .title {
+  flex: 1 auto;
+}
+
 .scrollable {
   overflow-y: overlay;
   scroll-behavior: smooth;
@@ -683,6 +712,14 @@
 
 .MenuItem .subtitle {
   font-size: 12px;
+}
+
+.ContextMenu hr {
+  margin: 0 -4px;
+  border: none;
+  padding: .25em 0;
+  width: calc(100% + 8px);
+  background-color: var(--secondary);
 }
 
 .DropdownMenu .top {
@@ -979,8 +1016,12 @@
   margin-bottom: -80px;
 }
 
-.Page .Forward {
-  background-color: var(--secondary);
+.LeftColumn .Page .Forward {
+  background-color: var(--background);
+}
+
+.LeftColumn .Page .Chats {
+  height: 100%;
 }
 
 .SubPage {
