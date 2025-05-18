@@ -4,6 +4,7 @@ import { calculateMediaDimensions } from "./MessageMedia";
 import Lottie from "react-lottie";
 import { client } from "../../../App";
 import Transition from "../Transition";
+import LottiePlayer from "../../common/LottiePlayer";
 
 const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, autoPlay = true, loop = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
     const [width, setWidth] = useState(_width)
@@ -50,30 +51,31 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
                 const src = window.URL.createObjectURL(data)
                 setData(src)
             } else {
-                const options = {
-                    container: img.current,
-                    loop,
-                    autoplay: autoPlay,
-                    animationData: data,
-                    fileId: media.document.id.value,
-                    width,
-                    height
-                };
-                window.RLottie.loadAnimation(options, _anim => {
-                    // setAnim(_anim);
-                    anim.current = _anim
+                setData(data)
+                // const options = {
+                //     container: img.current,
+                //     loop,
+                //     autoplay: autoPlay,
+                //     animationData: data,
+                //     fileId: media.document.id.value,
+                //     width,
+                //     height
+                // };
+                // window.RLottie.loadAnimation(options, _anim => {
+                //     // setAnim(_anim);
+                //     anim.current = _anim
 
-                    // if (window.RLottie.hasFirstFrame(this.anim)) {
-                    // if (!eventListeners) return;
+                //     // if (window.RLottie.hasFirstFrame(this.anim)) {
+                //     // if (!eventListeners) return;
 
-                    // eventListeners.forEach(({ eventName, callback }) => {
-                    //     if (eventName === 'firstFrame') {
-                    //         callback && callback();
-                    //     }
-                    //     });
-                    // }
-                });
-                setData(true)
+                //     // eventListeners.forEach(({ eventName, callback }) => {
+                //     //     if (eventName === 'firstFrame') {
+                //     //         callback && callback();
+                //     //     }
+                //     //     });
+                //     // }
+                // });
+                // setData(true)
             }
 
             if (setIsLoaded)
@@ -85,16 +87,16 @@ const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoj
             // else
             //     isLowQualityLoaded.current = true
         })()
-        return () => {
-            window.RLottie.destroy(anim.current)
-        }
+        // return () => {
+        //     window.RLottie.destroy(anim.current)
+        // }
     }, [media, size])
 
     return <Transition state={true}>
         {!data && <span className="Loading"></span>}
         {isWebp ? <img width={20} height={20} src={data} /> :
             isWebm ? <video width={20} height={20} src={data} autoPlay={autoPlay} loop /> :
-                <div className="RLottie" ref={img}></div>
+                data && <LottiePlayer data={data} fileId={media.document.id.value} autoPlay={autoPlay} loop={loop} width={width} height={height} />
         }
     </Transition>
 })

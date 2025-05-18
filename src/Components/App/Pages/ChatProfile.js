@@ -158,7 +158,7 @@ export default function ChatProfile() {
                             <div className="Items Members">
                                 <div className="Item" onClick={() => { }}><Icon name="person_add" /><span>Add Members</span></div>
                                 {activeChat?.participants && Object.values(activeChat.participants).map((item, index) => (
-                                    item.id && <div className="Item" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
+                                    item.id && <div className="Item Member" key={item.id?.value} onClick={() => showUserProfile(item, dispatch)}>
                                         <Profile size={44} entity={item} id={item.id?.value} name={item.firstName} />
                                         <div className="UserDetails">
                                             <div className="title"><FullNameTitle chat={item} /></div>

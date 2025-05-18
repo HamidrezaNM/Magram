@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState: {
+        topPeers: { users: [] },
         playerVolume: 1,
         animations: {
             AnimatedStickers: false,
@@ -29,6 +30,11 @@ export const settingsSlice = createSlice({
         },
         handleToggleDarkMode: (state) => {
             state.darkMode = !state.darkMode
+        },
+        handleTopPeers: (state, action) => {
+            const date = Date.now()
+
+            state.topPeers = { users: action.payload, date }
         }
     },
 })
@@ -38,7 +44,8 @@ export const {
     handlePlayerVolume,
     handleAnimationsOptions,
     handleCustomTheme,
-    handleToggleDarkMode
+    handleToggleDarkMode,
+    handleTopPeers
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

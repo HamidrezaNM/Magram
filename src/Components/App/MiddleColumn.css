@@ -192,7 +192,7 @@
     color: var(--primary);
 }
 
-.MiddleColumn .Messages {
+.MiddleColumn .MessageList {
     flex: 1 1;
     overflow-y: overlay;
     overflow-x: hidden;
@@ -203,17 +203,21 @@
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.MiddleColumn .Messages.NoMessages {
+.MiddleColumn .MessageList.NoMessages {
     justify-content: center;
 }
 
-.MiddleColumn .Messages.NoMessages .NoMessage {
+.MiddleColumn .MessageList.NoMessages .NoMessage {
     justify-content: center;
 }
 
-.MiddleColumn .Messages> :first-child:not(.NoMessage) {
+/* .MiddleColumn .MessageList> :nth-child(2):not(.NoMessage) {
     margin-top: auto !important;
-}
+} */
+
+/* .loadMore {
+    height: 20px;
+} */
 
 .MiddleColumn .bottom {
     min-height: 48px;
@@ -244,6 +248,11 @@
 
 .MiddleColumn .bottom .Composer .commands .DropdownMenu {
     bottom: -7px;
+}
+
+.MiddleColumn .TopBar,
+.MiddleColumn .bottom {
+    touch-action: none;
 }
 
 .MiddleColumn .bottom .message-input {
@@ -486,9 +495,14 @@
     gap: 12px;
 }
 
+.MiddleColumn .MuiSkeleton-root {
+    background-color: #ffffff20 !important;
+}
+
 .loading .css-et6ef6-MuiSkeleton-root::after {
     animation: animation-wiooy8 1.5s linear 0.5s infinite;
-    border-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent) 30;
+    border-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) 30;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     border-width: 2px;
     border-style: solid;
     border-right: none;

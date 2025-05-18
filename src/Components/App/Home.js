@@ -19,7 +19,7 @@ import Settings from "./Settings";
 import './Settings.css'
 import { Skeleton, ThemeProvider, createTheme } from "@mui/material";
 import MessagesLoading from "../UI/MessagesLoading";
-import Messages from "./Messages";
+import Messages from "./MessageList";
 import ChatContextProvider, { ChatContext } from "./ChatContext";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "../Stores/store";

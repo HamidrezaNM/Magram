@@ -19,7 +19,6 @@ import buildClassName from "../Util/buildClassName";
 function Chat({ info, isActive, onClick }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-    const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
     const ChatEl = useRef()

@@ -13,8 +13,9 @@ import buildClassName from "../Util/buildClassName";
 import { getChatType } from "../Helpers/chats";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { UserContext } from "../Auth/Auth";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 
-const Messages = forwardRef(({ MessagesRef }, ref) => {
+const MessageList = forwardRef(({ MessageListRef }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [messagesRenderCount, setMessagesRenderCount] = useState(20)
     const [messageParts, setMessageParts] = useState([])
@@ -33,23 +34,44 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     const autoScroll = useRef(true);
     const previousScrollHeightMinusTop = useRef(0);
     const messageRenderIncrease = useRef(false);
+    const loadMore = useRef();
 
-    const chatType = getChatType(activeChat.entity)
+    const chatType = useMemo(() => getChatType(activeChat.entity), [activeChat?.entity])
     const messageStartIndex = messages?.length - messagesRenderCount > 0 ? messages?.length - messagesRenderCount : 0
+
+    const loadMoreObserver = useIntersectionObserver({ threshold: 0 })
+
+    const handleIntersect = useCallback((entry) => {
+        if (entry.isIntersecting && messages?.length) {
+            // previousScrollHeightMinusTop.current = MessageListRef.current.scrollHeight - MessageListRef.current.scrollTop
+            // messageRenderIncrease.current = true
+
+            // setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
+            handleLoadMoreMessages()
+        }
+    }, [messages?.length, messagesRenderCount, isLoaded]);
+
+    useEffect(() => {
+        loadMoreObserver.addCallback(handleIntersect);
+
+        return () => {
+            loadMoreObserver.removeCallback(handleIntersect);
+        };
+    }, [loadMoreObserver]);
 
     const onGetMessages = async (data, overwrite = false) => {
         setIsLoaded(true)
         setTimeout(() => {
-            MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight + 3000, behavior: "instant" })
+            MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight + 3000, behavior: "instant" })
         }, 40)
         if (messages?.length !== data?.total) {
-            MessagesRef.current.classList.add('MessagesAnimating')
+            MessageListRef.current.classList.add('MessagesAnimating')
             dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse(), overwrite }))
 
             handlePinnedMessages()
 
             // setTimeout(() => {
-            //     MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
+            //     MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight, behavior: "instant" })
             // }, 300)
 
             readHistory(activeChat.id.value, dispatch)
@@ -59,7 +81,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     }
 
     const handleScrollToBottom = () => {
-        MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "smooth" })
+        MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight, behavior: "smooth" })
     }
 
     useEffect(() => {
@@ -79,7 +101,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 if (messages?.length > 0) {
                     isLoading.current = false
                     requestAnimationFrame(() => {
-                        MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
+                        MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight, behavior: "instant" })
                     })
                 }
                 dispatch(handlePinnedMessage())
@@ -128,10 +150,44 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
         })()
     }, [activeChat?.id]) // Get Messages on activeChat Changed
 
+    const handleLoadMoreMessages = async () => {
+        if (isLoaded && messages?.length > 20) {
+            previousScrollHeightMinusTop.current = MessageListRef.current.scrollHeight - MessageListRef.current.scrollTop
+            messageRenderIncrease.current = true
+
+            if (messages?.length <= messagesRenderCount) {
+                setIsLoaded(false)
+                // const messagesLength = messages?.length
+                let maxMessageId = null
+
+                // if (messagesLength > 0) {
+                maxMessageId = messages[0]?.id
+                // }
+
+                const result = await client.getMessages(
+                    activeChat.id,
+                    {
+                        limit: 100,
+                        maxId: maxMessageId
+                    }
+                );
+
+                setIsLoaded(true)
+                if (result?.length) {
+                    dispatch(unshiftMessages({ chatId: activeChat.id.value, messages: result.reverse() }))
+                    setMessagesRenderCount(messages.length + result.length < messagesRenderCount * 2 ? messages.length + result.length : messagesRenderCount * 2)
+                } else
+                    return
+            } else
+                setMessagesRenderCount(messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
+            console.log('message render count increase', messages?.length < messagesRenderCount * 2 ? messages?.length : messagesRenderCount * 2)
+        }
+    }
+
     const onScrollMessages = async () => {
         if (document.querySelector('.scrollToBottom')) {
-            if (Math.abs(MessagesRef.current.scrollHeight - MessagesRef.current.clientHeight - MessagesRef.current.scrollTop) > 30
-                || 0 > MessagesRef.current.scrollTop) {
+            if (Math.abs(MessageListRef.current.scrollHeight - MessageListRef.current.clientHeight - MessageListRef.current.scrollTop) > 30
+                || 0 > MessageListRef.current.scrollTop) {
                 document.querySelector('.scrollToBottom').classList.remove('hidden')
                 document.querySelector('.scrollToBottom').style.bottom = document.querySelector('.bottom').clientHeight + 8 + 'px'
                 autoScroll.current = false
@@ -140,8 +196,8 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 autoScroll.current = true
             }
 
-            if (isLoaded && messages?.length > 20 && MessagesRef.current.scrollTop < 1) {
-                previousScrollHeightMinusTop.current = MessagesRef.current.scrollHeight - MessagesRef.current.scrollTop
+            if (false && isLoaded && messages?.length > 20 && MessageListRef.current.scrollTop < 1) {
+                previousScrollHeightMinusTop.current = MessageListRef.current.scrollHeight - MessageListRef.current.scrollTop
                 messageRenderIncrease.current = true
 
                 if (messages?.length <= messagesRenderCount) {
@@ -176,12 +232,12 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     useEffect(() => {
         if (activeChat && messages?.length && isLoading.current) {
-            MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "instant" })
+            MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight, behavior: "instant" })
             isLoading.current = false
         }
 
         if (activeChat && messages?.length) {
-            const items = MessagesRef.current.querySelectorAll('.MessagesAnimating .Message')
+            const items = MessageListRef.current.querySelectorAll('.MessagesAnimating .Message')
             const itemsLength = Object.keys(items).length
 
             if (itemsLength) {
@@ -190,7 +246,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
                 })
 
                 setTimeout(() => {
-                    MessagesRef.current?.classList?.remove('MessagesAnimating')
+                    MessageListRef.current?.classList?.remove('MessagesAnimating')
                 }, itemsLength * 20);
             }
         }
@@ -199,8 +255,8 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
     useEffect(() => {
         if (messageRenderIncrease.current && previousScrollHeightMinusTop.current > 0) {
             // setTimeout(() => {
-            MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight - previousScrollHeightMinusTop.current, behavior: "instant" })
-            console.log(MessagesRef.current.scrollTop, previousScrollHeightMinusTop.current)
+            MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight - previousScrollHeightMinusTop.current, behavior: "instant" })
+            console.log(MessageListRef.current.scrollTop, previousScrollHeightMinusTop.current)
             // }, 200);
             messageRenderIncrease.current = false
         }
@@ -236,7 +292,7 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
 
     const handleKeyUp = e => {
         if (e.keyCode === 38) {
-            // setMessagesRenderCount(messages?.length < messagesRenderCount + 1 ? messages?.length : messagesRenderCount + 1)
+            setMessagesRenderCount(messages?.length < messagesRenderCount + 20 ? messages?.length : messagesRenderCount + 20)
             const outMessages = messages.filter(item => Number(item._senderId) === Number(User.id) || item.out)
 
             if (outMessages.length > 0) {
@@ -278,17 +334,18 @@ const Messages = forwardRef(({ MessagesRef }, ref) => {
             isiOS={iOSTheme} />
     }
 
-    console.log('Messages Rerender')
+    console.log('MessageList Rerender')
 
     return <div className={buildClassName(
-        "Messages",
+        "MessageList",
         "scrollable",
         (!messages?.length && isLoaded) && 'NoMessages'
-    )} ref={MessagesRef} onScroll={onScrollMessages}>
+    )} ref={MessageListRef} onScroll={onScrollMessages}>
+        <div className="loadMore" ref={(el) => loadMoreObserver.observe(el)}></div>
         {messages || !isLoaded ? <>
             {
                 !isLoaded && <div className="loading">
-                    <MessagesLoading />
+                    <MessagesLoading count={20} />
                 </div>
             }
             {messages && messages
@@ -346,4 +403,4 @@ function useGroupedMessages(messages, messageStartIndex) {
     return getGroupedMessages;
 }
 
-export default memo(Messages)
+export default memo(MessageList)

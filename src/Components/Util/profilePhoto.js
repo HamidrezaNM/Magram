@@ -3,7 +3,7 @@ import { client } from "../../App";
 export async function profilePhoto(entity) {
     const avatars = await caches.open('ma-media-avatars')
 
-    const cachedAvatar = await avatars.match(window.location.origin + '/avatar-' + entity.photo.photoId.value)
+    const cachedAvatar = await avatars.match(window.location.origin + '/avatar-' + Number(entity.photo.photoId))
 
     var url
 
@@ -15,7 +15,7 @@ export async function profilePhoto(entity) {
         var blob = new Blob([buffer], { type: 'image/jpg' });
         url = window.URL.createObjectURL(blob)
 
-        await avatars.put('/avatar-' + entity.photo.photoId.value, new Response(blob))
+        await avatars.put('/avatar-' + Number(entity.photo.photoId), new Response(blob))
     }
 
     return url

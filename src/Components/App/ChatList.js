@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useRef, useState } from "react";
+import { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import { toDoubleDigit } from "./Home";
 import { client } from "../../App";
@@ -20,7 +20,6 @@ function ChatList({ onClick }) {
 
     const ChatListRef = useRef()
 
-    const Auth = useContext(AuthContext);
     const User = useContext(UserContext);
 
     const dispatch = useDispatch()
@@ -29,15 +28,17 @@ function ChatList({ onClick }) {
 
     const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
-    const allChats = Object.values(chats).sort((a, b) => {
-        if (a.message?.date > b.message?.date) {
-            return -1;
-        }
-        if (a.message?.date < b.message?.date) {
-            return 1;
-        }
-        return 0;
-    })
+    const allChats = useMemo(() => {
+        return Object.values(chats).sort((a, b) => {
+            if (a.message?.date > b.message?.date) {
+                return -1;
+            }
+            if (a.message?.date < b.message?.date) {
+                return 1;
+            }
+            return 0;
+        })
+    }, [chats])
 
     const archives = allChats.filter((chat) => chat.archived)
 
@@ -56,7 +57,7 @@ function ChatList({ onClick }) {
                 console.log(error)
             }
         })()
-    }, [User, Auth.authJWT])
+    }, [User])
 
     useEffect(() => {
         if (Object.keys(chats).length > 0) {

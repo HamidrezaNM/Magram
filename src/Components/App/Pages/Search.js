@@ -1,35 +1,25 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthContext, UserContext } from "../../Auth/Auth";
-import { PageClose, PageHandle, PageHeader, SubPage } from "../Page";
-import { BackArrow, Icon, Profile } from "../common";
-import DropdownMenu from "../../UI/DropdownMenu";
-import MenuItem from "../../UI/MenuItem";
-import Transition from "../Transition";
-import { ChatContext } from "../ChatContext";
-import Menu from "../../UI/Menu";
-import { showUserProfile } from "./UserProfile";
-import ManageGroup from "./ManageGroup/Manage";
+import { PageClose, PageHeader } from "../Page";
+import { BackArrow, Profile } from "../common";
 import ContentEditable from "../../common/WrappedContentEditable";
-import { client, socket } from "../../../App";
+import { client } from "../../../App";
 import { viewChat } from "../ChatList";
-import { getChatData } from "../Chat";
 import { Api } from "telegram";
-import { generateChatWithPeer, getChatIdFromPeer, getChatSubtitle } from "../../Helpers/chats";
+import { generateChatWithPeer, getChatSubtitle } from "../../Helpers/chats";
 import { handleCoolDown } from "../../Util/coolDown";
 import Tabs from "../../UI/Tabs";
 import TabContent from "../../UI/TabContent";
 import buildClassName from "../../Util/buildClassName";
+import { handleTopPeers } from "../../Stores/Settings";
 
 
 export default function Search() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [input, setInput] = useState('')
-    const [topPeers, setTopPeers] = useState([])
+    // const [topPeers, setTopPeers] = useState([])
     const [chats, setChats] = useState([])
     const [tabIndex, setTabIndex] = useState(0)
-
-    const Auth = useContext(AuthContext)
 
     const dispatch = useDispatch()
 
@@ -39,6 +29,7 @@ export default function Search() {
 
     const subPage = useSelector((state) => state.ui.subPage)
     const centerTopBar = useSelector((state) => state.settings.customTheme)
+    const topPeers = useSelector((state) => state.settings.topPeers)
 
     useEffect(() => {
         setIsLoaded(true)
@@ -47,21 +38,28 @@ export default function Search() {
         }, 200);
 
         (async () => {
-            const result = await client.invoke(new Api.contacts.GetTopPeers({
-                correspondents: true,
-                botsApp: false,
-                botsInline: false,
-                botsPm: false,
-                channels: false,
-                forwardChats: false,
-                forwardUsers: false,
-                groups: false,
-                limit: 5
-            }))
+            const now = Date.now();
+            const diff = now - topPeers?.date;
 
-            setTopPeers(result.users)
+            if (!topPeers?.users?.length || (diff > 0 && diff > 60 * 60 * 1000)) {
+                console.log('GetTopPeers')
+
+                const result = await client.invoke(new Api.contacts.GetTopPeers({
+                    correspondents: true,
+                    botsApp: false,
+                    botsInline: false,
+                    botsPm: false,
+                    channels: false,
+                    forwardChats: false,
+                    forwardUsers: false,
+                    groups: false,
+                    limit: 5
+                }))
+
+                dispatch(handleTopPeers(result.users))
+            }
         })()
-    }, [])
+    }, [topPeers])
 
     const changeInputHandler = useCallback(async e => {
         var value = e.target ? e.target.value : e;
@@ -115,9 +113,9 @@ export default function Search() {
                     <span className="placeholder" style={{ paddingLeft: 28 }} ref={placeholderRef}>Search</span>
                 </div>
                 <div className="topPeers">
-                    {topPeers.length > 0 && Object.values(topPeers).map((item) => (
+                    {topPeers?.users?.length > 0 && Object.values(topPeers.users).map((item) => (
                         !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
-                            <Profile entity={item} size={48} name={item?.title} id={item.id?.value} />
+                            <Profile entity={item} size={54} name={item?.title} id={item.id?.value} />
                             <div className="title">{item?.title ?? item.firstName}</div>
                         </div>
                     ))}

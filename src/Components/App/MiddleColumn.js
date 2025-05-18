@@ -7,14 +7,15 @@ import { client } from "../../App";
 import { Api } from "telegram";
 import Composer from "./MiddleColumn/Composer";
 import { useSelector } from "react-redux";
-import Messages from "./Messages";
+import Messages from "./MessageList";
 import { generateChatWithPeer } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
+import MessageList from "./MessageList";
 
 function MiddleColumn({ }) {
     const [composerChat, setComposerChat] = useState()
 
-    const MessagesRef = useRef()
+    const MessageListRef = useRef()
     const BottomRef = useRef();
     const scrollToBottom = useRef();
     const background = useRef();
@@ -28,7 +29,7 @@ function MiddleColumn({ }) {
     const maskPattern = darkMode
 
     const handleScrollToBottom = () => {
-        MessagesRef.current.scroll({ left: 0, top: MessagesRef.current.scrollHeight, behavior: "smooth" })
+        MessageListRef.current.scroll({ left: 0, top: MessageListRef.current.scrollHeight, behavior: "smooth" })
     }
 
     useEffect(() => {
@@ -73,8 +74,8 @@ function MiddleColumn({ }) {
                 <ChatInfo key={activeChat.id.value} />
                 <PinnedMessage />
             </div>
-            {!thread ? <Messages MessagesRef={MessagesRef} /> :
-                <Thread ThreadRef={MessagesRef} />}
+            {!thread ? <MessageList MessageListRef={MessageListRef} /> :
+                <Thread ThreadRef={MessageListRef} />}
             <div ref={scrollToBottom} className="scrollToBottom hidden" onClick={handleScrollToBottom}>
                 <Icon name="arrow_downward" />
             </div>

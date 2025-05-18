@@ -1,4 +1,4 @@
-import { memo, useCallback, useContext, useEffect, useState } from "react"
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getChatData } from "../Chat"
 import { handleCall, handleThread, setActiveChat } from "../../Stores/UI"
@@ -48,7 +48,7 @@ function ChatInfo() {
             PageHandle(dispatch, 'ChatProfile', '')
     }, [page, showPage, activeChat])
 
-    const chatInfoSubtitle = useCallback(() => {
+    const chatInfoSubtitle = useMemo(() => {
         if (typingStatus && typingStatus.length > 0) {
             if (!typingAction)
                 setTypingAction(true)
@@ -113,7 +113,7 @@ function ChatInfo() {
                 {centerTopBar ? <>
                     <div className="body">
                         <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                        {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}
+                        {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle}</div>}
                     </div>
                     <div className="meta"><Profile showPreview entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                 </>
@@ -121,7 +121,7 @@ function ChatInfo() {
                         <div className="meta"><Profile showPreview entity={activeChat.entity} name={activeChat.title} id={activeChat.entity?.id.value} isSavedMessages={isSavedMessages} /></div>
                         <div className="body">
                             <div className="title"><FullNameTitle chat={activeChat.entity} isSavedMessages={isSavedMessages} /></div>
-                            {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle()}</div>}
+                            {!isSavedMessages && <div className={buildClassName("subtitle", typingAction && 'typing')}>{chatInfoSubtitle}</div>}
                         </div>
                     </>
                 }

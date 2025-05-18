@@ -41,7 +41,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
     }, [])
 
     useEffect(() => {
-        const messagesEl = document.querySelector('.MiddleColumn .Messages')
+        const messagesEl = document.querySelector('.MiddleColumn .MessageList')
 
         let inView = true
 
@@ -698,9 +698,7 @@ const Sticker = forwardRef(({ children, media, size, _width, _height, noAvatar =
         })()
     }, [media, size])
 
-    return <>
-        <img ref={img} width={width > 0 ? dimensions.width : ''} />
-    </>
+    return <img ref={img} width={width > 0 ? dimensions.width : ''} />
 })
 
 export function fancyTimeFormat(duration) {

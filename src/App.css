@@ -28,7 +28,7 @@
   --surface-color: #ffffff10;
   --on-surface: #ffffff20;
   --surface-hover: #0009;
-  --border-color: #111;
+  --border-color: #1e1e1e;
   --icon-hover: #ffffff20;
   --icon-active: #ffffff30;
   --default: linear-gradient(120deg, #3b7493, #00345e);
@@ -70,7 +70,7 @@
   --surface-color: #fffb;
   --on-surface: #00000020;
   --surface-hover: #ffffff;
-  --border-color: #ddd;
+  --border-color: #f1f1f1;
   --icon-hover: #0000000a;
   --icon-active: #0000000f;
   --default: linear-gradient(120deg, #62cdff, #096bd1);
@@ -360,7 +360,7 @@
     max-width: none;
     border-radius: 0;
     /* transform: translate3d(-5rem, 0, 0); */
-    transition: transform .3s ease;
+    transition: transform .2s ease;
   }
 
   .MiddleColumn {
@@ -559,6 +559,7 @@
 .scrollable {
   overflow-y: overlay;
   scroll-behavior: smooth;
+  touch-action: auto;
 }
 
 @-moz-document url-prefix() {
@@ -609,7 +610,6 @@
   background-color: var(--surface-color);
   position: absolute;
   min-width: 13.5rem;
-  max-width: 16rem;
   border-radius: 10px;
   z-index: 4;
   margin: 4px;
@@ -632,6 +632,7 @@
 
 .ContextMenu {
   min-width: 10rem;
+  max-width: 16rem;
   position: fixed;
 }
 
@@ -838,6 +839,7 @@
 .Page .Items {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .Page .section>.title,
@@ -857,7 +859,7 @@
   font-size: 18px;
   cursor: pointer;
   border-radius: 16px;
-  border-bottom: 1px solid var(--primary-container);
+  border-bottom: 1px solid var(--border-color);
   transition: all .3s ease-in-out;
 }
 
@@ -898,6 +900,40 @@
 .Page .Item .profile {
   margin: 0 12px;
 }
+
+.Page .Item .ColorPicker {
+  width: calc(100% - 32px);
+  position: absolute;
+  margin-top: 142px;
+  background-color: var(--secondary);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+/* .Page .Item .ColorPicker {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.Page .Item input[type="color"] {
+  background-color: transparent;
+  border: none;
+  border-radius: 50px;
+  overflow: hidden !important;
+  width: 36px;
+  height: 38px;
+  appearance: none;
+  padding: 0px;
+  position: absolute;
+} */
 
 .Page .section.Info {
   border-radius: 0 0 16px 16px;
@@ -1421,6 +1457,10 @@ a:hover {
 
 .MusicPlayer .Controls {
   display: flex;
+}
+
+.RLottie {
+  line-height: 0;
 }
 
 .BackButton {

@@ -56,20 +56,20 @@
     --accent-bg: #ffffff1a;
 }
 
-.Messages.MessagesAnimating .Message {
+.MessageList.MessagesAnimating .Message {
     opacity: 0;
     transform: scale(.9);
 }
 
-.Messages.animateFromTop .Message.Out {
+.MessageList.animateFromTop .Message.Out {
     transform-origin: right top;
 }
 
-.Messages.animateFromTop .Message.In {
+.MessageList.animateFromTop .Message.In {
     transform-origin: left top;
 }
 
-.Messages.MessagesAnimating .Message.showAnim {
+.MessageList.MessagesAnimating .Message.showAnim {
     opacity: 1;
     transform: scale(1);
 }

@@ -1,11 +1,11 @@
 import { Avatar, Skeleton } from "@mui/material"
 import { memo } from "react";
 
-function MessagesLoading() {
+function MessagesLoading({ count = 20 }) {
     console.log('message loading rerendered')
     var divs = []
     var isOut = false;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < count; i++) {
         isOut = Math.round(Math.random() / 1.5) == 0 ? false : true;
         divs.push(
             <div className="item" key={i} style={{ alignSelf: isOut ? 'flex-end' : 'flex-start' }}>

@@ -5,9 +5,11 @@ import { BackArrow, Icon, Switch } from "../../common";
 import { UserContext } from "../../../Auth/Auth";
 import buildClassName from "../../../Util/buildClassName";
 import { handleCustomTheme } from "../../../Stores/Settings";
+import { ChromePicker, GithubPicker, HuePicker, SketchPicker, SliderPicker } from "react-color";
 
 export default function SettingsThemes() {
     const [isLoaded, setIsLoaded] = useState(false)
+    const [primaryColor, setPrimaryColor] = useState()
 
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const bottomBar = useSelector((state) => state.settings.customTheme.bottomBar)
@@ -36,6 +38,14 @@ export default function SettingsThemes() {
         dispatch(handleCustomTheme({ gradientMessage: value }))
     }
 
+    useEffect(() => {
+        if (primaryColor) {
+            document.querySelector(':root').style.setProperty('--primary', primaryColor.hex)
+            document.querySelector('.Dark').style.setProperty('--primary', primaryColor.hex)
+            document.querySelector('.iOSTheme').style.setProperty('--primary', primaryColor.hex)
+        }
+    }, [primaryColor])
+
     return <div className={buildClassName("SettingsThemes", !isLoaded && 'fadeThrough')}>
         <PageHeader key={centerTopBar}>
             <div><BackArrow index={2} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
@@ -62,6 +72,27 @@ export default function SettingsThemes() {
                 </div>
                 <div className="Item"><span>Gradient Background in Messages</span>
                     <Switch checked={gradientMessage} setChecked={setGradientMessage} />
+                </div>
+            </div>
+        </div>
+
+        <div className="section">
+            <div className="Items">
+                <div className="Item">
+                    <span>Primary Color</span>
+                    <div className="meta">
+                        <span style={{
+                            backgroundColor: primaryColor?.hex,
+                            width: '32px',
+                            height: '32px',
+                            display: 'block',
+                            borderRadius: '16px',
+                            marginRight: '12px'
+                        }}></span>
+                    </div>
+                    <div className="ColorPicker">
+                        <SliderPicker color={primaryColor} onChange={setPrimaryColor} />
+                    </div>
                 </div>
             </div>
         </div>
