@@ -12,6 +12,7 @@ import { generateChatWithPeer } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 import MessageList from "./MessageList";
 import { ChatBackgroundGradientRendererWebGL } from "../Util/gradientRenderer";
+import VoiceChatInfo from "./MiddleColumn/VoiceChatInfo";
 
 function MiddleColumn({ }) {
     const [composerChat, setComposerChat] = useState()
@@ -93,6 +94,7 @@ function MiddleColumn({ }) {
             <div className="TopBar">
                 <ChatInfo key={activeChat.id.value} />
                 <PinnedMessage />
+                <VoiceChatInfo />
             </div>
             {!thread ? <MessageList MessageListRef={MessageListRef} gradientRenderer={gradientRenderer.current?.gradientRenderer} /> :
                 <Thread ThreadRef={MessageListRef} />}
