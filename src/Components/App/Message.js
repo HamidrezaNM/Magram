@@ -8,7 +8,7 @@ import { socket } from "../../App";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Skeleton, Slide, Zoom } from "@mui/material";
 import { ChatContext } from "./ChatContext";
 import { useDispatch, useSelector } from "react-redux";
-import { handleCall, handleContextMenu, handleDeleteMessageEffect, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleToast, handleUnpinMessage } from "../Stores/UI";
+import { handleCall, handleContextMenu, handleDeleteMessageEffect, handleDialog, handleEditMessage, handleGoToMessage, handlePinMessage, handlePinnedMessage, handleReplyToMessage, handleThread, handleToast, handleUnpinMessage } from "../Stores/UI";
 import MessageContextMenu from "./MessageContextMenu";
 import { EmojiConvertor } from "emoji-js";
 import MessageText, { getMessageText } from "./MessageText";
@@ -299,7 +299,12 @@ function Message({
     }, [data])
 
     const handleDelete = useCallback(() => {
-        setOpenDeleteModal(true); handleContextMenuClose()
+        dispatch(handleDialog({
+            type: 'deleteMessage',
+            message: data
+        }))
+        handleContextMenuClose()
+        // setOpenDeleteModal(true); handleContextMenuClose()
     }, [data])
 
     const handleGetReadParticipants = useCallback(() => {

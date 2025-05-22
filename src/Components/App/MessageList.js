@@ -15,7 +15,7 @@ import ContextMenu from "./MiddleColumn/ContextMenu";
 import { UserContext } from "../Auth/Auth";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 
-const MessageList = forwardRef(({ MessageListRef }, ref) => {
+const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [messagesRenderCount, setMessagesRenderCount] = useState(20)
     const [messageParts, setMessageParts] = useState([])
@@ -91,6 +91,8 @@ const MessageList = forwardRef(({ MessageListRef }, ref) => {
     }, [messages?.length]) // Scroll to Bottom on ReceiveMessage and SendMessage
 
     useEffect(() => {
+        let gradientLoading;
+
         (async () => {
 
             window.RLottie.destroyWorkers() // Temporary
@@ -98,6 +100,12 @@ const MessageList = forwardRef(({ MessageListRef }, ref) => {
             if (activeChat) {
                 setIsLoaded(false)
                 setMessagesRenderCount(20)
+
+                if (gradientRenderer)
+                    gradientLoading = setInterval(() => {
+                        gradientRenderer.toNextPosition()
+                    }, 200);
+
                 if (messages?.length > 0) {
                     isLoading.current = false
                     requestAnimationFrame(() => {
@@ -140,14 +148,21 @@ const MessageList = forwardRef(({ MessageListRef }, ref) => {
                         handlePinnedMessages()
                         readHistory(activeChat.id.value, dispatch)
                     }
+
+                    clearInterval(gradientLoading)
                 } catch (error) {
                     dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
                 }
 
 
                 document.querySelector('.scrollToBottom').style.bottom = document.querySelector('.bottom').clientHeight + 8 + 'px'
+
             }
         })()
+
+        return () => {
+            clearInterval(gradientLoading)
+        }
     }, [activeChat?.id]) // Get Messages on activeChat Changed
 
     const handleLoadMoreMessages = async () => {

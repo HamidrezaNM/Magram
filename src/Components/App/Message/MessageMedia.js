@@ -43,6 +43,8 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
     useEffect(() => {
         const messagesEl = document.querySelector('.MiddleColumn .MessageList')
 
+        if (!messagesEl) return;
+
         let inView = true
 
         const handleHideWhenNotInView = () => {

@@ -497,6 +497,11 @@
 
 .MiddleColumn .MuiSkeleton-root {
     background-color: #ffffff20 !important;
+    backdrop-filter: blur(20px);
+}
+
+.Dark .MiddleColumn .MuiSkeleton-root {
+    backdrop-filter: none;
 }
 
 .loading .css-et6ef6-MuiSkeleton-root::after {

@@ -23,7 +23,7 @@ import TurndownService from "turndown";
 import Picker from "./Composer/Picker";
 import Transition from "../Transition";
 
-function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
+function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
     const [messageInputHandled, setMessageInputHandled] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -313,6 +313,9 @@ function Composer({ chat, thread, scrollToBottom, handleScrollToBottom }) {
             }, 75);
         }, 100);
         messageInputEl.current.children[0].focus();
+
+        if (gradientRenderer)
+            gradientRenderer.toNextPosition()
     }
 
     const handleMessageInput = useCallback(() => {

@@ -70,6 +70,7 @@ const ChatHandler = forwardRef(({ }, ref) => {
         (async () => {
             if (activeChat) {
                 try {
+                    dispatch(setActiveFullChat())
                     if (activeChat.isChannel) {
                         if (!activeChat.fullChat) {
                             const fullChannel = await client.invoke(

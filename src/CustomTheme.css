@@ -151,6 +151,7 @@
 .iOSTheme .MediaItem * {
     top: 0;
     transition: all .3s ease;
+    transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.25);
 }
 
 .iOSTheme .Page .Items.Media {
@@ -502,6 +503,7 @@
         gap: 0;
         background-color: #fffa;
         transition: transform 0.3s ease, opacity 0.2s ease;
+        transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.25), opacity 0.2s ease;
         transform-origin: top !important;
         box-shadow: none;
     }
@@ -563,4 +565,62 @@
     .MenuItem .ParticipantProfiles {
         padding-right: 12px;
     }
+
+    .Dialog {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 16px;
+        font-size: 14px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow: hidden;
+        z-index: 9;
+        user-select: none;
+        transition: all .3s ease;
+    }
+
+    .Dialog.animate {
+        /* opacity: 0; */
+        transform: translateY(100%);
+    }
+
+    .Dialog .button {
+        padding-block: 14px;
+        border-radius: 16px;
+        /* border-top: 1px solid var(--border-color); */
+        color: var(--primary);
+        font-size: 18px;
+        transition: all .3s ease;
+    }
+
+    .Dialog .Content,
+    .Dialog>.button {
+        background-color: rgba(var(--secondary-rgb), .5);
+        border-radius: 10px;
+        backdrop-filter: blur(16px);
+        overflow: hidden;
+    }
+
+    .Dialog .Content .button {
+        border-top: 1px solid var(--active-primary);
+        border-radius: 0;
+    }
+
+    .Dialog>.button {
+        background-color: rgba(var(--secondary-rgb), .9);
+        font-weight: 500;
+    }
+
+    .Dialog .button:hover {
+        background-color: var(--secondary);
+    }
+
+    .Dialog .Content .body {
+        padding: 14px;
+    }
+
 }

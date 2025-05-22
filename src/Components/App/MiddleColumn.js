@@ -11,6 +11,7 @@ import Messages from "./MessageList";
 import { generateChatWithPeer } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 import MessageList from "./MessageList";
+import { ChatBackgroundGradientRendererWebGL } from "../Util/gradientRenderer";
 
 function MiddleColumn({ }) {
     const [composerChat, setComposerChat] = useState()
@@ -19,7 +20,9 @@ function MiddleColumn({ }) {
     const BottomRef = useRef();
     const scrollToBottom = useRef();
     const background = useRef();
-    const canvas = useRef();
+    const gradientCanvasRef = useRef();
+
+    const gradientRenderer = useRef();
 
     const activeChat = useSelector((state) => state.ui.activeChat)
     const chats = useSelector((state) => state.chats.value)
@@ -47,26 +50,43 @@ function MiddleColumn({ }) {
     }, [thread, activeChat])
 
     useEffect(() => {
-        if (!canvas.current) return
+        if (!gradientCanvasRef.current) return
 
-        var ctx = canvas.current.getContext("2d");
+        // var ctx = canvas.current.getContext("2d");
 
-        var length = background.current.clientWidth, angle = 0;
-        var grd = ctx.createLinearGradient(0, 0, 0 + Math.cos(angle) * length, 0 + Math.sin(angle) * length);
+        // var length = background.current.clientWidth, angle = 0;
+        // var grd = ctx.createLinearGradient(0, 0, 0 + Math.cos(angle) * length, 0 + Math.sin(angle) * length);
 
-        grd.addColorStop(0, "#002b29");
-        grd.addColorStop(1, "#3d2471");
-        // grd.addColorStop(.66, "#962fbf");
-        // grd.addColorStop(1, "#4f5bd5");
+        // grd.addColorStop(0, "#002b29");
+        // grd.addColorStop(1, "#3d2471");
+        // // grd.addColorStop(.66, "#962fbf");
+        // // grd.addColorStop(1, "#4f5bd5");
 
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, background.current.clientWidth, background.current.clientHeight);
+        // ctx.fillStyle = grd;
+        // ctx.fillRect(0, 0, background.current.clientWidth, background.current.clientHeight);
+
+        const lightColors = '#9adf5b,#5bdfa1,#65df5b,#00db92';
+        const darkColors = '#fec496,#dd6cb9,#962fbf,#4f5bd5';
+
+        const colors = darkMode ? darkColors : lightColors
+
+        gradientCanvasRef.current?.setAttribute('data-colors', colors);
+        gradientCanvasRef.current.width = background.current.clientWidth;
+        gradientCanvasRef.current.height = background.current.clientHeight;
+        try {
+            const renderer = ChatBackgroundGradientRendererWebGL.create(colors, gradientCanvasRef.current);
+            gradientRenderer.current = renderer;
+        } catch (e) {
+            console.log('error', e)
+            //   const renderer = ChatBackgroundGradientRenderer.create(colors, gradientCanvasRef.current);
+            //   gradientRenderer = renderer;
+        }
     }, [background.current?.clientWidth, maskPattern])
 
     return <>
         <div className={buildClassName("background", "green", maskPattern && "has-mask-pattern")} ref={background}>
-            {maskPattern && <div className="MaskPattern">
-                <canvas width={background.current?.clientWidth} height={background.current?.clientHeight} ref={canvas}></canvas>
+            {<div className={maskPattern && "MaskPattern"}>
+                <canvas style={{ opacity: `${darkMode ? 0.3 : 0.8}` }} width={background.current?.clientWidth} height={background.current?.clientHeight} ref={gradientCanvasRef}></canvas>
             </div>}
         </div>
         {activeChat && <div className="Content">
@@ -74,13 +94,13 @@ function MiddleColumn({ }) {
                 <ChatInfo key={activeChat.id.value} />
                 <PinnedMessage />
             </div>
-            {!thread ? <MessageList MessageListRef={MessageListRef} /> :
+            {!thread ? <MessageList MessageListRef={MessageListRef} gradientRenderer={gradientRenderer.current?.gradientRenderer} /> :
                 <Thread ThreadRef={MessageListRef} />}
             <div ref={scrollToBottom} className="scrollToBottom hidden" onClick={handleScrollToBottom}>
                 <Icon name="arrow_downward" />
             </div>
-            <div className="bottom" ref={BottomRef}>
-                {composerChat && <Composer key={activeChat.id?.value} chat={thread ? composerChat : activeChat} thread={thread} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
+            <div className="bottom" ref={BottomRef} onClick={() => gradientRenderer.current?.gradientRenderer?.toNextPosition()}>
+                {composerChat && <Composer key={activeChat.id?.value} chat={thread ? composerChat : activeChat} thread={thread} gradientRenderer={gradientRenderer.current?.gradientRenderer} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
             </div>
         </div>}
     </>

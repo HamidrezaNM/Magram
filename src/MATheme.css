@@ -3,6 +3,7 @@
     --primary-container: #1e1e1e;
     --secondary: #121212;
     --secondary-text: #aaa;
+    --secondary-rgb: 18, 18, 18;
     /* --on-primary: #272727; */
     --on-primary: #ffffff10;
     /* --active-primary: #373737; */
@@ -29,6 +30,7 @@
     --primary-container: #f1f1f1;
     --secondary: #fff;
     --secondary-text: #888;
+    --secondary-rgb: 255, 255, 255;
     /* --on-primary: #f1f1f1; */
     --on-primary: #00000010;
     /* --active-primary: #eee; */
