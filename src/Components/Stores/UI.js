@@ -26,6 +26,11 @@ export const uiSlice = createSlice({
         callLeftPanelClose: false,
         callMinimal: false,
         callMaximized: false,
+        groupCall: null,
+        userMedia: {
+            stream: null,
+            audioDeviceIndex: 0,
+        },
         deleteEffect: null,
         voiceOutputVolume: 50,
         mediaPreview: null,
@@ -179,6 +184,34 @@ export const uiSlice = createSlice({
         handleCallMaximizedToggle: (state) => {
             state.callMaximized = !state.callMaximized
         },
+        handleGroupCall: (state, action) => {
+            state.groupCall = action.payload
+        },
+        handleGroupCallJoined: (state, action) => {
+            state.groupCall = {
+                ...state.groupCall,
+                connection: action.payload.connection,
+                joined: true,
+                active: true
+            }
+        },
+        handleGroupCallLeft: (state, action) => {
+            state.groupCall = {
+                ...state.groupCall,
+                connection: null,
+                joined: false,
+                active: false
+            }
+        },
+        handleGroupCallActive: (state, action) => {
+            state.groupCall = { ...state.groupCall, active: action.payload }
+        },
+        handleGroupCallParticipants: (state, action) => {
+            state.groupCall = { ...state.groupCall, participants: action.payload }
+        },
+        handleUserMediaStream: (state, action) => {
+            state.userMedia = { ...state.userMedia, stream: action.payload }
+        },
         handleVoiceOutputVolume: (state, action) => {
             state.voiceOutputVolume = action.payload
         },
@@ -255,6 +288,12 @@ export const {
     handleCallLeftPanelToggle,
     handleCallMinimalToggle,
     handleCallMaximizedToggle,
+    handleGroupCall,
+    handleGroupCallJoined,
+    handleGroupCallLeft,
+    handleGroupCallActive,
+    handleGroupCallParticipants,
+    handleUserMediaStream,
     handleVoiceOutputVolume,
     handleMediaPreview,
     handleMediaPreviewClose,

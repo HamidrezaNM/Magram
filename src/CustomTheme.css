@@ -44,6 +44,11 @@
     gap: 0 !important;
 }
 
+.centerTopBar .TopBar .VoiceChatInfo .actions .button {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
 .centerTopBar .BackArrow {
     display: block;
 }

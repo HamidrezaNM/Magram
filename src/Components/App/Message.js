@@ -19,7 +19,7 @@ import { showUserProfile } from "./Pages/UserProfile";
 import MessageCall from "./Message/MessageCall";
 import { getMediaDimensions, getMediaType, isDocumentGIF, isDocumentPhoto } from "../Helpers/messages";
 import { deleteMessage, getMessageReadDate, getMessageReadParticipants, retractVote, saveGIF } from "../Util/messages";
-import { generateChatWithPeer, getChatEntity, getChatIdFromPeer, getChatType } from "../Helpers/chats";
+import { generateChatWithPeer, getChatEntity, getChatIdFromPeer, getChatType, getMessageRights } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
 import FullNameTitle from "../common/FullNameTitle";
@@ -50,7 +50,7 @@ function Message({
 
     const isPinned = useRef(data.pin)
 
-    const emoji = new EmojiConvertor()
+    // const emoji = new EmojiConvertor()
 
     const User = useContext(UserContext);
 
@@ -59,7 +59,6 @@ function Message({
     const MessageEl = useRef()
     const Bubble = useRef()
     const BubbleContent = useRef()
-    const messageText = useRef()
     const messageMedia = useRef()
     const bubbleDimensions = useRef({})
 
@@ -369,7 +368,6 @@ function Message({
                     canForward={true}
                     canDelete={
                         User.id.value === data._senderId?.value ||
-                        data._chat?.adminRights?.deleteMessages ||
                         chatType === 'User' ||
                         chatType === 'Bot'}
                     canReadParticipants={chatType === 'Group' && isOutMessage.current && seen}

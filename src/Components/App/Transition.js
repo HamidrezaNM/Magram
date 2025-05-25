@@ -47,15 +47,15 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
                         })
                     })
                 } else {
-                    if (!element.current) return
+                    if (!element.current || !element.current.firstElementChild) return
 
                     element.current.firstElementChild.style.transition = 'none'
                     element.current.firstElementChild.classList.add('animate', 'showAnim')
                     requestAnimationFrame(() => {
-                        if (!element.current) return
+                        if (!element.current || !element.current.firstElementChild) return
                         element.current.classList.remove('hidden')
                         requestAnimationFrame(() => {
-                            if (!element.current) return
+                            if (!element.current || !element.current.firstElementChild) return
                             element.current.firstElementChild.style.transition = ''
                             element.current.firstElementChild.classList.remove('animate', 'showAnim')
                         });

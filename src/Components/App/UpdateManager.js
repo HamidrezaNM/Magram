@@ -4,7 +4,7 @@ import { Api } from "telegram";
 import ChatHandler from "./Handlers/ChatHandler";
 import { UpdateConnectionState } from "telegram/network";
 import MessagesHandler from "./Handlers/MessagesHandler";
-import { getChatIdFromPeer } from "../Helpers/chats";
+import { getChatIdFromPeer, getPeerId } from "../Helpers/chats";
 
 function UpdateManager() {
     const connectionState = useRef(1)
@@ -60,6 +60,19 @@ function UpdateManager() {
                 messagesHandler.current.onUpdate({
                     type: update.className,
                     ...update
+                })
+                break;
+            case 'UpdateGroupCallParticipants':
+                const participants = update.participants?.map(participant => {
+                    var user = update._entities.get(getPeerId(participant.peer).toString())
+                    console.log('herb', getPeerId(participant.peer), user)
+                    return { ...participant, user }
+                })
+
+                chatHandler.current.onUpdate({
+                    type: update.className,
+                    call: update.call,
+                    participants,
                 })
                 break;
             default:

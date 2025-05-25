@@ -115,6 +115,9 @@
   --color-text: rgb(255, 255, 255);
   --color-white: #ffffff;
   --hover-color: #272727;
+
+  --gradient-blue: linear-gradient(225deg, #4EABF8 14.73%, #3478F6 85.27%);
+  --gradient-green: linear-gradient(230.46deg, #00A3B4 12.94%, #00CB47 86.29%);
 }
 
 :root {
@@ -1465,6 +1468,156 @@ a:hover {
 
 .MusicPlayer .Controls {
   display: flex;
+}
+
+.VoiceChat {
+  max-width: 420px;
+  min-height: 480px;
+  flex: 1 1;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 16px 16px 0 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.VoiceChat.animate {
+  transform: translateY(100%);
+}
+
+.VoiceChat .TopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+}
+
+.VoiceChat .TopBar .title {
+  font-weight: 500;
+}
+
+.VoiceChat .TopBar .subtitle {
+  font-size: 14px;
+  color: var(--secondary-text);
+}
+
+.VoiceChat .Content {
+  flex: 1 auto;
+}
+
+.VoiceChat .Participants {
+  border-radius: 12px;
+  background-color: var(--primary-container);
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.VoiceChat .Participants .Participant {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 54px;
+  padding: 0 8px;
+  user-select: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.VoiceChat .Participants .Participant:hover {
+  background-color: var(--on-primary);
+}
+
+.VoiceChat .Participants .Participant .body {
+  flex: 1 auto;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.VoiceChat .Participants .Participant .title {
+  font-weight: 500;
+}
+
+.VoiceChat .Participants .Participant .subtitle {
+  color: var(--primary);
+}
+
+.VoiceChat .Participants .Participant .subtitle.live {
+  color: #00dd00;
+}
+
+.VoiceChat .Bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 8px;
+}
+
+.VoiceChat .Bottom .button {
+  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+
+.VoiceChat .Bottom .button .icon {
+  background-color: rgba(var(--primary-rgb), .3);
+  padding: 12px;
+  border-radius: 50%;
+}
+
+.VoiceChat .Bottom .button.mic .RLottie {
+  border-radius: 50%;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.VoiceChat .Bottom .button.mic .RLottie::after,
+.VoiceChat .Bottom .button.mic .RLottie::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transition: all .3s ease;
+}
+
+.VoiceChat .Bottom .button.mic .RLottie::before {
+  background: var(--gradient-blue);
+}
+
+.VoiceChat .Bottom .button.mic .RLottie::after {
+  background: var(--gradient-green);
+  opacity: 0;
+}
+
+.VoiceChat .Bottom .button.mic.live .RLottie::after {
+  opacity: 1;
+}
+
+.VoiceChat .Bottom .button.mic .title {
+  min-width: 80px;
+  min-height: 20px;
+}
+
+.VoiceChat .Bottom .button.leave .icon {
+  background-color: rgba(200, 0, 0, .3);
 }
 
 .RLottie {

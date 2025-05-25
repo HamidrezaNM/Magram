@@ -21,13 +21,13 @@ export function getPeerId(peer) {
     switch (peer.className) {
         case 'PeerUser':
         case 'InputPeerUser':
-            return peer.userId.value
+            return Number(peer.userId)
         case 'PeerChat':
         case 'InputPeerChat':
-            return peer.chatId.value
+            return Number(peer.chatId)
         case 'PeerChannel':
         case 'InputPeerChannel':
-            return peer.channelId.value
+            return Number(peer.channelId)
         default:
             break;
     }
@@ -78,6 +78,46 @@ export function getChatSubtitle(chat, type) {
         default:
             return ''
     }
+}
+
+export function isParticipantAdmin(participant) {
+    if (!participant) return false;
+
+    if (participant.rank) return true
+
+    if (participant.className === 'ChannelParticipantAdmin' ||
+        participant.className === 'ChatParticipantAdmin') return true
+
+    if (participant.className === 'ChannelParticipantCreator' ||
+        participant.className === 'ChatParticipantCreator') return true
+}
+
+export function getParticipantRank(participant) {
+    if (!participant) return;
+
+    if (participant.rank) return participant.rank
+
+    if (participant.className === 'ChannelParticipantAdmin' ||
+        participant.className === 'ChatParticipantAdmin') return 'Admin'
+
+    if (participant.className === 'ChannelParticipantCreator' ||
+        participant.className === 'ChatParticipantCreator') return 'Owner'
+}
+
+export function getParticipant(userId, chat) {
+    return chat?.participants?.participants?.find(item => Number(item.id) === Number(userId))?.participant
+}
+
+export function getParticipantRights(entity) {
+    if (!entity) return;
+
+    if (entity.creator) return {
+        deleteMessages: true,
+        pinMessages: true,
+        banUsers: true
+    }
+
+    if (entity.adminRights) return entity.adminRights
 }
 
 export const getDeleteChatText = (chat) => {

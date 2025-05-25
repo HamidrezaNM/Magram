@@ -14,6 +14,8 @@ export function getUserFullName(user) {
         return 'Deleted Account';
     }
 
+    if (user.title) return user.title;
+
     if (user.firstName && user.lastName) {
         return `${user.firstName} ${user.lastName}`;
     }

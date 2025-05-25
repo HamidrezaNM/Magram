@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
 import { chatAdded, handleTypingStatus, removeTypingStatus, setFullChat, updateChatRead, updateChatUserStatus, updateTypingStatus } from "../../Stores/Chats";
-import { handleToast, setActiveChat, setActiveFullChat } from "../../Stores/UI";
+import { handleGroupCallParticipants, handleToast, setActiveChat, setActiveFullChat } from "../../Stores/UI";
 import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
 import { returnBigInt } from "telegram/Helpers";
 
@@ -58,6 +58,10 @@ const ChatHandler = forwardRef(({ }, ref) => {
                             console.log(error)
                         }
                         break
+                    case 'UpdateGroupCallParticipants':
+                        console.log(update.participants)
+                        dispatch(handleGroupCallParticipants(update.participants))
+                        break;
                     default:
                         break;
                 }

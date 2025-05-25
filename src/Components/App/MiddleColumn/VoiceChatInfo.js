@@ -1,13 +1,20 @@
-import { memo, useEffect } from "react"
-import { useSelector } from "react-redux"
+import { memo, useEffect, useRef, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { TGCalls } from "../../Util/Calls/TGCalls";
 import { client } from "../../../App";
 import { Api } from "telegram";
+import { Profile } from "../common";
+import { getPeerId } from "../../Helpers/chats";
+import Transition from "../Transition";
+import { handleGroupCall, handleGroupCallJoined, handleUserMedia, handleUserMediaStream } from "../../Stores/UI";
 
 function VoiceChatInfo({ }) {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
+    const groupCall = useSelector((state) => state.ui.groupCall)
 
-    // const peer = new RTCPeerConnection()
+    const dispatch = useDispatch()
+
+    const tgcalls = useRef()
 
     const joinVoiceChat = async (payload) => {
         let params;
@@ -29,17 +36,17 @@ function VoiceChatInfo({ }) {
                             },
                         ],
                         ssrc: payload.source,
-                        'ssrc-groups': [
-                            {
-                                semantics: 'FID',
-                                sources: payload.sourceGroup,
-                            },
-                        ],
+                        // 'ssrc-groups': [
+                        //     {
+                        //         semantics: 'FID',
+                        //         sources: payload.sourceGroup,
+                        //     },
+                        // ],
                     }),
                 }),
                 joinAs: params?.joinAs || 'me',
-                muted: params?.muted || false,
-                videoStopped: params?.videoStopped || false,
+                muted: params?.muted || true,
+                videoStopped: params?.videoStopped || true,
                 inviteHash: params?.inviteHash,
             }),
         );
@@ -56,43 +63,79 @@ function VoiceChatInfo({ }) {
     }
 
     const handleJoin = async () => {
-        const tgcalls = new TGCalls();
+        tgcalls.current = new TGCalls();
 
-        tgcalls.joinVoiceCall = async payload => {
+        tgcalls.current.joinVoiceCall = async payload => {
             // Somehow join voice call and get transport
-            console.log('transoirtnmrt')
 
             return await joinVoiceChat(payload);
         };
 
-        // const audioStream = new Stream(createReadStream('audio.raw'));
-        // const videoStream = new Stream(createReadStream('video.raw'), {
-        //     video: true,
-        // });
-        // navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-        // .then(stream => {
-        //     // localVideo.srcObject = stream;
-        //     stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
-        // })
-        // .catch(error => console.error('Error accessing media devices.', error));
+        const ssrcs = groupCall.participants.map(participant => { return { ssrc: participant.source } })
 
-        // audioStream.on('finish', () => {
-        //     console.log('Audio finished streaming');
-        // });
         console.log('tgcalls start')
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-            .then((stream) => {
+            .then(async (stream) => {
                 console.log('get user media')
                 const [audioTrack] = stream.getAudioTracks();
                 // const [videoTrack] = stream.getVideoTracks();
-                return tgcalls.start(audioTrack);
+
+                dispatch(handleUserMediaStream(stream))
+
+                const connection = await tgcalls.current.start(audioTrack, undefined, ssrcs);
+
+                dispatch(handleGroupCallJoined({ connection: { ...connection, tgcalls: tgcalls.current } }))
             });
     }
 
+    useEffect(() => {
+        (async () => {
+            if (!fullChat?.call) return
+            const groupCall = await client.invoke(new Api.phone.GetGroupCall({
+                call: fullChat?.call,
+                // limit: 3
+            }))
 
-    return fullChat?.call && <div className="VoiceChatInfo">
-        <div className="Join" onClick={handleJoin}>Join</div>
-    </div>
+            const participants = groupCall.participants?.map(participant => {
+                var user = groupCall.users.find(item => Number(item.id) === getPeerId(participant.peer))
+                console.log(getPeerId(participant.peer))
+                return { ...participant, user }
+            })
+
+            const result = { ...groupCall, participants }
+
+            dispatch(handleGroupCall(result))
+            console.log(result)
+        })()
+    }, [fullChat?.call])
+
+    return <Transition state={fullChat?.call && groupCall?.participants.length >= 0}>
+        <div className="VoiceChatInfo">
+            <div className="info">
+                <div className="meta ParticipantProfiles">
+                    {groupCall && groupCall.participants?.map((participant) => {
+                        return <Profile
+                            key={Number(participant?.peer?.userId)}
+                            size={36}
+                            entity={participant?.user}
+                            id={participant?.user?.id?.value}
+                            name={participant?.user?.firstName} />
+                    })}
+                </div>
+                <div className="FlexColumn">
+                    <div className="title">
+                        {groupCall?.call?.title ?? 'Voice Chat'}
+                    </div>
+                    <div className="subtitle">
+                        {groupCall?.participants.length} participants
+                    </div>
+                </div>
+            </div>
+            <div className="actions">
+                <div className="Join button" onClick={handleJoin}>Join</div>
+            </div>
+        </div>
+    </Transition>
 }
 
 export default memo(VoiceChatInfo)

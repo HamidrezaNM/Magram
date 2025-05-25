@@ -10,7 +10,7 @@ import { goToMessage } from "./Home";
 import { Api } from "telegram";
 import { readHistory } from "../Util/messages";
 import buildClassName from "../Util/buildClassName";
-import { getChatType } from "../Helpers/chats";
+import { getChatType, getParticipant, getParticipantRights } from "../Helpers/chats";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { UserContext } from "../Auth/Auth";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
@@ -21,7 +21,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const [messageParts, setMessageParts] = useState([])
 
     const activeChat = useSelector((state) => state.ui.activeChat)
-    const fullChat = useSelector((state) => state.ui.activeFullChat)
+    const botInfo = useSelector((state) => state.ui.activeFullChat?.botInfo)
     const messages = useSelector((state) => state.messages.value[activeChat.id.value])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
@@ -37,6 +37,9 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const loadMore = useRef();
 
     const chatType = useMemo(() => getChatType(activeChat.entity), [activeChat?.entity])
+
+    // const permissions = useMemo(() => getParticipantRights(getParticipant(User.id, activeChat)), [activeChat?.participants])
+
     const messageStartIndex = messages?.length - messagesRenderCount > 0 ? messages?.length - messagesRenderCount : 0
 
     const loadMoreObserver = useIntersectionObserver({ threshold: 0 })
@@ -376,7 +379,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
                         <div className="message-text">
                             {getChatType(activeChat?.entity) === 'Bot' ?
                                 <span>
-                                    {fullChat?.botInfo?.description}
+                                    {botInfo?.description}
                                 </span>
                                 : <span>No messages here yet...</span>
                             }

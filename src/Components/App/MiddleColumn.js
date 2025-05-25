@@ -4,10 +4,8 @@ import PinnedMessage from "./MiddleColumn/PinnedMessage";
 import Thread from "./MiddleColumn/Thread";
 import { Icon } from "./common";
 import { client } from "../../App";
-import { Api } from "telegram";
 import Composer from "./MiddleColumn/Composer";
 import { useSelector } from "react-redux";
-import Messages from "./MessageList";
 import { generateChatWithPeer } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
 import MessageList from "./MessageList";
@@ -92,9 +90,9 @@ function MiddleColumn({ }) {
         </div>
         {activeChat && <div className="Content">
             <div className="TopBar">
-                <ChatInfo key={activeChat.id.value} />
+                <ChatInfo key={'chat-info-' + activeChat.id.value} />
                 <PinnedMessage />
-                <VoiceChatInfo />
+                <VoiceChatInfo key={'voice-chat-info-' + activeChat.id.value} />
             </div>
             {!thread ? <MessageList MessageListRef={MessageListRef} gradientRenderer={gradientRenderer.current?.gradientRenderer} /> :
                 <Thread ThreadRef={MessageListRef} />}
@@ -102,7 +100,7 @@ function MiddleColumn({ }) {
                 <Icon name="arrow_downward" />
             </div>
             <div className="bottom" ref={BottomRef} onClick={() => gradientRenderer.current?.gradientRenderer?.toNextPosition()}>
-                {composerChat && <Composer key={activeChat.id?.value} chat={thread ? composerChat : activeChat} thread={thread} gradientRenderer={gradientRenderer.current?.gradientRenderer} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
+                {composerChat && <Composer key={'composer-' + activeChat.id?.value} chat={thread ? composerChat : activeChat} thread={thread} gradientRenderer={gradientRenderer.current?.gradientRenderer} scrollToBottom={scrollToBottom} handleScrollToBottom={handleScrollToBottom} />}
             </div>
         </div>}
     </>

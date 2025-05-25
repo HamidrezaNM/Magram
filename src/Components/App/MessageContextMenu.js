@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MenuItem from "../UI/MenuItem";
 import { Profile } from "./common";
 import { formatTime } from "../Util/dateFormat";
 import { getDate } from "./Message";
+import { useSelector } from "react-redux";
+import { getParticipantRights } from "../Helpers/chats";
 
 export default function MessageContextMenu({
     canReply,
@@ -32,6 +34,14 @@ export default function MessageContextMenu({
     readParticipants,
     readDate
 }) {
+    const activeChat = useSelector((state) => state.ui.activeChat)
+
+    const permissions = useMemo(() => getParticipantRights(activeChat?.entity), [activeChat?.entity])
+
+    if (!canDelete) {
+        canDelete = permissions?.deleteMessages
+    }
+
     return <>
         {canReply && <MenuItem icon="reply" title="Reply" onClick={onReply} />}
         {canCopy && <MenuItem icon="content_copy" title="Copy" onClick={onCopy} />}

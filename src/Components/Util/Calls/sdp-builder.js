@@ -42,7 +42,7 @@ export class SdpBuilder {
         this.add('s=-');
         this.add('t=0 0');
         this.add(`a=group:BUNDLE 0 1`);
-        this.add('a=ice-lite');
+        // this.add('a=ice-lite');
     }
 
     addTransport(transport) {
@@ -62,7 +62,7 @@ export class SdpBuilder {
         }
     }
 
-    addSsrcEntry(transport) {
+    addSsrcEntry(transport, ssrcs) {
         // Audio codecs
         this.add(`m=audio 1 RTP/SAVPF 111 126`);
         this.add('c=IN IP4 0.0.0.0');
@@ -75,8 +75,13 @@ export class SdpBuilder {
         this.add('a=rtcp-mux');
         this.add('a=rtcp-fb:111 transport-cc');
         this.add('a=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level');
-        this.add('a=recvonly');
+        this.add('a=sendrecv');
         // Audio codecs
+
+        for (const { ssrc } of ssrcs) {
+            this.add(`a=ssrc:${ssrc} cname:telegramUser${ssrc}`);
+            this.add(`a=ssrc:${ssrc} msid:stream${ssrc} track${ssrc}`);
+        }
 
         // Video codecs
         this.add(`m=video 1 RTP/SAVPF 100 101 102 103`);
@@ -113,7 +118,7 @@ export class SdpBuilder {
 
     addConference(conference) {
         this.addHeader(conference.sessionId);
-        this.addSsrcEntry(conference.transport);
+        this.addSsrcEntry(conference.transport, conference.ssrcs);
     }
 
     static fromConference(conference) {

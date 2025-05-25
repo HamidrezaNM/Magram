@@ -15,7 +15,7 @@ import { client } from "../../../App";
 import FullNameTitle from "../../common/FullNameTitle";
 import { setActiveChat } from "../../Stores/UI";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
-import { deleteChat, generateChatWithPeer, getChatSubtitle, getChatType, getDeleteChatText } from "../../Helpers/chats";
+import { deleteChat, generateChatWithPeer, getChatSubtitle, getChatType, getDeleteChatText, getParticipantRank } from "../../Helpers/chats";
 import Tabs from "../../UI/Tabs";
 import buildClassName from "../../Util/buildClassName";
 import TabContent from "../../UI/TabContent";
@@ -164,11 +164,9 @@ export default function ChatProfile() {
                                             <div className="title"><FullNameTitle chat={item} /></div>
                                             <div className="subtitle">{getUserStatus(item.status, item)}</div>
                                         </div>
-                                        {item.participant?.adminRights &&
+                                        {item.participant &&
                                             <div className="meta">
-                                                {item.participant?.rank ??
-                                                    item.participant?.className === 'ChannelParticipantCreator' ?
-                                                    'Owner' : 'Admin'}
+                                                {getParticipantRank(item.participant)}
                                             </div>}
                                     </div>
                                 ))}

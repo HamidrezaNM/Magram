@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import '@thorvg/lottie-player';
 
-function RLottie({ sticker, width = 160, height = 160, autoplay = true, loop = false }) {
+function RLottie({ sticker, fileId, width = 160, height = 160, autoplay = true, loop = false, fromFrame, toFrame }) {
     // const [data, setData] = useState()
 
     const player = useRef()
@@ -12,6 +12,11 @@ function RLottie({ sticker, width = 160, height = 160, autoplay = true, loop = f
         (async () => {
             const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker + '.json')
             const data = await res.json()
+
+            if (fromFrame) data.ip = fromFrame
+            if (toFrame) data.op = toFrame
+
+            console.log(fromFrame, toFrame)
             // const player = document.querySelector('lottie-player');
 
             // setData(window.URL.createObjectURL(_data))
@@ -26,7 +31,7 @@ function RLottie({ sticker, width = 160, height = 160, autoplay = true, loop = f
                 loop,
                 autoplay,
                 stringData: JSON.stringify(data),
-                fileId: sticker,
+                fileId: fileId ?? sticker,
                 width,
                 height
             };
@@ -37,7 +42,7 @@ function RLottie({ sticker, width = 160, height = 160, autoplay = true, loop = f
                 window.RLottie.destroy(anim.current)
             }
         })()
-    }, [sticker])
+    }, [sticker, fromFrame])
 
     return <div className="RLottie" ref={player}></div>
     // return <div className="RLottie">

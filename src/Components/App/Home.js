@@ -295,6 +295,7 @@ function Home() {
                     <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
                         <MiddleColumn />
                     </div>
+                    <VoiceChat />
 
                     <MediaPreview />
 

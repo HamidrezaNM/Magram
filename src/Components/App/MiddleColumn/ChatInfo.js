@@ -138,6 +138,7 @@ function ChatInfo() {
             <Menu icon="more_vert">
                 <DropdownMenu className="top right withoutTitle">
                     {chatType === 'Channel' && fullChat?.linkedChatId && <MenuItem icon="chat" title="View Discussion" onClick={viewDiscussion} />}
+                    {chatType === 'Group' && fullChat?.call && <MenuItem icon="voice_chat" title="Join Voice Chat" onClick={viewDiscussion} />}
                     <MenuItem icon="logout" title={getDeleteChatText(activeChat.entity)} className="danger" onClick={() => setOpenDeleteChatModal(true)} />
                 </DropdownMenu>
             </Menu>
