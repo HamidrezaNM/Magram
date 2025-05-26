@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
 import DropdownMenu from "../../UI/DropdownMenu"
 import Menu from "../../UI/Menu"
 import { Icon, Profile } from "../common"
@@ -8,10 +8,11 @@ import Transition from "../Transition"
 import RLottie from "../../common/RLottie"
 import buildClassName from "../../Util/buildClassName"
 import TextTransition from "../../common/TextTransition"
-import { handleGroupCallActive, handleGroupCallLeft } from "../../Stores/UI"
+import { handleGroupCallActive, handleGroupCallLeft, handleGroupCallParticipants, handleToast } from "../../Stores/UI"
 import { client } from "../../../App"
 import { Api } from "telegram"
-import { returnBigInt } from "telegram/Helpers"
+import { getUserFullName } from "../../Helpers/users"
+import { UserContext } from "../../Auth/Auth"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
@@ -20,12 +21,19 @@ function VoiceChat({ }) {
     const groupCall = useSelector(state => state.ui.groupCall)
     const participants = groupCall?.participants
 
+    const User = useContext(UserContext)
+
+    const oldParticipants = useRef(participants)
+    const micRef = useRef()
+
     const dispatch = useDispatch()
 
     const micSegments = {
         unmute: [21, 42],
         mute: [43, 63]
     }
+
+    const handleClose = () => dispatch(handleGroupCallActive(false))
 
     const leaveGroupCall = async () => {
         console.log('leave group call', groupCall?.call, groupCall?.connection?.source)
@@ -41,6 +49,15 @@ function VoiceChat({ }) {
                 source: Number(groupCall.connection.source)
             }))
 
+            dispatch(handleGroupCallParticipants([
+                new Api.GroupCallParticipant({
+                    self: true,
+                    left: true,
+                    peer: new Api.PeerUser({
+                        userId: User.id
+                    })
+                })]))
+
             console.log(result)
         } catch (error) {
             console.log('Failed to LeaveGroupCall', error)
@@ -49,7 +66,6 @@ function VoiceChat({ }) {
         dispatch(handleGroupCallLeft())
         groupCall.connection.tgcalls.close()
         stopUserMedia(userMedia?.stream)
-
     }
 
     function stopUserMedia(stream) {
@@ -67,12 +83,70 @@ function VoiceChat({ }) {
             if (audioTrack) {
                 audioTrack.enabled = !mute
             }
+
+            // if (micRef.current)
+            //     if (mute)
+            //         micRef.current.playFrames(micSegments.mute[0], micSegments.mute[1])
+            //     else
+            //         micRef.current.playFrames(micSegments.unmute[0], micSegments.unmute[1])
         }
     }, [mute])
 
+    function addParticipants(newlyAdded) {
+        console.log("Joined Participants:", newlyAdded);
+        newlyAdded.forEach(participant => {
+            dispatch(handleToast({ profile: participant.user, title: `${getUserFullName(participant.user)} joined the voice chat.` }))
+        })
+    }
+
+    function removeParticipants(leftParticipants) {
+        console.log("Left Participants:", leftParticipants);
+    }
+
+    function updateParticipants(newParticipants) {
+        if (!Array.isArray(newParticipants)) {
+            newParticipants = [];
+            console.log('new participants is not array')
+        }
+
+        if (!oldParticipants.current?.length) {
+            console.log('old participants is empty')
+            addParticipants(newParticipants)
+            oldParticipants.current = [...newParticipants]
+            return;
+        }
+
+        const addedParticipants = newParticipants.filter(
+            (newP) => !oldParticipants.current.some((oldP) => oldP.id === newP.id || !oldP.left)
+        );
+
+        const removedParticipants = oldParticipants.current.filter(
+            (oldP) => !newParticipants.some((newP) => newP.id === oldP.id && !newP.left)
+        );
+
+        console.log(addedParticipants, removedParticipants)
+
+        if (addedParticipants.length > 0) {
+            addParticipants(addedParticipants);
+        }
+
+        if (removedParticipants.length > 0) {
+            removeParticipants(removedParticipants);
+        }
+
+        oldParticipants.current = [...newParticipants];
+    }
+
+    useEffect(() => {
+        if (participants) {
+            console.log('update participants', participants, oldParticipants.current)
+            updateParticipants(participants)
+        }
+    }, [participants])
+
     return groupCall?.call && <Transition state={groupCall.active} eachElement>
-        <div className="bg VoiceChatBG" onClick={() => dispatch(handleGroupCallActive(false))}></div>
-        <div className="VoiceChat">
+        <div className="bg VoiceChatBG" onClick={handleClose}></div>
+        <div className="VoiceChat animate">
             <div className="TopBar">
                 <div className="">
                     <Menu icon="more_horiz">
@@ -86,22 +160,24 @@ function VoiceChat({ }) {
                     <div className="subtitle">{participants.length} participants</div>
                 </div>
                 <div className="meta">
-                    <Icon name="close" />
+                    <Icon name="close" onClick={handleClose} />
                 </div>
             </div>
             <div className="Content">
                 <div className="Participants">
                     {participants.filter(participant => !participant.left).map(participant =>
-                        <div className="Participant">
+                        <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
                             <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} />
                             <div className="body">
                                 <div className="title">
                                     <FullNameTitle chat={participant.user} />
                                 </div>
-                                <div className="subtitle">listening</div>
+                                <div className="subtitle">
+                                    <TextTransition text={participant.muted ? 'listening' : 'speaking'} />
+                                </div>
                             </div>
                             <div className="meta">
-                                <Icon name="mic_off" />
+                                <Icon name={participant.muted ? 'mic_off' : 'mic'} />
                             </div>
                         </div>
                     )}

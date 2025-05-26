@@ -139,7 +139,7 @@ export class TGCalls extends EventTarget {
         this.conference = {
             sessionId,
             transport: joinVoiceCallResult.transport,
-            ssrcs: [...ssrcs],
+            ssrcs: [],
         };
 
         // Setting remoteSdp
@@ -183,15 +183,18 @@ export class TGCalls extends EventTarget {
             return;
         }
 
-        this.conference.ssrcs.push({ ssrc, ssrcGroup });
+        if (!this.conference.ssrcs.includes(ssrc)) {
+            this.conference.ssrcs.push(ssrc);
 
-        const updatedSdp = SdpBuilder.fromConference(this.conference);
-        console.log('Updating remote SDP with new participant:', ssrc);
+            const updatedSdp = SdpBuilder.fromConference(this.conference);
+            console.log('Updating remote SDP with new participant:', ssrc);
 
-        await this.connection.setRemoteDescription({
-            type: 'answer',
-            sdp: updatedSdp,
-        });
+            await this.connection.setRemoteDescription({
+                type: 'answer',
+                sdp: updatedSdp,
+            });
+        }
+
     }
 
     async removeRemoteParticipant(ssrc) {

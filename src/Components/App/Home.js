@@ -61,6 +61,7 @@ import buildClassName from "../Util/buildClassName";
 import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import DeleteEffect from "../common/DeleteEffect";
+import CallHeader from "./CallHeader";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -94,6 +95,7 @@ function Home() {
     const showCall = useSelector((state) => state.ui.showCall)
     const callMinimal = useSelector((state) => state.ui.callMinimal)
     const callMaximized = useSelector((state) => state.ui.callMaximized)
+    const groupCallJoined = useSelector((state) => state.ui.groupCall?.joined)
     const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
     const background = useSelector((state) => state.ui.background)
     const darkMode = useSelector((state) => state.settings.darkMode)
@@ -295,7 +297,8 @@ function Home() {
                     <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
                         <MiddleColumn />
                     </div>
-                    <VoiceChat />
+                    {groupCallJoined && <VoiceChat />}
+                    {groupCallJoined && <CallHeader />}
 
                     <MediaPreview />
 

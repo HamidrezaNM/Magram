@@ -19,7 +19,7 @@ export function parseSdp(sdp) {
         setup: lookup('a=setup:'),
         pwd: lookup('a=ice-pwd:'),
         ufrag: lookup('a=ice-ufrag:'),
-        source: rawSource ? Number(rawSource.split(' ')[0]) : null,
+        source: rawSource ? Math.abs(Number(rawSource.split(' ')[0])) : null,
         sourceGroup: rawSourceGroup
             ? rawSourceGroup.split(' ').map(Number)
             : null,

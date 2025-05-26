@@ -140,6 +140,7 @@ export const uiSlice = createSlice({
             } else {
                 state.activeChat = action.payload
             }
+            state.activeFullChat = undefined
         },
         updateActiveChatDefaultBannedRights: (state, action) => {
             state.activeChat = {
@@ -207,7 +208,19 @@ export const uiSlice = createSlice({
             state.groupCall = { ...state.groupCall, active: action.payload }
         },
         handleGroupCallParticipants: (state, action) => {
-            state.groupCall = { ...state.groupCall, participants: action.payload }
+            if (state.groupCall?.participants) {
+                action.payload.forEach((newP) => {
+                    const existingIndex = state.groupCall.participants.findIndex(
+                        (p) => Number(p.peer.userId) === Number(newP.peer.userId)
+                    );
+
+                    if (existingIndex !== -1) {
+                        state.groupCall.participants[existingIndex] = { ...state.groupCall.participants[existingIndex], ...newP };
+                    } else {
+                        state.groupCall = { ...state.groupCall, participants: [...state.groupCall.participants, newP] }
+                    }
+                });
+            }
         },
         handleUserMediaStream: (state, action) => {
             state.userMedia = { ...state.userMedia, stream: action.payload }
@@ -245,7 +258,7 @@ export const uiSlice = createSlice({
                 state.musicPlayer.playing = !state.musicPlayer.playing
         },
         handleToast: (state, action) => {
-            state.toasts.push({ icon: action.payload.icon, title: action.payload.title })
+            state.toasts.push({ icon: action.payload.icon, profile: action.payload.profile, title: action.payload.title })
         },
         handleDialog: (state, action) => {
             state.dialogs.push(action.payload)

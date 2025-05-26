@@ -68,7 +68,7 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
         }
     }, [isActive])
 
-    return <>{(isActive || alwaysShow) && <div className="Transition hidden" ref={element}>
+    return (isActive || alwaysShow) && <div className="Transition hidden" ref={element}>
         {children}
-    </div>}</>
+    </div>
 }

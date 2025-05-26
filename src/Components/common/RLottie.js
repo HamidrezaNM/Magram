@@ -1,20 +1,47 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from "react";
 import '@thorvg/lottie-player';
 
-function RLottie({ sticker, fileId, width = 160, height = 160, autoplay = true, loop = false, fromFrame, toFrame }) {
+const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autoplay = true, loop = false, fromFrame, toFrame }, ref) => {
     // const [data, setData] = useState()
 
     const player = useRef()
 
     const anim = useRef()
+    const data = useRef()
+
+    useImperativeHandle(ref, () => ({
+        playFrames(fromFrame, toFrame) {
+            window.RLottie.destroy(anim.current)
+            console.log('play frames', fromFrame, toFrame)
+
+            if (fromFrame) data.current.ip = fromFrame
+            if (toFrame) data.current.op = toFrame
+
+            const options = {
+                container: player.current,
+                loop,
+                autoplay,
+                stringData: JSON.stringify(data.current),
+                fileId: fileId ?? sticker,
+                width,
+                height
+            };
+            window.RLottie.loadAnimation(options, _anim => {
+                console.log('play animation', fromFrame, toFrame)
+                anim.current = _anim
+            });
+        }
+    }))
 
     useEffect(() => {
         (async () => {
-            const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker + '.json')
-            const data = await res.json()
+            if (!data.current) {
+                const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker + '.json')
+                data.current = await res.json()
+            }
 
-            if (fromFrame) data.ip = fromFrame
-            if (toFrame) data.op = toFrame
+            if (fromFrame) data.current.ip = fromFrame
+            if (toFrame) data.current.op = toFrame
 
             console.log(fromFrame, toFrame)
             // const player = document.querySelector('lottie-player');
@@ -30,7 +57,7 @@ function RLottie({ sticker, fileId, width = 160, height = 160, autoplay = true, 
                 container: player.current,
                 loop,
                 autoplay,
-                stringData: JSON.stringify(data),
+                stringData: JSON.stringify(data.current),
                 fileId: fileId ?? sticker,
                 width,
                 height
@@ -55,6 +82,6 @@ function RLottie({ sticker, fileId, width = 160, height = 160, autoplay = true, 
     //     >
     //     </lottie-player>}
     // </div>
-}
+})
 
 export default memo(RLottie)

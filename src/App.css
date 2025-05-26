@@ -332,6 +332,36 @@
   top: 0;
   left: 0;
   overflow: hidden;
+  transition: margin-top .3s ease;
+}
+
+.Home:has(.header) .LeftColumn,
+.Home:has(.header) .MiddleColumn {
+  margin-top: 36px !important;
+}
+
+.Home:has(.header.hideAnim) .LeftColumn,
+.Home:has(.header.hideAnim) .MiddleColumn {
+  margin-top: 0px !important;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 36px;
+  display: flex;
+  color: #fff;
+  font-weight: 500;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.header.animate {
+  transform: translateY(-100%);
 }
 
 .UserDetails {
@@ -371,7 +401,7 @@
     max-width: none;
     border-radius: 0;
     /* transform: translate3d(-5rem, 0, 0); */
-    transition: transform .2s ease;
+    transition: transform .2s ease, margin-top .3s ease;
   }
 
   .MiddleColumn {
@@ -1471,26 +1501,27 @@ a:hover {
 }
 
 .VoiceChat {
-  max-width: 420px;
-  min-height: 480px;
   flex: 1 1;
+  max-width: 420px;
   background-color: var(--background);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 12px;
-  border-radius: 16px 16px 0 0;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  margin-left: 12px;
+  border-radius: 20px 0 0 20px;
   z-index: 5;
   overflow: hidden;
   transition: all .3s ease;
 }
 
 .VoiceChat.animate {
-  transform: translateY(100%);
+  margin-right: -420px;
+  margin-left: 0;
+}
+
+.VoiceChatBG {
+  display: none;
 }
 
 .VoiceChat .TopBar {
@@ -1526,9 +1557,10 @@ a:hover {
   align-items: center;
   height: 54px;
   padding: 0 8px;
-  user-select: none;
   border-radius: 12px;
+  cursor: pointer;
   overflow: hidden;
+  user-select: none;
   transition: all .3s ease;
 }
 
@@ -1552,8 +1584,42 @@ a:hover {
   color: var(--primary);
 }
 
-.VoiceChat .Participants .Participant .subtitle.live {
+.VoiceChat .Participants .Participant .subtitle .TextTransition {
+  align-items: flex-start;
+}
+
+.VoiceChat .Participants .Participant .subtitle,
+.VoiceChat .Participants .Participant .meta {
+  transition: all .3s ease;
+}
+
+.VoiceChat .Participants .Participant.live .subtitle,
+.VoiceChat .Participants .Participant.live .meta {
   color: #00dd00;
+}
+
+.CallHeader {
+  background: var(--gradient-green);
+  /* width: calc(100% - 420px - 12px); */
+  padding-left: 8px;
+  text-transform: uppercase;
+}
+
+.CallHeader .ParticipantProfiles .profile {
+  border: 2px solid #fff;
+  border: none;
+}
+
+.TextTransition .Transition.hidden {
+  visibility: visible;
+}
+
+.TextTransition .Transition.hidden span {
+  visibility: hidden;
+}
+
+.TextTransition .Transition.hidden .prev {
+  visibility: visible !important;
 }
 
 .VoiceChat .Bottom {
@@ -1570,6 +1636,28 @@ a:hover {
   align-items: center;
   display: flex;
   cursor: pointer;
+  touch-action: none;
+}
+
+.VoiceChat .Bottom .button .icon {
+  position: relative;
+  overflow: hidden;
+}
+
+.VoiceChat .Bottom .button .icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background-color: var(--on-primary);
+  transition: all .3s ease;
+}
+
+.VoiceChat .Bottom .button .icon:hover::after {
+  opacity: 1;
 }
 
 .VoiceChat .Bottom .button .icon {
@@ -1584,6 +1672,8 @@ a:hover {
   position: relative;
   overflow: hidden;
   transition: all .3s ease;
+  width: 128px;
+  height: 128px;
 }
 
 .VoiceChat .Bottom .button.mic .RLottie::after,
@@ -1691,6 +1781,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 1.2rem;
 }
 
 .TextTransition span {

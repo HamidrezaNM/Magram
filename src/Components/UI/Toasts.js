@@ -10,6 +10,7 @@ function Toasts() {
         {toasts.map(toast => {
             return <Toast
                 icon={toast.icon}
+                profile={toast.profile}
                 title={toast.title}
             />
         })}

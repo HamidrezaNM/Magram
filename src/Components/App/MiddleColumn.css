@@ -201,6 +201,7 @@
     height: 42px;
     background-color: rgba(var(--surface-rgb), .7);
     user-select: none;
+    transition: all .3s ease;
 }
 
 .MiddleColumn .VoiceChatInfo .info {

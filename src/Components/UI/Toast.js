@@ -1,8 +1,9 @@
 import { memo, useEffect, useState } from "react";
-import { Icon } from "../App/common";
+import { Icon, Profile } from "../App/common";
 import Transition from "../App/Transition";
+import { getUserFullName } from "../Helpers/users";
 
-function Toast({ icon, title }) {
+function Toast({ icon, title, profile }) {
     const [show, setShow] = useState(true)
 
     useEffect(() => {
@@ -13,7 +14,8 @@ function Toast({ icon, title }) {
 
     return <Transition state={show}>
         <div className="Toast">
-            <Icon name={icon} />
+            {icon && <Icon name={icon} />}
+            {profile && <Profile size={24} entity={profile} id={profile.id} name={getUserFullName(profile)} />}
             <span>{title}</span>
         </div>
     </Transition>

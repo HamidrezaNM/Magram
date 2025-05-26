@@ -206,4 +206,32 @@
         width: 100%;
         --background-rgb: 85, 170, 255;
     }
+
+    .VoiceChat {
+        border-radius: 16px 16px 0 0;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 420px;
+        min-height: 480px;
+    }
+
+    .VoiceChat.animate {
+        max-width: none;
+        transform: translateY(100%);
+    }
+
+    .VoiceChatBG {
+        display: block;
+    }
+
+    .Home:has(.header) .MiddleColumn {
+        height: calc(100% - 36px);
+    }
+
+    .Home:has(.header.hideAnim) .MiddleColumn {
+        height: 100%;
+    }
 }

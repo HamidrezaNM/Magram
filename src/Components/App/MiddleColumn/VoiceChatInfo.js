@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { TGCalls } from "../../Util/Calls/TGCalls";
 import { client } from "../../../App";
@@ -6,15 +6,20 @@ import { Api } from "telegram";
 import { Profile } from "../common";
 import { getPeerId } from "../../Helpers/chats";
 import Transition from "../Transition";
-import { handleGroupCall, handleGroupCallJoined, handleUserMedia, handleUserMediaStream } from "../../Stores/UI";
+import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleUserMedia, handleUserMediaStream } from "../../Stores/UI";
+import { UserContext } from "../../Auth/Auth";
 
 function VoiceChatInfo({ }) {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
     const groupCall = useSelector((state) => state.ui.groupCall)
 
+    const User = useContext(UserContext)
+
     const dispatch = useDispatch()
 
     const tgcalls = useRef()
+
+    const participantsCount = groupCall?.participants.filter(x => !x.left).length;
 
     const joinVoiceChat = async (payload) => {
         let params;
@@ -80,40 +85,56 @@ function VoiceChatInfo({ }) {
                 const [audioTrack] = stream.getAudioTracks();
                 // const [videoTrack] = stream.getVideoTracks();
 
+                audioTrack.enabled = false; // Mute when Joined
+
                 dispatch(handleUserMediaStream(stream))
 
                 const connection = await tgcalls.current.start(audioTrack, undefined, ssrcs);
 
+                const date = Date.now()
+
                 dispatch(handleGroupCallJoined({ connection: { ...connection, tgcalls: tgcalls.current } }))
+                dispatch(handleGroupCallParticipants([{
+                    ...new Api.GroupCallParticipant({
+                        self: true,
+                        left: false,
+                        muted: true,
+                        date,
+                        source: connection.source,
+                        peer: new Api.PeerUser({
+                            userId: User.id
+                        })
+                    }), user: User
+                }]))
             });
     }
 
     useEffect(() => {
         (async () => {
-            if (!fullChat?.call) return
-            const groupCall = await client.invoke(new Api.phone.GetGroupCall({
+            if (!fullChat?.call || groupCall?.joined) return
+            const getGroupCall = await client.invoke(new Api.phone.GetGroupCall({
                 call: fullChat?.call,
                 // limit: 3
             }))
 
-            const participants = groupCall.participants?.map(participant => {
-                var user = groupCall.users.find(item => Number(item.id) === getPeerId(participant.peer))
+            const participants = getGroupCall.participants?.map(participant => {
+                var user = getGroupCall.users.find(item => Number(item.id) === getPeerId(participant.peer))
                 console.log(getPeerId(participant.peer))
                 return { ...participant, user }
             })
 
-            const result = { ...groupCall, participants }
+            const result = { ...getGroupCall, participants }
 
             dispatch(handleGroupCall(result))
             console.log(result)
         })()
     }, [fullChat?.call])
 
-    return <Transition state={fullChat?.call && groupCall?.participants.length >= 0}>
+    return <Transition state={fullChat?.call && participantsCount >= 0 && !groupCall?.joined}>
         <div className="VoiceChatInfo">
             <div className="info">
                 <div className="meta ParticipantProfiles">
-                    {groupCall && groupCall.participants?.map((participant) => {
+                    {groupCall && groupCall.participants?.filter(participant => !participant.left).map((participant) => {
                         return <Profile
                             key={Number(participant?.peer?.userId)}
                             size={36}
@@ -127,7 +148,7 @@ function VoiceChatInfo({ }) {
                         {groupCall?.call?.title ?? 'Voice Chat'}
                     </div>
                     <div className="subtitle">
-                        {groupCall?.participants.length} participants
+                        {participantsCount} participants
                     </div>
                 </div>
             </div>
