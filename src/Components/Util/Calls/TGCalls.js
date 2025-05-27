@@ -10,6 +10,9 @@ export class TGCalls extends EventTarget {
         this.remoteSsrcs = [];
         this.conference = null;
         this.remoteStreams = new Map();
+        this.ssrcMap = new Map();
+        this.streamMap = new Map();
+        this.ssrcStreams = new Map();
         this.audioElements = new Map();
     }
 
@@ -42,13 +45,39 @@ export class TGCalls extends EventTarget {
         };
 
         this.connection.ontrack = (event) => {
-            console.log('📡 New track received:', event.track.kind, 'SSRC:', event.track.id);
+            console.log('📡 New track received:', event.track.kind, 'SSRC:', event.track.id, event);
 
             const stream = event.streams[0];
             if (!stream) {
                 console.warn('No stream found for track');
                 return;
             }
+
+            // const receiver = event.receiver;
+            // console.log('getting receiver', receiver)
+            // if (receiver && typeof receiver.getParameters === 'function') {
+            //     const params = receiver.getParameters();
+            //     console.log('getting parameters', params)
+            //     if (params.encodings && params.encodings.length > 0) {
+            //         const ssrc = params.encodings[0].ssrc;
+            //         console.log(`SSRC ${ssrc} for track ${event.track.id} from user`);
+            //         //   if (ssrc && !userVisualizers[userId].ssrcs.includes(ssrc)) {
+            //         //     userVisualizers[userId].ssrcs.push(ssrc);
+            //         //     // می‌توانید SSRC را در حباب نمایش دهید
+            //         //     updateBubbleWithSSRC(userVisualizers[userId].bubbleElement, userVisualizers[userId].ssrcs);
+            //         //   }
+            //     }
+            // }
+
+            // event.receiver.getStats().then(stats => {
+            //     stats.forEach(report => {
+            //         if (report.type === 'inbound-rtp' && report.trackIdentifier === event.track.id) {
+            //             this.ssrcStreams.set(report.ssrc, { stream, ssrc: report.ssrc });
+            //         }
+            //     });
+            // });
+
+            // console.log('wtf', this.ssrcStreams.values())
 
             const streamId = stream.id;
 
@@ -152,9 +181,13 @@ export class TGCalls extends EventTarget {
         });
 
         // For debugging
-        setInterval(async () => {
-            await this.checkStats();
-        }, 3000);
+        // setInterval(async () => {
+        //     await this.checkStats();
+        // }, 3000);
+
+        setInterval(() => {
+            this.updateSsrcMapFromStats();
+        }, 1000);
 
         return { source }
     }
@@ -167,7 +200,7 @@ export class TGCalls extends EventTarget {
 
         for (const report of stats.values()) {
             if (report.type === 'inbound-rtp') {
-                console.log(`📡 Inbound ${report.mediaType} - SSRC: ${report.ssrc}, Packets: ${report.packetsReceived}, Bytes: ${report.bytesReceived}`);
+                console.log(`📡 Inbound ${report.mediaType} - SSRC: ${report.ssrc}, Packets: ${report.packetsReceived}, Bytes: ${report.bytesReceived}`, report);
             } else if (report.type === 'outbound-rtp') {
                 console.log(`📤 Outbound ${report.mediaType} - SSRC: ${report.ssrc}, Packets: ${report.packetsSent}, Bytes: ${report.bytesSent}`);
             } else if (report.type === 'candidate-pair' && report.state === 'succeeded') {
@@ -207,6 +240,36 @@ export class TGCalls extends EventTarget {
             type: 'answer',
             sdp: updatedSdp,
         });
+    }
+
+    async updateSsrcMapFromStats() {
+        if (!this.connection) return;
+
+        const stats = await this.connection.getStats();
+        for (const report of stats.values()) {
+            if (report.type !== 'inbound-rtp' || !report.ssrc) continue;
+
+            const ssrc = report.ssrc;
+            if (this.ssrcMap.has(ssrc)) continue;
+
+            const receivers = this.connection.getReceivers();
+            for (const receiver of receivers) {
+                const track = receiver.track;
+                if (!track) continue;
+
+                if (track.kind !== 'audio') continue;
+
+                const stream = new MediaStream([track]);
+                this.ssrcMap.set(ssrc, track);
+                this.streamMap.set(ssrc, stream);
+
+                this.dispatchEvent(new CustomEvent('new-remote-stream', {
+                    detail: { ssrc, stream }
+                }));
+
+                break;
+            }
+        }
     }
 
     close() {

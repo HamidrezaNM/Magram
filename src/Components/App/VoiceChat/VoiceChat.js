@@ -13,13 +13,18 @@ import { client } from "../../../App"
 import { Api } from "telegram"
 import { getUserFullName } from "../../Helpers/users"
 import { UserContext } from "../../Auth/Auth"
+import { handlePluralization } from "../../Util/text"
+import { updateParticipants } from "../../Util/Calls/voiceChat"
+import SoundBubbles from "../../common/SoundBubbles"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
+    const [ssrcStream, setSsrcStream] = useState([])
 
     const userMedia = useSelector(state => state.ui.userMedia)
     const groupCall = useSelector(state => state.ui.groupCall)
     const participants = groupCall?.participants
+    const presentParticipants = participants.filter(participant => !participant.left)
 
     const User = useContext(UserContext)
 
@@ -36,7 +41,7 @@ function VoiceChat({ }) {
     const handleClose = () => dispatch(handleGroupCallActive(false))
 
     const leaveGroupCall = async () => {
-        console.log('leave group call', groupCall?.call, groupCall?.connection?.source)
+        // console.log('leave group call', groupCall?.call, groupCall?.connection?.source)
 
         if (!groupCall?.call || !groupCall.connection?.source) return;
 
@@ -46,7 +51,7 @@ function VoiceChat({ }) {
                     id: groupCall.call.id,
                     accessHash: groupCall.call.accessHash
                 }),
-                source: Number(groupCall.connection.source)
+                source: parseInt(groupCall.connection.source)
             }))
 
             dispatch(handleGroupCallParticipants([
@@ -77,70 +82,42 @@ function VoiceChat({ }) {
     }
 
     useEffect(() => {
+        if (groupCall?.connection?.tgcalls) {
+            const onNewStream = (e) => {
+                const { ssrc, stream } = e.detail;
+                console.log('NewRemoteStream', ssrc, stream)
+                setSsrcStream(prev => [...prev, { ssrc, stream }]);
+            };
+
+            groupCall.connection.tgcalls.addEventListener('new-remote-stream', onNewStream);
+
+            return () => {
+                groupCall.connection.tgcalls.removeEventListener('new-remote-stream', onNewStream);
+            };
+        }
+
+    }, [groupCall?.connection?.tgcalls])
+
+    useEffect(() => {
         if (userMedia?.stream) {
             const audioTrack = userMedia.stream.getAudioTracks()[userMedia.audioDeviceIndex]
 
             if (audioTrack) {
                 audioTrack.enabled = !mute
             }
-
-            // if (micRef.current)
-            //     if (mute)
-            //         micRef.current.playFrames(micSegments.mute[0], micSegments.mute[1])
-            //     else
-            //         micRef.current.playFrames(micSegments.unmute[0], micSegments.unmute[1])
         }
     }, [mute])
 
-    function addParticipants(newlyAdded) {
-        console.log("Joined Participants:", newlyAdded);
-        newlyAdded.forEach(participant => {
-            dispatch(handleToast({ profile: participant.user, title: `${getUserFullName(participant.user)} joined the voice chat.` }))
-        })
-    }
-
-    function removeParticipants(leftParticipants) {
-        console.log("Left Participants:", leftParticipants);
-    }
-
-    function updateParticipants(newParticipants) {
-        if (!Array.isArray(newParticipants)) {
-            newParticipants = [];
-            console.log('new participants is not array')
-        }
-
-        if (!oldParticipants.current?.length) {
-            console.log('old participants is empty')
-            addParticipants(newParticipants)
-            oldParticipants.current = [...newParticipants]
-            return;
-        }
-
-        const addedParticipants = newParticipants.filter(
-            (newP) => !oldParticipants.current.some((oldP) => oldP.id === newP.id || !oldP.left)
-        );
-
-        const removedParticipants = oldParticipants.current.filter(
-            (oldP) => !newParticipants.some((newP) => newP.id === oldP.id && !newP.left)
-        );
-
-        console.log(addedParticipants, removedParticipants)
-
-        if (addedParticipants.length > 0) {
-            addParticipants(addedParticipants);
-        }
-
-        if (removedParticipants.length > 0) {
-            removeParticipants(removedParticipants);
-        }
-
-        oldParticipants.current = [...newParticipants];
-    }
-
     useEffect(() => {
         if (participants) {
-            console.log('update participants', participants, oldParticipants.current)
-            updateParticipants(participants)
+            updateParticipants({
+                newParticipants: participants,
+                oldParticipants: oldParticipants.current,
+                onJoined: (participant) => dispatch(handleToast({ profile: participant.user, title: `${getUserFullName(participant.user)} joined the voice chat.` })),
+                onLeft: (participant) => dispatch(handleToast({ profile: participant.user, title: `${getUserFullName(participant.user)} left the voice chat.` }))
+            })
+
+            oldParticipants.current = [...participants];
         }
     }, [participants])
 
@@ -157,7 +134,7 @@ function VoiceChat({ }) {
                 </div>
                 <div className="body">
                     <div className="title">Voice Chat</div>
-                    <div className="subtitle">{participants.length} participants</div>
+                    <div className="subtitle">{handlePluralization(presentParticipants?.length, 'participant')}</div>
                 </div>
                 <div className="meta">
                     <Icon name="close" onClick={handleClose} />
@@ -165,9 +142,11 @@ function VoiceChat({ }) {
             </div>
             <div className="Content">
                 <div className="Participants">
-                    {participants.filter(participant => !participant.left).map(participant =>
+                    {presentParticipants.map(participant =>
                         <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
-                            <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} />
+                            <SoundBubbles stream={ssrcStream && ssrcStream.find(item => item.ssrc === participant.source)?.stream}>
+                                <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} />
+                            </SoundBubbles>
                             <div className="body">
                                 <div className="title">
                                     <FullNameTitle chat={participant.user} />

@@ -43,7 +43,6 @@ const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autopl
             if (fromFrame) data.current.ip = fromFrame
             if (toFrame) data.current.op = toFrame
 
-            console.log(fromFrame, toFrame)
             // const player = document.querySelector('lottie-player');
 
             // setData(window.URL.createObjectURL(_data))

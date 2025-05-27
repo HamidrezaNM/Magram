@@ -364,6 +364,13 @@
   transform: translateY(-100%);
 }
 
+.header .title {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
 .UserDetails {
   display: flex;
   flex-direction: column;
@@ -444,7 +451,6 @@
   .Home:has(.MiddleColumn.focused) .LeftColumn {
     transform: translateX(-25px) scale(.98);
   }
-
 
   .Home .Column {
     position: fixed;
@@ -1529,6 +1535,8 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   height: 42px;
+  text-align: center;
+  user-select: none;
 }
 
 .VoiceChat .TopBar .title {
@@ -1584,6 +1592,10 @@ a:hover {
   color: var(--primary);
 }
 
+.VoiceChat .Participants .Participant .meta {
+  color: #888;
+}
+
 .VoiceChat .Participants .Participant .subtitle .TextTransition {
   align-items: flex-start;
 }
@@ -1595,7 +1607,7 @@ a:hover {
 
 .VoiceChat .Participants .Participant.live .subtitle,
 .VoiceChat .Participants .Participant.live .meta {
-  color: #00dd00;
+  color: #00CB47;
 }
 
 .CallHeader {
@@ -1636,6 +1648,7 @@ a:hover {
   align-items: center;
   display: flex;
   cursor: pointer;
+  user-select: none;
   touch-action: none;
 }
 
@@ -1710,6 +1723,78 @@ a:hover {
   background-color: rgba(200, 0, 0, .3);
 }
 
+.Home:has(.VoiceChat) .MiddleColumn {
+  border-radius: 0 20px 20px 0;
+}
+
+.SoundBubblesContainer {
+  position: relative;
+}
+
+.SoundBubbles {
+  top: 0;
+}
+
+.SoundBubbles,
+.SoundBubbles div {
+  width: 42px;
+  height: 42px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s ease;
+}
+
+.SoundBubbles div {
+  border-radius: 44%;
+  width: 32px;
+  height: 32px;
+}
+
+.SoundBubbles .first {
+  background-color: rgb(255 255 255 / 16%);
+  scale: 1.05;
+  rotate: 40deg;
+  animation: bubbles 5s infinite reverse;
+}
+
+.SoundBubbles .second {
+  background-color: rgb(255 255 255 / 20%);
+  scale: 1.15;
+  rotate: 15deg;
+  animation: bubbles 5s infinite;
+}
+
+.SoundBubblesContainer .profile {
+  transition: all .2s ease;
+}
+
+.SoundBubblesContainer.active .profile {
+  transform: scale(.8);
+}
+
+.SoundBubblesContainer:not(.active) .SoundBubbles {
+  transform: scale(0) !important;
+}
+
+@keyframes bubbles {
+  0% {
+    border-radius: 43%;
+    transform: scale(1.0) rotate(45deg);
+  }
+
+  50% {
+    border-radius: 47%;
+    transform: scale(1.05) rotate(40deg);
+  }
+
+  100% {
+    border-radius: 43%;
+    transform: scale(1.0) rotate(45deg);
+  }
+}
+
 .RLottie {
   line-height: 0;
 }
@@ -1730,6 +1815,7 @@ a:hover {
 .LeftColumn .TopBar {
   position: relative;
   transition: background-color .3s ease;
+  touch-action: none;
 }
 
 .BackButton .icon {

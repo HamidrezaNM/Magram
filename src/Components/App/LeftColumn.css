@@ -155,7 +155,7 @@
     display: ruby;
     white-space: nowrap;
     color: var(--secondary-text);
-    line-height: 1.2;
+    line-height: 1.4;
 }
 
 .Chat .info .message-details {
