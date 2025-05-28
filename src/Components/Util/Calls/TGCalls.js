@@ -1,5 +1,5 @@
 import { parseSdp } from "./parseSdp";
-import { SdpBuilder } from "./sdp-builder";
+import sdpbuilder from "./sdpbuilder";
 
 export class TGCalls extends EventTarget {
     constructor(params) {
@@ -14,7 +14,44 @@ export class TGCalls extends EventTarget {
         this.streamMap = new Map();
         this.ssrcStreams = new Map();
         this.audioElements = new Map();
+
+        this.ssrcs = []
+        this.lastMid = 0
     }
+
+    createDataChannel(connection) {
+        const dataChannel = connection.createDataChannel('data', {
+            id: 0,
+        });
+
+        dataChannel.onopen = () => {
+            // console.log('Data channel open!');
+        };
+
+        dataChannel.onmessage = (e) => {
+            // console.log('onmessage');
+            const data = JSON.parse(e.data);
+            // console.log(data);
+            switch (data.colibriClass) {
+                case 'DominantSpeakerEndpointChangeEvent':
+                    break;
+                case 'SenderVideoConstraints':
+
+                    break;
+                case 'EndpointConnectivityStatusChangeEvent':
+
+                    break;
+            }
+        };
+
+        dataChannel.onerror = (e) => {
+            console.log('%conerror', 'background: green; font-size: 5em');
+            console.error(e);
+        };
+
+        return dataChannel;
+    }
+
 
     async start(audio, video, ssrcs) {
         if (this.connection) {
@@ -26,6 +63,10 @@ export class TGCalls extends EventTarget {
         }
 
         this.connection = new RTCPeerConnection();
+
+        const isPresentation = false; // TODO: It's Temporary
+
+        // const dataChannel = isPresentation ? undefined : this.createDataChannel(this.connection);
 
         this.connection.oniceconnectionstatechange = () => {
             console.log('ICE Connection State:', this.connection.iceConnectionState);
@@ -53,32 +94,6 @@ export class TGCalls extends EventTarget {
                 return;
             }
 
-            // const receiver = event.receiver;
-            // console.log('getting receiver', receiver)
-            // if (receiver && typeof receiver.getParameters === 'function') {
-            //     const params = receiver.getParameters();
-            //     console.log('getting parameters', params)
-            //     if (params.encodings && params.encodings.length > 0) {
-            //         const ssrc = params.encodings[0].ssrc;
-            //         console.log(`SSRC ${ssrc} for track ${event.track.id} from user`);
-            //         //   if (ssrc && !userVisualizers[userId].ssrcs.includes(ssrc)) {
-            //         //     userVisualizers[userId].ssrcs.push(ssrc);
-            //         //     // می‌توانید SSRC را در حباب نمایش دهید
-            //         //     updateBubbleWithSSRC(userVisualizers[userId].bubbleElement, userVisualizers[userId].ssrcs);
-            //         //   }
-            //     }
-            // }
-
-            // event.receiver.getStats().then(stats => {
-            //     stats.forEach(report => {
-            //         if (report.type === 'inbound-rtp' && report.trackIdentifier === event.track.id) {
-            //             this.ssrcStreams.set(report.ssrc, { stream, ssrc: report.ssrc });
-            //         }
-            //     });
-            // });
-
-            // console.log('wtf', this.ssrcStreams.values())
-
             const streamId = stream.id;
 
             if (!this.remoteStreams.has(streamId)) {
@@ -90,8 +105,14 @@ export class TGCalls extends EventTarget {
                     audio.autoplay = true;
                     audio.volume = 1.0;
 
+                    audio.id = streamId
+
                     audio.style.display = 'none';
                     document.body.appendChild(audio);
+
+                    this.dispatchEvent(new CustomEvent('new-remote-stream', {
+                        detail: { ssrc: streamId.split('audio')[1], stream }
+                    }));
 
                     this.audioElements.set(streamId, audio);
 
@@ -104,6 +125,10 @@ export class TGCalls extends EventTarget {
                 }
             }
         };
+
+        this.connection.onnegotiationneeded = () => {
+            console.log('Conenction OnNegirapkletyion')
+        }
 
         // Add Input Tracks
         if (audio) {
@@ -118,7 +143,7 @@ export class TGCalls extends EventTarget {
         console.log('Creating offer...');
 
         const offer = await this.connection.createOffer({
-            offerToReceiveVideo: true,
+            offerToReceiveVideo: false,
             offerToReceiveAudio: true,
         });
 
@@ -162,28 +187,82 @@ export class TGCalls extends EventTarget {
 
         console.log('Join result:', joinVoiceCallResult);
 
-        this.connection.addTransceiver('audio', { direction: 'recvonly' });
+        // this.connection.addTransceiver('audio', { direction: 'recvonly' });
+
+        const audioSsrc = !isPresentation ? {
+            userId: '',
+            sourceGroups: [
+                {
+                    sources: [source || 0],
+                },
+            ],
+            isRemoved: isPresentation,
+            isMain: true,
+            isVideo: false,
+            isPresentation,
+            endpoint: isPresentation ? '1' : '0',
+            mid: isPresentation ? '1' : '0'
+        } : undefined;
+
+        const videoSsrc = sourceGroup && {
+            isPresentation,
+            userId: '',
+            sourceGroups: sourceGroup,
+            isMain: true,
+            isVideo: true,
+            endpoint: false ? '0' : '1',
+            mid: isPresentation ? '0' : '1'
+        };
+
+        if (isPresentation) {
+            if (videoSsrc) this.ssrcs.push(videoSsrc);
+            if (audioSsrc) this.ssrcs.push(audioSsrc);
+        } else {
+            if (audioSsrc) this.ssrcs.push(audioSsrc);
+            if (videoSsrc) this.ssrcs.push(videoSsrc);
+        }
+
+
+        // ssrcs.forEach(participant => {
+        //     this.lastMid = this.lastMid + 1;
+        //     this.ssrcs.push({
+        //         userId: participant.id,
+        //         isMain: false,
+        //         endpoint: `audio${participant.source}`,
+        //         isVideo: false,
+        //         sourceGroups: [{
+        //             sources: [participant.source],
+        //         }],
+        //         mid: this.lastMid.toString()
+        //     });
+        // })
 
         const sessionId = Date.now();
         this.conference = {
             sessionId,
             transport: joinVoiceCallResult.transport,
-            ssrcs: [],
+            audioExtensions: joinVoiceCallResult.audio?.['rtp-hdrexts'],
+            audioPayloadTypes: joinVoiceCallResult.audio?.['payload-types'],
+            videoExtensions: joinVoiceCallResult.video?.['rtp-hdrexts'],
+            videoPayloadTypes: joinVoiceCallResult.video?.['payload-types'],
+            ssrcs: [...this.ssrcs],
         };
 
         // Setting remoteSdp
-        const remoteSdp = SdpBuilder.fromConference(this.conference);
-        // console.log('Setting remote SDP:', remoteSdp);
+        const remoteSdp = sdpbuilder(this.conference, true);
+        console.log('Setting remote SDP:', remoteSdp);
 
         await this.connection.setRemoteDescription({
             type: 'answer',
             sdp: remoteSdp,
         });
 
+        this.handleUpdateGroupCallParticipants(ssrcs)
+
         // For debugging
-        // setInterval(async () => {
-        //     await this.checkStats();
-        // }, 3000);
+        setInterval(async () => {
+            await this.checkStats();
+        }, 3000);
 
         setInterval(() => {
             this.updateSsrcMapFromStats();
@@ -219,7 +298,7 @@ export class TGCalls extends EventTarget {
         if (!this.conference.ssrcs.includes(ssrc)) {
             this.conference.ssrcs.push(ssrc);
 
-            const updatedSdp = SdpBuilder.fromConference(this.conference);
+            const updatedSdp = sdpbuilder(this.conference);
             console.log('Updating remote SDP with new participant:', ssrc);
 
             await this.connection.setRemoteDescription({
@@ -235,7 +314,8 @@ export class TGCalls extends EventTarget {
 
         this.conference.ssrcs = this.conference.ssrcs.filter(s => s.ssrc !== ssrc);
 
-        const updatedSdp = SdpBuilder.fromConference(this.conference);
+        // const updatedSdp = SdpBuilder.fromConference(this.conference);
+        const updatedSdp = sdpbuilder(this.conference);
         await this.connection.setRemoteDescription({
             type: 'answer',
             sdp: updatedSdp,
@@ -263,13 +343,44 @@ export class TGCalls extends EventTarget {
                 this.ssrcMap.set(ssrc, track);
                 this.streamMap.set(ssrc, stream);
 
-                this.dispatchEvent(new CustomEvent('new-remote-stream', {
-                    detail: { ssrc, stream }
-                }));
+                // this.dispatchEvent(new CustomEvent('new-remote-stream', {
+                //     detail: { ssrc, stream }
+                // }));
 
                 break;
             }
         }
+    }
+
+    async handleUpdateGroupCallParticipants(updatedParticipants) {
+        updatedParticipants.forEach(participant => {
+            if (participant.self || participant.left) return
+
+            this.lastMid = this.lastMid + 1;
+            this.conference.ssrcs.push({
+                userId: participant.peer.userId,
+                isMain: false,
+                endpoint: `audio${participant.source}`,
+                isVideo: false,
+                sourceGroups: [{
+                    sources: [participant.source],
+                }],
+                mid: this.lastMid.toString()
+            });
+        })
+
+        console.log(this.conference.ssrcs)
+
+
+        const sdp = sdpbuilder(this.conference);
+        console.log('updated sdp', sdp)
+        await this.connection.setRemoteDescription({
+            type: 'offer',
+            sdp,
+        });
+
+        const answerNew = await this.connection.createAnswer();
+        await this.connection.setLocalDescription(answerNew);
     }
 
     close() {

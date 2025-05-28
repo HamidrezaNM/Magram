@@ -89,7 +89,7 @@ function VoiceChatInfo({ }) {
 
                 dispatch(handleUserMediaStream(stream))
 
-                const connection = await tgcalls.current.start(audioTrack, undefined, ssrcs);
+                const connection = await tgcalls.current.start(audioTrack, undefined, groupCall.participants);
 
                 const date = Date.now()
 

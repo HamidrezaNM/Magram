@@ -84,11 +84,12 @@ function SoundBubbles({ stream, children }) {
             }
 
             // اگر کاربر ساکت نیست، ویژوالایزر حباب را بر اساس صدا به‌روز کنید
-            if (!isCurrentlySilent) {
-                const scale = 1 + (averageVolume / 64); // مثال: مقیاس‌دهی بر اساس صدا (64 یک مقسوم علیه تجربی است)
-                // firstBubble.current.style = `scale(${Math.min(scale * .98, 2.5)})`; // محدود کردن حداکثر اندازه
-                bubbles.current.style.transform = `scale(${Math.min(scale, 2.5)})`; // محدود کردن حداکثر اندازه
-            }
+            // if (!isCurrentlySilent) {
+            const scale = 1 + (averageVolume / 64); // مثال: مقیاس‌دهی بر اساس صدا (64 یک مقسوم علیه تجربی است)
+            console.log('volume', averageVolume)
+            // firstBubble.current.style = `scale(${Math.min(scale * .98, 2.5)})`; // محدود کردن حداکثر اندازه
+            bubbles.current.style.transform = `scale(${Math.min(scale, 2.5)})`; // محدود کردن حداکثر اندازه
+            // }
         }
     }
 

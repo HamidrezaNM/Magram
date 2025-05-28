@@ -144,8 +144,8 @@ function VoiceChat({ }) {
                 <div className="Participants">
                     {presentParticipants.map(participant =>
                         <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
-                            <SoundBubbles stream={ssrcStream && ssrcStream.find(item => item.ssrc === participant.source)?.stream}>
-                                <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} />
+                            <SoundBubbles stream={ssrcStream && ssrcStream.find(item => Number(item.ssrc) === Number(participant.source))?.stream} key={'sound-bubble-' + participant.source}>
+                                <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} key={'profile-' + participant.source} />
                             </SoundBubbles>
                             <div className="body">
                                 <div className="title">

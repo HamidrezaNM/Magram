@@ -63,3 +63,7 @@ export function updateParticipants({ newParticipants, oldParticipants, onJoined,
         removeParticipants(removedParticipants, onLeft);
     }
 }
+
+export function fromTelegramSource(source) {
+    return source >>> 0;
+}
