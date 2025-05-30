@@ -234,4 +234,116 @@
     .Home:has(.header.hideAnim) .MiddleColumn {
         height: 100%;
     }
+
+    .VoiceChat {
+        height: 680px;
+        /* Temporary */
+    }
+
+    .VoiceChat.Maximized {
+        height: 100%;
+        transition: all .3s ease;
+    }
+
+    .VoiceChat .Bottom {
+        height: 192px;
+    }
+
+    .VoiceChat .Participants {
+        transition: all .3s ease;
+    }
+
+    .VoiceChat .Participants .Participant {
+        width: 100%;
+        height: 54px;
+        transition: opacity .3s .1s ease;
+    }
+
+    .VoiceChat .Bottom .button {
+        transition: all .3s ease;
+    }
+
+    .VoiceChat .Bottom .button.mic .RLottie canvas {
+        width: 64px;
+        height: 64px;
+        transition: all .3s ease;
+    }
+
+    .VoiceChat.Maximized .Bottom {
+        height: 96px;
+        transition: all .3s ease;
+    }
+
+    .VoiceChat.Maximized .Bottom .button {
+        gap: 6px;
+    }
+
+    .VoiceChat.Maximized .Bottom .button .icon {
+        flex: none;
+    }
+
+    .VoiceChat.Maximized .Bottom .button.mic .SoundBubbles,
+    .VoiceChat.Maximized .Bottom .button.mic .RLottie {
+        width: 56px;
+        height: 56px;
+    }
+
+    .VoiceChat.Maximized .button.mic .SoundBubbles div {
+        width: 54px;
+        height: 54px;
+    }
+
+    .VoiceChat.Maximized .Bottom .button.mic .RLottie canvas {
+        width: 42px;
+        height: 42px;
+    }
+
+    .VoiceChat.Maximized .VideoParticipants {
+        height: 100%;
+        max-height: 100%;
+        margin: 0 -12px;
+    }
+
+    .VoiceChat.Maximized .VideoParticipants .VideoParticipant {
+        max-height: 100%;
+    }
+
+    .VoiceChat.Maximized .VideoParticipants .VideoParticipant .info {
+        margin-bottom: 92px;
+        margin-left: 12px;
+    }
+
+    .VoiceChat.Maximized .Participants {
+        background: none;
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+        margin-top: -92px;
+    }
+
+    .VoiceChat.Maximized.PreparingAnim .Participants .Participant {
+        opacity: 0;
+        transition: none;
+    }
+
+    .VoiceChat.Maximized .Participants .Participant {
+        width: 80px;
+        height: 80px;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 1;
+        background-color: var(--secondary);
+    }
+
+
+    .VoiceChat.Maximized .Participants .Participant .body {
+        flex: none;
+    }
+
+    .VoiceChat.Maximized .Participants .Participant .subtitle,
+    .VoiceChat.Maximized .Participants .Participant .meta {
+        height: 0px;
+        display: none;
+    }
 }

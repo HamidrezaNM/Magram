@@ -16,10 +16,13 @@ import { UserContext } from "../../Auth/Auth"
 import { handlePluralization } from "../../Util/text"
 import { updateParticipants } from "../../Util/Calls/voiceChat"
 import SoundBubbles from "../../common/SoundBubbles"
+import VideoParticipant from "./VideoParticipant"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
+    const [screenCast, setScreenCast] = useState(false)
     const [ssrcStream, setSsrcStream] = useState([])
+    const [maximized, setMaximized] = useState(false)
 
     const userMedia = useSelector(state => state.ui.userMedia)
     const groupCall = useSelector(state => state.ui.groupCall)
@@ -29,6 +32,8 @@ function VoiceChat({ }) {
     const User = useContext(UserContext)
 
     const oldParticipants = useRef(participants)
+
+    const voiceChatRef = useRef()
     const micRef = useRef()
 
     const dispatch = useDispatch()
@@ -81,6 +86,46 @@ function VoiceChat({ }) {
         }
     }
 
+    async function handleToggleCamera() {
+
+        navigator.mediaDevices.getDisplayMedia({ audio: false, video: true })
+            .then(async (stream) => {
+                groupCall.connection.tgcalls.toggleStream(stream)
+
+                const result = await client.invoke(new Api.phone.EditGroupCallParticipant({
+                    call: new Api.InputGroupCall({
+                        id: groupCall.call.id,
+                        accessHash: groupCall.call.accessHash
+                    }),
+                    participant: new Api.InputPeerSelf(),
+                    muted: true,
+                    videoPaused: false,
+                    videoStopped: false,
+                }))
+                console.log('toggle camera', result)
+            })
+
+        setScreenCast(true)
+    }
+
+    function handleMaximized() {
+        setMaximized(!maximized)
+    }
+
+    useEffect(() => {
+        if (voiceChatRef.current) {
+            voiceChatRef.current.classList.toggle('Maximized', maximized)
+
+            if (maximized) {
+                voiceChatRef.current.classList.add('PreparingAnim')
+
+                requestAnimationFrame(() => {
+                    voiceChatRef.current.classList.remove('PreparingAnim')
+                });
+            }
+        }
+    }, [maximized])
+
     useEffect(() => {
         if (groupCall?.connection?.tgcalls) {
             const onNewStream = (e) => {
@@ -89,10 +134,18 @@ function VoiceChat({ }) {
                 setSsrcStream(prev => [...prev, { ssrc, stream }]);
             };
 
+            const onRemoveStream = (e) => {
+                const { ssrc, stream } = e.detail;
+                console.log('RemoveRemoteStream', ssrc, stream)
+                setSsrcStream(prev => prev.filter(i => i.ssrc.endpoint !== ssrc.endpoint));
+            };
+
             groupCall.connection.tgcalls.addEventListener('new-remote-stream', onNewStream);
+            groupCall.connection.tgcalls.addEventListener('remove-remote-stream', onRemoveStream);
 
             return () => {
                 groupCall.connection.tgcalls.removeEventListener('new-remote-stream', onNewStream);
+                groupCall.connection.tgcalls.removeEventListener('remove-remote-stream', onRemoveStream);
             };
         }
 
@@ -100,11 +153,26 @@ function VoiceChat({ }) {
 
     useEffect(() => {
         if (userMedia?.stream) {
-            const audioTrack = userMedia.stream.getAudioTracks()[userMedia.audioDeviceIndex]
+            (async () => {
+                const audioTrack = userMedia.stream.getAudioTracks()[userMedia.audioDeviceIndex]
 
-            if (audioTrack) {
-                audioTrack.enabled = !mute
-            }
+                if (audioTrack) {
+                    audioTrack.enabled = !mute
+
+                    const toggleMute = await client.invoke(new Api.phone.EditGroupCallParticipant({
+                        call: new Api.InputGroupCall({
+                            id: groupCall.call.id,
+                            accessHash: groupCall.call.accessHash
+                        }),
+                        participant: new Api.InputPeerSelf(),
+                        muted: mute,
+                        videoPaused: !screenCast,
+                        videoStopped: !screenCast,
+                    }))
+
+                    console.log(toggleMute)
+                }
+            })()
         }
     }, [mute])
 
@@ -117,13 +185,17 @@ function VoiceChat({ }) {
                 onLeft: (participant) => dispatch(handleToast({ profile: participant.user, title: `${getUserFullName(participant.user)} left the voice chat.` }))
             })
 
+            if (groupCall?.connection?.tgcalls && participants !== oldParticipants.current) {
+                groupCall?.connection?.tgcalls.handleUpdateGroupCallParticipants(participants)
+            }
+
             oldParticipants.current = [...participants];
         }
     }, [participants])
 
     return groupCall?.call && <Transition state={groupCall.active} eachElement>
         <div className="bg VoiceChatBG" onClick={handleClose}></div>
-        <div className="VoiceChat animate">
+        <div className="VoiceChat animate" ref={voiceChatRef}>
             <div className="TopBar">
                 <div className="">
                     <Menu icon="more_horiz">
@@ -141,11 +213,29 @@ function VoiceChat({ }) {
                 </div>
             </div>
             <div className="Content">
+                <div className="VideoParticipants">
+                    {presentParticipants.map(participant =>
+                        participant.video && <VideoParticipant
+                            onClick={handleMaximized}
+                            participant={participant}
+                            stream={ssrcStream &&
+                                ssrcStream.find(item =>
+                                    Number(item.ssrc.userId) === Number(participant.peer.userId) && item.ssrc.isVideo)?.stream} />
+                    )}
+                </div>
                 <div className="Participants">
                     {presentParticipants.map(participant =>
                         <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
-                            <SoundBubbles stream={ssrcStream && ssrcStream.find(item => Number(item.ssrc) === Number(participant.source))?.stream} key={'sound-bubble-' + participant.source}>
-                                <Profile size={42} entity={participant.user} id={participant.user?.id} name={participant.user?.firstName} key={'profile-' + participant.source} />
+                            <SoundBubbles
+                                stream={ssrcStream &&
+                                    ssrcStream.find(item =>
+                                        Number(item.ssrc.userId) === Number(participant.peer.userId) && !item.ssrc.isVideo)?.stream}
+                                key={'sound-bubble-' + participant.source}>
+                                <Profile size={42}
+                                    entity={participant.user}
+                                    id={participant.user?.id}
+                                    name={participant.user?.firstName}
+                                    key={'profile-' + participant.source} />
                             </SoundBubbles>
                             <div className="body">
                                 <div className="title">
@@ -164,28 +254,30 @@ function VoiceChat({ }) {
             </div>
             <div className="Bottom">
                 <div className="button">
-                    <Icon name="volume_up" size={32} />
-                    <div className="title">audio</div>
+                    <Icon name="videocam_off" onClick={handleToggleCamera} size={32} />
+                    <div className="title">Camera</div>
                 </div>
                 <div className={buildClassName('button', 'mic', !mute && 'live')} onClick={() => setMute(!mute)}>
                     {/* <Icon name="mic_off" size={48} /> */}
-                    {mute ?
-                        <RLottie
-                            sticker="voice_outlined"
-                            fileId="voice_outlined_mute"
-                            width={64}
-                            height={64}
-                            autoplay={true}
-                            fromFrame={micSegments.mute[0]}
-                            toFrame={micSegments.mute[1]} />
-                        : <RLottie
-                            sticker="voice_outlined"
-                            fileId="voice_outlined_unmute"
-                            width={64}
-                            height={64}
-                            autoplay={true}
-                            fromFrame={micSegments.unmute[0]}
-                            toFrame={micSegments.unmute[1]} />}
+                    <SoundBubbles stream={userMedia?.stream}>
+                        {mute ?
+                            <RLottie
+                                sticker="voice_outlined"
+                                fileId="voice_outlined_mute"
+                                width={64}
+                                height={64}
+                                autoplay={true}
+                                fromFrame={micSegments.mute[0]}
+                                toFrame={micSegments.mute[1]} />
+                            : <RLottie
+                                sticker="voice_outlined"
+                                fileId="voice_outlined_unmute"
+                                width={64}
+                                height={64}
+                                autoplay={true}
+                                fromFrame={micSegments.unmute[0]}
+                                toFrame={micSegments.unmute[1]} />}
+                    </SoundBubbles>
                     <div className="title">
                         <TextTransition text={mute ? 'Unmute' : "You're Live"} />
                     </div>

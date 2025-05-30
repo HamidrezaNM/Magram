@@ -8,6 +8,7 @@ import { getPeerId } from "../../Helpers/chats";
 import Transition from "../Transition";
 import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleUserMedia, handleUserMediaStream } from "../../Stores/UI";
 import { UserContext } from "../../Auth/Auth";
+import { black } from "../../Util/Calls/voiceChat";
 
 function VoiceChatInfo({ }) {
     const fullChat = useSelector((state) => state.ui.activeFullChat)
@@ -41,12 +42,7 @@ function VoiceChatInfo({ }) {
                             },
                         ],
                         ssrc: payload.source,
-                        // 'ssrc-groups': [
-                        //     {
-                        //         semantics: 'FID',
-                        //         sources: payload.sourceGroup,
-                        //     },
-                        // ],
+                        'ssrc-groups': payload.sourceGroup,
                     }),
                 }),
                 joinAs: params?.joinAs || 'me',
@@ -81,7 +77,7 @@ function VoiceChatInfo({ }) {
         console.log('tgcalls start')
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(async (stream) => {
-                console.log('get user media')
+                console.log('get user media', stream)
                 const [audioTrack] = stream.getAudioTracks();
                 // const [videoTrack] = stream.getVideoTracks();
 
@@ -89,7 +85,10 @@ function VoiceChatInfo({ }) {
 
                 dispatch(handleUserMediaStream(stream))
 
-                const connection = await tgcalls.current.start(audioTrack, undefined, groupCall.participants);
+                const connection = await tgcalls.current.start(
+                    audioTrack,
+                    black({ width: 640, height: 480 }),
+                    groupCall.participants);
 
                 const date = Date.now()
 

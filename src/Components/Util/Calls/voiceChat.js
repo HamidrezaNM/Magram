@@ -64,6 +64,20 @@ export function updateParticipants({ newParticipants, oldParticipants, onJoined,
     }
 }
 
+export function toTelegramSource(source) {
+    return source << 0;
+}
+
 export function fromTelegramSource(source) {
     return source >>> 0;
 }
+
+export const black = ({ width = 640, height = 480 } = {}) => {
+    const canvas = Object.assign(document.createElement('canvas'), { width, height });
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw Error('Cannot create canvas ctx');
+
+    ctx.fillRect(0, 0, width, height);
+    const stream = canvas.captureStream();
+    return new MediaStream([Object.assign(stream.getVideoTracks()[0], { enabled: false })]);
+};

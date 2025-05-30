@@ -91,7 +91,7 @@ function ChatList({ onClick }) {
 
         const includePeerChats = includePeerIds &&
             allChats.filter(chat =>
-                includePeerIds.includes(chat.entity?.id?.value))
+                includePeerIds.includes(Number(chat.entity?.id)))
 
         folderChats = includePeerChats
 
