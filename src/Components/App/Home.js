@@ -290,15 +290,17 @@ function Home() {
         <ThemeProvider theme={darkTheme}>
             <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint}>
                 <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
-                    <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
-                    <Transition state={showCall} action={() => dispatch(handleCall())}>
-                        <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
-                    </Transition>
-                    <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
-                        <MiddleColumn />
+                    <div className="Main">
+                        <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
+                        <Transition state={showCall} action={() => dispatch(handleCall())}>
+                            <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
+                        </Transition>
+                        <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
+                            <MiddleColumn />
+                        </div>
+                        {groupCallJoined && <CallHeader />}
                     </div>
                     {groupCallJoined && <VoiceChat />}
-                    {groupCallJoined && <CallHeader />}
 
                     <MediaPreview />
 

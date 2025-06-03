@@ -17,12 +17,15 @@ import { handlePluralization } from "../../Util/text"
 import { updateParticipants } from "../../Util/Calls/voiceChat"
 import SoundBubbles from "../../common/SoundBubbles"
 import VideoParticipant from "./VideoParticipant"
+import './VoiceChat.css'
+import PositionTransition from "../../common/PositionTransition"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
     const [screenCast, setScreenCast] = useState(false)
     const [ssrcStream, setSsrcStream] = useState([])
     const [maximized, setMaximized] = useState(false)
+    const [count, setCount] = useState(1)
 
     const userMedia = useSelector(state => state.ui.userMedia)
     const groupCall = useSelector(state => state.ui.groupCall)
@@ -35,6 +38,7 @@ function VoiceChat({ }) {
 
     const voiceChatRef = useRef()
     const micRef = useRef()
+    const containerRef = useRef()
 
     const dispatch = useDispatch()
 
@@ -110,6 +114,76 @@ function VoiceChat({ }) {
 
     function handleMaximized() {
         setMaximized(!maximized)
+    }
+
+    function getContainerGridLayout(count) {
+        if (!containerRef.current) return;
+
+        containerRef.current.style.gridTemplateColumns = '';
+        containerRef.current.style.gridTemplateRows = '';
+        [...containerRef.current.children].forEach(item => {
+            item.style.gridColumn = ''
+            item.style.gridRow = ''
+        })
+        console.log(Math.sqrt(count) % 1)
+        if (count === 1) {
+            return 'layout-1'
+        } else if (count === 3) return 'layout-3'
+        else if (Math.sqrt(count) % 1 !== 0) {
+            if (Math.sqrt(count + 1) % 1 === 0) {
+                const columns = Math.sqrt(count + 1);
+
+                containerRef.current.style.gridTemplateRows = `repeat(${(columns - 1) * columns}, 1fr)`;
+                containerRef.current.style.gridTemplateColumns = `repeat(${(columns - 1) * columns}, 1fr)`;
+
+                requestAnimationFrame(() => {
+                    [...containerRef.current.children].forEach(item => {
+                        item.style.gridColumn = 'span ' + (columns - 1)
+                        item.style.gridRow = 'span ' + (columns - 1)
+                    })
+
+                    for (let i = 0; i < columns - 1; i++) {
+                        containerRef.current.children[i].style.gridColumn = 'span ' + columns
+                    }
+                })
+
+                return
+            } else if (count % 3 === 0) {
+                containerRef.current.style.gridTemplateRows = `repeat(${3}, 1fr)`;
+                containerRef.current.style.gridTemplateColumns = `repeat(${count / 3}, 1fr)`;
+                return
+            } else if (count >= 5) {
+                const size = count % 3 === 0 ? count : count + (3 - count % 3)
+                const n = size / 3
+                const columns = n * (n - 1);
+                const columnsToBeChanged = count % 3
+
+                requestAnimationFrame(() => {
+                    containerRef.current.style.gridTemplateRows = `repeat(${3}, 1fr)`;
+                    containerRef.current.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+
+                    [...containerRef.current.children].forEach(item => {
+                        console.log('salam', columns + 1)
+                        item.style.gridColumn = 'span ' + (n)
+                    })
+
+                    console.log('lengthfor', (3 - count % 3) * (columns + 1))
+                    for (let i = 0; i < columnsToBeChanged * n; i++) {
+                        if (containerRef.current.children[count - i - 1]) {
+                            console.log('bye', columns)
+                            containerRef.current.children[count - i - 1].style.gridColumn = 'span ' + (n - 1)
+
+                            console.log(containerRef.current.children[count - i - 1], count - i - 1)
+                        }
+                    }
+                })
+            }
+
+
+            return 'fancy-layout'
+        }
+
+        containerRef.current.style.gridTemplateColumns = `repeat(${Math.sqrt(count)}, 1fr)`;
     }
 
     useEffect(() => {
@@ -196,97 +270,109 @@ function VoiceChat({ }) {
     return groupCall?.call && <Transition state={groupCall.active} eachElement>
         <div className="bg VoiceChatBG" onClick={handleClose}></div>
         <div className="VoiceChat animate" ref={voiceChatRef}>
-            <div className="TopBar">
-                <div className="">
-                    <Menu icon="more_horiz">
-                        <DropdownMenu className="top right withoutTitle">
+            <div className="Sidebar">
+                <div className="TopBar">
+                    <div className="">
+                        <Menu icon="more_horiz">
+                            <DropdownMenu className="top right withoutTitle">
 
-                        </DropdownMenu>
-                    </Menu>
-                </div>
-                <div className="body">
-                    <div className="title">Voice Chat</div>
-                    <div className="subtitle">{handlePluralization(presentParticipants?.length, 'participant')}</div>
-                </div>
-                <div className="meta">
-                    <Icon name="close" onClick={handleClose} />
-                </div>
-            </div>
-            <div className="Content">
-                <div className="VideoParticipants">
-                    {presentParticipants.map(participant =>
-                        participant.video && <VideoParticipant
-                            onClick={handleMaximized}
-                            participant={participant}
-                            stream={ssrcStream &&
-                                ssrcStream.find(item =>
-                                    Number(item.ssrc.userId) === Number(participant.peer.userId) && item.ssrc.isVideo)?.stream} />
-                    )}
-                </div>
-                <div className="Participants">
-                    {presentParticipants.map(participant =>
-                        <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
-                            <SoundBubbles
-                                stream={ssrcStream &&
-                                    ssrcStream.find(item =>
-                                        Number(item.ssrc.userId) === Number(participant.peer.userId) && !item.ssrc.isVideo)?.stream}
-                                key={'sound-bubble-' + participant.source}>
-                                <Profile size={42}
-                                    entity={participant.user}
-                                    id={participant.user?.id}
-                                    name={participant.user?.firstName}
-                                    key={'profile-' + participant.source} />
-                            </SoundBubbles>
-                            <div className="body">
-                                <div className="title">
-                                    <FullNameTitle chat={participant.user} />
-                                </div>
-                                <div className="subtitle">
-                                    <TextTransition text={participant.muted ? 'listening' : 'speaking'} />
-                                </div>
-                            </div>
-                            <div className="meta">
-                                <Icon name={participant.muted ? 'mic_off' : 'mic'} />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-            <div className="Bottom">
-                <div className="button">
-                    <Icon name="videocam_off" onClick={handleToggleCamera} size={32} />
-                    <div className="title">Camera</div>
-                </div>
-                <div className={buildClassName('button', 'mic', !mute && 'live')} onClick={() => setMute(!mute)}>
-                    {/* <Icon name="mic_off" size={48} /> */}
-                    <SoundBubbles stream={userMedia?.stream}>
-                        {mute ?
-                            <RLottie
-                                sticker="voice_outlined"
-                                fileId="voice_outlined_mute"
-                                width={64}
-                                height={64}
-                                autoplay={true}
-                                fromFrame={micSegments.mute[0]}
-                                toFrame={micSegments.mute[1]} />
-                            : <RLottie
-                                sticker="voice_outlined"
-                                fileId="voice_outlined_unmute"
-                                width={64}
-                                height={64}
-                                autoplay={true}
-                                fromFrame={micSegments.unmute[0]}
-                                toFrame={micSegments.unmute[1]} />}
-                    </SoundBubbles>
-                    <div className="title">
-                        <TextTransition text={mute ? 'Unmute' : "You're Live"} />
+                            </DropdownMenu>
+                        </Menu>
+                    </div>
+                    <div className="body">
+                        <div className="title">Voice Chat</div>
+                        <div className="subtitle">{handlePluralization(presentParticipants?.length, 'participant')}</div>
+                    </div>
+                    <div className="meta">
+                        <Icon name="close" onClick={handleClose} />
                     </div>
                 </div>
-                <div className="button leave" onClick={leaveGroupCall}>
-                    <Icon name="call_end" size={32} />
-                    <div className="title">leave</div>
+                <div className="Content">
+                    <div className="VideoParticipants">
+                        <div className="VideoParticipant" onClick={handleMaximized}></div>
+                        {presentParticipants.map(participant =>
+                            participant.video && <VideoParticipant
+                                onClick={handleMaximized}
+                                participant={participant}
+                                stream={ssrcStream &&
+                                    ssrcStream.find(item =>
+                                        Number(item.ssrc.userId) === Number(participant.peer.userId) && item.ssrc.isVideo)?.stream} />
+                        )}
+                    </div>
+                    <div className="Participants">
+                        {presentParticipants.map(participant =>
+                            <div className={buildClassName("Participant", !participant.muted && 'live')} key={participant.source}>
+                                <SoundBubbles
+                                    stream={ssrcStream &&
+                                        ssrcStream.find(item =>
+                                            Number(item.ssrc.userId) === Number(participant.peer.userId) && !item.ssrc.isVideo)?.stream}
+                                    key={'sound-bubble-' + participant.source}>
+                                    <Profile size={42}
+                                        entity={participant.user}
+                                        id={participant.user?.id}
+                                        name={participant.user?.firstName}
+                                        key={'profile-' + participant.source} />
+                                </SoundBubbles>
+                                <div className="body">
+                                    <div className="title">
+                                        <FullNameTitle chat={participant.user} />
+                                    </div>
+                                    <div className="subtitle">
+                                        <TextTransition text={participant.muted ? 'listening' : 'speaking'} />
+                                    </div>
+                                </div>
+                                <div className="meta">
+                                    <Icon name={participant.muted ? 'mic_off' : 'mic'} />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="Bottom">
+                    <div className="button">
+                        <Icon name="videocam_off" onClick={handleToggleCamera} size={32} />
+                        <div className="title">Camera</div>
+                    </div>
+                    <div className={buildClassName('button', 'mic', !mute && 'live')} onClick={() => setMute(!mute)}>
+                        {/* <Icon name="mic_off" size={48} /> */}
+                        <SoundBubbles stream={userMedia?.stream}>
+                            {mute ?
+                                <RLottie
+                                    sticker="voice_outlined"
+                                    fileId="voice_outlined_mute"
+                                    width={64}
+                                    height={64}
+                                    autoplay={true}
+                                    fromFrame={micSegments.mute[0]}
+                                    toFrame={micSegments.mute[1]} />
+                                : <RLottie
+                                    sticker="voice_outlined"
+                                    fileId="voice_outlined_unmute"
+                                    width={64}
+                                    height={64}
+                                    autoplay={true}
+                                    fromFrame={micSegments.unmute[0]}
+                                    toFrame={micSegments.unmute[1]} />}
+                        </SoundBubbles>
+                        <div className="title">
+                            <TextTransition text={mute ? 'Unmute' : "You're Live"} />
+                        </div>
+                    </div>
+                    <div className="button leave" onClick={leaveGroupCall}>
+                        <Icon name="call_end" size={32} />
+                        <div className="title">Leave</div>
+                    </div>
+                    <button onClick={() => setCount(count + 1)}>Count +</button>
+                    <button onClick={() => setCount(count - 1)}>Count -</button>
                 </div>
             </div>
+            {maximized && <div ref={containerRef}
+                className={buildClassName("ParticipantsContainer",
+                    "VideoParticipants",
+                    getContainerGridLayout(count))}>
+                {Array(count).fill(0).map(() =>
+                    <div className="VideoParticipant item" onClick={handleMaximized}></div>)}
+            </div>}
         </div>
     </Transition>
 }

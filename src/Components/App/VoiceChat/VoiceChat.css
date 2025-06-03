@@ -1,0 +1,66 @@
+.VoiceChat .ParticipantsContainer {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+
+.ParticipantsContainer.layout-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.ParticipantsContainer.layout-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.ParticipantsContainer.layout-3 {
+    grid-template-areas:
+        "one one"
+        "two three";
+    grid-template-columns: 1fr 1fr;
+}
+
+.ParticipantsContainer.layout-3 .item:nth-child(1) {
+    grid-area: one;
+}
+
+.ParticipantsContainer.layout-3 .item:nth-child(2) {
+    grid-area: two;
+}
+
+.ParticipantsContainer.layout-3 .item:nth-child(3) {
+    grid-area: three;
+}
+
+.ParticipantsContainer.layout-4,
+.ParticipantsContainer.layout-5,
+.ParticipantsContainer.layout-6 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.ParticipantsContainer.layout-7,
+.ParticipantsContainer.layout-8,
+.ParticipantsContainer.layout-9 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.ParticipantsContainer.one {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.ParticipantsContainer.fancy-layout {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.fancy-layout .item:first-child {
+    grid-column: 1 / -1;
+    /* کل سطر اول */
+}
+
+.fancy-layout .item:nth-child(1),
+.fancy-layout .item:nth-child(2) {
+    grid-column: 1 / -1;
+}

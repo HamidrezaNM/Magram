@@ -305,9 +305,9 @@ export class TGCalls extends EventTarget {
         this.handleUpdateGroupCallParticipants(ssrcs)
 
         // For debugging
-        setInterval(async () => {
-            await this.checkStats();
-        }, 3000);
+        // setInterval(async () => {
+        //     await this.checkStats();
+        // }, 3000);
 
         return { source }
     }
