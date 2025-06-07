@@ -72,7 +72,6 @@ export function Switch({ checked = false, setChecked }) {
 
 export function CheckBox({ checked = false, setChecked, style }) {
     const onChange = useCallback(() => {
-        console.log('check', !checked)
         if (setChecked)
             setChecked(!checked)
     }, [checked, setChecked])

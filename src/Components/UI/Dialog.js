@@ -2,9 +2,9 @@ import { Children } from "react";
 import Transition from "../App/Transition";
 import buildClassName from "../Util/buildClassName";
 
-export default function Dialog({ children, state }) {
+export default function Dialog({ children, state, onClose }) {
     return <Transition state={state} eachElement>
-        <div className="bg animate" style={{ backgroundColor: '#00000050' }} onClick={() => { }}></div>
+        <div className="bg animate" style={{ backgroundColor: '#00000050' }} onClick={onClose}></div>
         <div className="Dialog">
             {children}
             {/* <div className="button primary" onClick={primaryBtn.action}>{primaryBtn.text}</div> */}

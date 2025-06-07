@@ -3,6 +3,7 @@ import { useSelector } from "react-redux"
 import JoinChatDialog from "../common/JoinChatDialog"
 import Dialog, { DialogButton, DialogCancel, DialogContent, DialogContentBody, DialogTitle } from "./Dialog"
 import DeleteMessageDialog from "../common/DeleteMessageDialog"
+import ClearCacheDialog from "../common/ClearCacheDialog"
 
 function Dialogs() {
     const dialogs = useSelector((state) => state.ui.dialogs)
@@ -13,6 +14,8 @@ function Dialogs() {
                 return <JoinChatDialog chat={dialog.chat} hash={dialog.hash} />
             case 'deleteMessage':
                 return <DeleteMessageDialog data={dialog.message} onDeleteMessage={dialog.onDeleteMessage} />
+            case 'clearCache':
+                return <ClearCacheDialog onClearCache={dialog.onClearCache} />
             default:
                 break;
         }

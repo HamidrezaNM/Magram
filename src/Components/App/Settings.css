@@ -122,3 +122,23 @@
     font-weight: 500;
     color: var(--primary);
 }
+
+.Page .Items .Button {
+    margin: 10px 16px;
+    font-weight: 500;
+    display: flex;
+    height: 48px;
+    background-color: var(--primary);
+    color: var(--text-color);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.Page .Items .Button .title {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+}

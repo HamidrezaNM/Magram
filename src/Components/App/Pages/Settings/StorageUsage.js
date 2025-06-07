@@ -10,18 +10,15 @@ import Transition from "../../Transition";
 import buildClassName from "../../../Util/buildClassName";
 import SettingsThemes from "./Themes";
 import { handleToggleDarkMode } from "../../../Stores/Settings";
-import { pieArcLabelClasses, PieChart } from "@mui/x-charts";
+import { chartsToolbarClasses, pieArcLabelClasses, PieChart } from "@mui/x-charts";
 import { formatBytes } from "../../Message/MessageMedia";
 import TextTransition from "../../../common/TextTransition";
+import { handleDialog } from "../../../Stores/UI";
 
 export default function SettingsStorageUsage() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [data, setData] = useState([])
     const [totalSize, setTotalSize] = useState(0)
-    // const [checkedData, setCheckedData] = useState({
-    //     photos: { active: true },
-    //     videos: { active: true }
-    // })
 
     const subPage = useSelector((state) => state.ui.subPage)
     const darkMode = useSelector((state) => state.settings.darkMode)
@@ -29,7 +26,7 @@ export default function SettingsStorageUsage() {
 
     const dispatch = useDispatch()
 
-    const chart = useRef()
+    const entireTotalSize = useRef()
 
     // const getSubPageLayout = useCallback(() => {
     //     switch (subPage[1]?.page) {
@@ -45,6 +42,11 @@ export default function SettingsStorageUsage() {
 
         let photoSize = 0
         let videoSize = 0
+        let documentSize = 0
+        let avatarSize = 0
+        let stickerSize = 0
+        let musicSize = 0
+        let miscellaneousSize = 0
 
         function cacheSize(c) {
             var type = ''
@@ -55,7 +57,13 @@ export default function SettingsStorageUsage() {
                             res.clone().blob().then(b => {
                                 type = req.url.split(`${window.location.origin}/`)[1]
                                 if (type.startsWith('Video')) videoSize += b.size
-                                if (type.startsWith('Photo')) photoSize += b.size
+                                else if (type.startsWith('Photo')) photoSize += b.size
+                                else if (type.startsWith('Document')) documentSize += b.size
+                                else if (type.startsWith('avatar')) avatarSize += b.size
+                                else if (type.startsWith('Sticker') ||
+                                    type.startsWith('CustomEmoji')) stickerSize += b.size
+                                else if (type.startsWith('Music')) musicSize += b.size
+                                else miscellaneousSize += b.size
 
                                 return
                             })
@@ -74,22 +82,24 @@ export default function SettingsStorageUsage() {
             });
         }
 
-        const size = await cachesSize()
-
-        console.log('photo cache size', photoSize)
-        console.log('video cache size', videoSize)
+        await cachesSize()
 
         return {
             photos: photoSize,
-            videos: videoSize
+            videos: videoSize,
+            document: documentSize,
+            avatar: avatarSize,
+            sticker: stickerSize,
+            music: musicSize,
+            miscellaneous: miscellaneousSize,
         }
     }
 
     const finalData = useMemo(() => {
-        const final = data.filter(item => item.checked)
+        const final = data.filter(item => item.checked && item.value > 0)
 
         if (final?.length > 1)
-            setTotalSize(Object.values(final).reduce((p, c) => p.value + c.value))
+            setTotalSize(final.reduce((p, c) => p + c.value, 0))
         else
             setTotalSize(final[0]?.value)
 
@@ -101,23 +111,55 @@ export default function SettingsStorageUsage() {
 
         (async () => {
             const sizes = await calculateCacheSize()
-            const total = Object.values(sizes).reduce((p, c) => p + c)
-            console.log('sizes', total)
 
-            setData([{
+            entireTotalSize.current = Object.values(sizes).reduce((p, c) => p + c, 0)
+
+            let cache = [{
                 label: 'Photos',
                 value: sizes.photos,
-                color: '#408ACF',
-                checked: true,
-                percent: Math.round(sizes.photos / total * 100)
+                color: '#5CAFFA',
+                checked: true
             },
             {
                 label: 'Videos',
                 value: sizes.videos,
-                color: '#5CAFFA',
-                checked: true,
-                percent: Math.round(sizes.videos / total * 100)
-            }])
+                color: '#408ACF',
+                checked: true
+            },
+            {
+                label: 'Documents',
+                value: sizes.document,
+                color: '#46BA43',
+                checked: true
+            },
+            {
+                label: 'Profile Photos',
+                value: sizes.avatar,
+                color: '#3A005E',
+                checked: true
+            },
+            {
+                label: 'Stickers & Emoji',
+                value: sizes.sticker,
+                color: '#F68136',
+                checked: true
+            },
+            {
+                label: 'Music',
+                value: sizes.music,
+                color: '#6C61DF',
+                checked: true
+            },
+            {
+                label: 'Miscellaneous',
+                value: sizes.miscellaneous,
+                color: '#6C61DF',
+                checked: true
+            }]
+
+            cache = cache.filter(item => item.value > 0).sort((a, b) => b.value - a.value)
+
+            setData(cache)
         })()
     }, [])
 
@@ -133,26 +175,27 @@ export default function SettingsStorageUsage() {
                     <PieChart
                         series={[
                             {
-                                arcLabel: (item) => `${item.percent}%`,
-                                // arcLabelMinAngle: 35,
-                                // arcLabelRadius: '60%',
+                                arcLabel: (item) => `${Math.round(item.value / totalSize * 100)}%`,
+                                arcLabelMinAngle: 25,
                                 innerRadius: 50,
                                 paddingAngle: 1,
+                                highlightScope: { highlight: 'item', fade: 'global' },
                                 data: finalData,
+                                valueFormatter: (item) => formatBytes(item.value, 1)
                             },
                         ]}
                         sx={{
                             [`& .${pieArcLabelClasses.root}`]: {
                                 fontWeight: '500',
-                            },
+                            }
                         }}
                         hideLegend
                         width={180}
                         height={180}
                     />
                     <div className="Content">
-                        <div className="title"><TextTransition text={formatBytes(totalSize, 2, true).size} /></div>
-                        <div className="subtitle">{formatBytes(totalSize, 2, true).type}</div>
+                        <div className="title"><TextTransition text={formatBytes(totalSize, 1, true).size} /></div>
+                        <div className="subtitle">{formatBytes(totalSize, 1, true).type}</div>
                     </div>
                 </div>
                 <div className="title" style={{
@@ -164,16 +207,19 @@ export default function SettingsStorageUsage() {
                     textTransform: 'none'
                 }}>Storage Usage</div>
                 <div className="Items">
-                    {data.map(item => <div className="Item" key={'storageItem' + item.label} onClick={() => { }}>
-                        <CheckBox style={{ '--accent-color': item.color }} checked={item.checked} setChecked={(checked) =>
-                            setData(prev => prev.map(i =>
-                                i.label === item.label
-                                    ? { ...i, checked }
-                                    : i
-                            ))} />
-                        <span>{item.label}</span>
-                        <div className="meta">{formatBytes(item.value)}</div>
+                    {data.map(item => <div className="Item" key={'storageItem' + item.label} onClick={() =>
+                        setData(prev => prev.map(i =>
+                            i.label === item.label
+                                ? { ...i, checked: !item.checked }
+                                : i
+                        ))}>
+                        <CheckBox style={{ '--accent-color': item.color }} checked={item.checked} />
+                        <span>{item.label} <span style={{ fontSize: 14 }}>{Math.round(item.value / entireTotalSize.current * 100)}%</span></span>
+                        <div className="meta">{formatBytes(item.value, 1)}</div>
                     </div>)}
+                    <div className="Button" onClick={() => dispatch(handleDialog({ type: 'clearCache', onClearCache: () => { } }))}>
+                        <div className="title">Clear Cache <TextTransition text={formatBytes(totalSize, 1)} style={{ fontSize: 14, color: '#fffa' }} /></div>
+                    </div>
                 </div>
             </div>
         </div>
