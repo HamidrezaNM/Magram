@@ -116,3 +116,9 @@
 .Page .Item.Device .Meta {
     flex: none !important;
 }
+
+.Page .StorageUsage .Item .meta {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary);
+}

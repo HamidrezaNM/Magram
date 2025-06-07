@@ -300,7 +300,8 @@ function Message({
     const handleDelete = useCallback(() => {
         dispatch(handleDialog({
             type: 'deleteMessage',
-            message: data
+            message: data,
+            onDeleteMessage
         }))
         handleContextMenuClose()
         // setOpenDeleteModal(true); handleContextMenuClose()
@@ -319,10 +320,10 @@ function Message({
         handleContextMenuClose()
     }, [data])
 
-    const onDeleteMessage = async () => {
+    const onDeleteMessage = async (revoke = true) => {
         handleClose()
 
-        await deleteMessage(data.chatId, data.id, dispatch)
+        await deleteMessage(data.chatId, data.id, dispatch, revoke)
     }
 
     const handleClose = () => {

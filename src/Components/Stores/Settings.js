@@ -14,7 +14,8 @@ export const settingsSlice = createSlice({
             centerTopBar: true,
             bottomBar: true,
             iOSTheme: true,
-            gradientMessage: true
+            gradientMessage: true,
+            primaryColor: null
         },
         darkMode: undefined
     },

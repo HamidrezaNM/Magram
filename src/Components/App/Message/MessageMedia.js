@@ -129,7 +129,7 @@ const MessageMedia = forwardRef(({ media, data, className, dimensions, noAvatar 
             <div className="MediaDownload" onClick={downloadMedia}>
                 <div className="message-loading-progress">
                     <Icon name={(isDownloading || data?.isUploading) ? "close" : "arrow_downward"} size={28} />
-                    {(isDownloading || data?.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 22 : 48} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
+                    {(isDownloading || data?.isUploading) && <CircularProgress variant="determinate" style={{ color: '#fff', animation: 'spinner 3s linear infinite' }} sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }} thickness={3} size={isDocumentAudio(media.document) ? 18 : 42} value={progress && progress.loaded / progress.total > .01 ? (progress.loaded / progress.total) * 100 : 1} />}
                 </div>
             </div>
         </Transition>
@@ -720,7 +720,7 @@ export function fancyTimeFormat(duration) {
     return ret;
 }
 
-export function formatBytes(bytes, decimals = 2) {
+export function formatBytes(bytes, decimals = 2, returnSeparately = false) {
     if (!+bytes) return '0 Bytes'
 
     const k = 1000
@@ -729,7 +729,7 @@ export function formatBytes(bytes, decimals = 2) {
 
     const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+    return returnSeparately ? { size: parseFloat((bytes / Math.pow(k, i)).toFixed(dm)), type: sizes[i] } : `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
 function extractFileName(fileName) {

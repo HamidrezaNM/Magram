@@ -70,6 +70,18 @@ export function Switch({ checked = false, setChecked }) {
     </label>
 }
 
+export function CheckBox({ checked = false, setChecked, style }) {
+    const onChange = useCallback(() => {
+        console.log('check', !checked)
+        if (setChecked)
+            setChecked(!checked)
+    }, [checked, setChecked])
+    return <label className="checkbox" style={style}>
+        <input type="checkbox" checked={checked} onChange={onChange} />
+        <span className="checkmark"></span>
+    </label>
+}
+
 export function BackArrow({ onClick, className, isiOS = false, title, index = 0 }) {
     const [state, setState] = useState(true)
 

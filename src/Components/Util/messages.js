@@ -9,8 +9,8 @@ export async function readHistory(peerId, dispatch) {
     dispatch(updateChatUnreadCount({ id: peerId, count: 0 }))
 }
 
-export async function deleteMessage(peerId, messageId, dispatch) {
-    await client.deleteMessages(peerId, [messageId], { revoke: true })
+export async function deleteMessage(peerId, messageId, dispatch, revoke = true) {
+    await client.deleteMessages(peerId, [messageId], { revoke })
 
     dispatch(handleDeleteMessage({
         chatId: peerId,

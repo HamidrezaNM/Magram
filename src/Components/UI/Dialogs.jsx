@@ -12,7 +12,7 @@ function Dialogs() {
             case 'joinChat':
                 return <JoinChatDialog chat={dialog.chat} hash={dialog.hash} />
             case 'deleteMessage':
-                return <DeleteMessageDialog />
+                return <DeleteMessageDialog data={dialog.message} onDeleteMessage={dialog.onDeleteMessage} />
             default:
                 break;
         }

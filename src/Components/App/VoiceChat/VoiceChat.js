@@ -19,6 +19,7 @@ import SoundBubbles from "../../common/SoundBubbles"
 import VideoParticipant from "./VideoParticipant"
 import './VoiceChat.css'
 import PositionTransition from "../../common/PositionTransition"
+import MenuItem from "../../UI/MenuItem"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
@@ -90,7 +91,7 @@ function VoiceChat({ }) {
         }
     }
 
-    async function handleToggleCamera() {
+    async function handleScreenShare() {
 
         navigator.mediaDevices.getDisplayMedia({ audio: false, video: true })
             .then(async (stream) => {
@@ -228,6 +229,8 @@ function VoiceChat({ }) {
     useEffect(() => {
         if (userMedia?.stream) {
             (async () => {
+                navigator.vibrate(1)
+
                 const audioTrack = userMedia.stream.getAudioTracks()[userMedia.audioDeviceIndex]
 
                 if (audioTrack) {
@@ -272,10 +275,11 @@ function VoiceChat({ }) {
         <div className="VoiceChat animate" ref={voiceChatRef}>
             <div className="Sidebar">
                 <div className="TopBar">
-                    <div className="">
+                    <div style={{ position: 'relative' }}>
                         <Menu icon="more_horiz">
-                            <DropdownMenu className="top right withoutTitle">
-
+                            <DropdownMenu className="top left withoutTitle">
+                                <MenuItem icon="graphic_eq" title="Noise Suppression" />
+                                <MenuItem icon="screen_share" title="Share Screen" onClick={handleScreenShare} />
                             </DropdownMenu>
                         </Menu>
                     </div>
@@ -330,7 +334,7 @@ function VoiceChat({ }) {
                 </div>
                 <div className="Bottom">
                     <div className="button">
-                        <Icon name="videocam_off" onClick={handleToggleCamera} size={32} />
+                        <Icon name="videocam_off" onClick={() => { }} size={32} />
                         <div className="title">Camera</div>
                     </div>
                     <div className={buildClassName('button', 'mic', !mute && 'live')} onClick={() => setMute(!mute)}>

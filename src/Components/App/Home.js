@@ -120,6 +120,11 @@ function Home() {
     }, [animations])
 
     useEffect(() => {
+        if (customTheme.primaryColor) {
+            document.querySelector(':root').style.setProperty('--primary', customTheme.primaryColor.hex)
+            document.querySelector('.Dark').style.setProperty('--primary', customTheme.primaryColor.hex)
+            document.querySelector('.iOSTheme').style.setProperty('--primary', customTheme.primaryColor.hex)
+        }
         setTimeout(() => {
             homeRef.current.classList.remove('animate')
         }, 300);

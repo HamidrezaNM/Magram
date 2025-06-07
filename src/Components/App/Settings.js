@@ -19,6 +19,7 @@ import SettingsChatSettings from "./Pages/Settings/ChatSettings";
 import { Api } from "telegram";
 import { handleCoolDown } from "../Util/coolDown";
 import FullNameTitle from "../common/FullNameTitle";
+import SettingsStorage from "./Pages/Settings/Storage";
 
 function Settings() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -100,6 +101,8 @@ function Settings() {
                 return <SettingsGeneral />
             case 'Privacy':
                 return <SettingsPrivacy />
+            case 'Storage':
+                return <SettingsStorage />
             case 'ChatSettings':
                 return <SettingsChatSettings />
             case 'Devices':
@@ -156,7 +159,7 @@ function Settings() {
                 <div className="Items">
                     <div className="Item" onClick={() => PageHandle(dispatch, 'General', 'General', true)}><Icon name="settings" /><span>General</span></div>
                     <div className="Item" onClick={() => PageHandle(dispatch, 'Privacy', 'Privacy and Security', true)}><Icon name="lock" /><span>Privacy and Security</span></div>
-                    <div className="Item"><Icon name="database" /><span>Storage</span></div>
+                    <div className="Item" onClick={() => PageHandle(dispatch, 'Storage', 'Storage', true)}><Icon name="database" /><span>Storage</span></div>
                     <div className="Item" onClick={() => PageHandle(dispatch, 'ChatSettings', 'Chat Settings', true)}><Icon name="chat" /><span>Chat Settings</span></div>
                     <div className="Item" onClick={() => PageHandle(dispatch, 'Devices', 'Devices', true)}><Icon name="devices" /><span>Devices</span></div>
                 </div>

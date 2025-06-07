@@ -9,12 +9,12 @@ import { ChromePicker, GithubPicker, HuePicker, SketchPicker, SliderPicker } fro
 
 export default function SettingsThemes() {
     const [isLoaded, setIsLoaded] = useState(false)
-    const [primaryColor, setPrimaryColor] = useState()
 
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const bottomBar = useSelector((state) => state.settings.customTheme.bottomBar)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
     const gradientMessage = useSelector((state) => state.settings.customTheme.gradientMessage)
+    const primaryColor = useSelector((state) => state.settings.customTheme.primaryColor)
 
     const dispatch = useDispatch()
 
@@ -38,13 +38,9 @@ export default function SettingsThemes() {
         dispatch(handleCustomTheme({ gradientMessage: value }))
     }
 
-    useEffect(() => {
-        if (primaryColor) {
-            document.querySelector(':root').style.setProperty('--primary', primaryColor.hex)
-            document.querySelector('.Dark').style.setProperty('--primary', primaryColor.hex)
-            document.querySelector('.iOSTheme').style.setProperty('--primary', primaryColor.hex)
-        }
-    }, [primaryColor])
+    const setPrimaryColor = (value) => {
+        dispatch(handleCustomTheme({ primaryColor: value }))
+    }
 
     return <div className={buildClassName("SettingsThemes", !isLoaded && 'fadeThrough')}>
         <PageHeader key={centerTopBar}>
@@ -91,7 +87,7 @@ export default function SettingsThemes() {
                         }}></span>
                     </div>
                     <div className="ColorPicker">
-                        <SliderPicker color={primaryColor} onChange={setPrimaryColor} />
+                        <SliderPicker color={primaryColor !== null ? primaryColor : undefined} onChange={setPrimaryColor} />
                     </div>
                 </div>
             </div>
