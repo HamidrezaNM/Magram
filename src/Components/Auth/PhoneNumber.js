@@ -1,6 +1,6 @@
 import { useState, useContext, useCallback, useRef } from "react";
 import { AuthContext } from "./Auth";
-import { client, socket } from "../../App";
+import { API_HASH, API_ID, client, socket } from "../../App";
 import { Api } from "telegram";
 
 export default function PhoneNumber() {
@@ -52,15 +52,6 @@ export default function PhoneNumber() {
             Auth.setAuthCountryCode(countryCode)
             Auth.setAuthPhoneCodeHash(sendCode.phoneCodeHash)
             Auth.setAuthState('authorizationStateWaitCode')
-            // socket.on('ValidatePhoneNumber', (response) => {
-            //     console.log(response)
-            //     if (response.ok) {
-            //     } else if (response.errorCode === 404) {
-            //         Auth.setAuthPhoneNumber(phoneNumber)
-            //         Auth.setAuthCountryCode(countryCode)
-            //         Auth.setAuthState('Password')
-            //     }
-            // })
         } else {
             phoneNumberRef.current.querySelector("label").innerHTML =
                 "Invalid Phone number";
@@ -73,8 +64,8 @@ export default function PhoneNumber() {
         await client.connect() // Connecting to the server
 
         return await client.sendCode({
-            apiId: 22692190,
-            apiHash: 'd392a9a3f167823d8c42aaa77270c0be'
+            apiId: API_ID,
+            apiHash: API_HASH
         }, countryCode + phoneNumber);
     }
 

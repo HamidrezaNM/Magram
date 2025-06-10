@@ -139,8 +139,11 @@ export const uiSlice = createSlice({
                 }
             } else {
                 state.activeChat = action.payload
+
+                if (Number(action.payload?.entity?.id) !== Number(state.activeFullChat?.id)) {
+                    state.activeFullChat = undefined
+                }
             }
-            state.activeFullChat = undefined
         },
         updateActiveChatDefaultBannedRights: (state, action) => {
             state.activeChat = {

@@ -66,8 +66,8 @@ export default function Administrators() {
                                     {item.participant?.adminRights &&
                                         <div className="meta">
                                             {item.participant?.rank ??
-                                                item.participant?.className === 'ChannelParticipantCreator' ?
-                                                'Owner' : 'Admin'}
+                                                (item.participant?.className === 'ChannelParticipantCreator' ?
+                                                    'Owner' : 'Admin')}
                                         </div>}
                                 </div>
                             ))}

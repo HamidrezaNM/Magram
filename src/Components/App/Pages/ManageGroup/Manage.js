@@ -22,11 +22,11 @@ export default function ManageGroup() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [hasChanged, setHasChanged] = useState(false)
     const [title, setTitle] = useState(activeChat.title)
-    const [username, setUsername] = useState(fullChat.username)
+    const [username, setUsername] = useState(activeChat.entity.username)
     const [bio, setBio] = useState(fullChat.about)
 
     useEffect(() => {
-        if (title === activeChat.title && username === fullChat.username && bio === fullChat.about)
+        if (title === activeChat.title && username === activeChat.entity.username && bio === fullChat.about)
             setHasChanged(false)
         else
             setHasChanged(true)

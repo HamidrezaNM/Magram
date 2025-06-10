@@ -67,7 +67,7 @@
   --primary-rgb: 0, 174, 255;
   --primary-hover: #008dcf;
   --primary-hover-rgb: 0, 141, 207;
-  --primary-active: #0080bb;
+  --primary-active: rgba(var(--primary-rgb), .5);
   --surface-color: #fffb;
   --on-surface: #00000020;
   --surface-hover: #ffffff;
@@ -950,6 +950,14 @@
   align-self: flex-start;
 }
 
+.Page .Item.unchangeable {
+  transition: all .15s cubic-bezier(0.5, 1, 0.5, 2);
+}
+
+.Page .Item.unchangeable.animate {
+  transform: translateX(10px);
+}
+
 .Page .Item .profile {
   margin: 0 12px;
 }
@@ -1029,6 +1037,10 @@
 
 .Tab.active {
   background-color: var(--primary-container);
+}
+
+.Tab .icon {
+  display: none;
 }
 
 .TabContainer,
@@ -2096,6 +2108,19 @@ a:hover {
 
 .visible {
   display: initial !important;
+}
+
+.beta {
+  font-size: 12px;
+  padding: 2px 4px;
+  font-weight: 500;
+  border: 1px solid;
+  vertical-align: middle;
+  border-radius: 4px;
+  display: inline-block;
+  color: var(--primary);
+  /* background-color: var(--primary); */
+  /* color: var(--text-color); */
 }
 
 .IconFill {

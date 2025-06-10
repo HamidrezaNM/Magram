@@ -92,7 +92,10 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                             <TextTransition text={connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState} />
                         </span>
                     </div>
-                    <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}><Icon name="search" /></div>
+                    <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}>
+                        <Icon name="lock" />
+                        <Icon name="search" />
+                    </div>
                 </>}
             </div>
         </div>

@@ -109,3 +109,21 @@ export function getChatColor(id) {
 export function getPeerColorIndexById(peerId) {
     return Math.abs(Number(peerId)) % 7;
 }
+
+export function Item({ className, onClick, unchangeable = false, children }) {
+    const [animate, setAnimate] = useState(false)
+
+    const handleUnchangeableClick = () => {
+        navigator.vibrate(10)
+        setAnimate(true)
+
+        setTimeout(() => {
+            navigator.vibrate(10)
+            setAnimate(false)
+        }, 150);
+    }
+
+    return <div className={buildClassName("Item", className, unchangeable && 'unchangeable', animate && 'animate')} onClick={!unchangeable ? onClick : handleUnchangeableClick}>
+        {children}
+    </div>
+}

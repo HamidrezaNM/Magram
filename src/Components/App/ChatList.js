@@ -12,6 +12,7 @@ import { Api } from "telegram";
 import { getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
+import { Icon } from "./common";
 
 function ChatList({ onClick }) {
     const [showArchives, setShowArchives] = useState(false)
@@ -127,6 +128,7 @@ function ChatList({ onClick }) {
                     folderTabIndex === index &&
                     'active'
                 )} onClick={() => setFolderTabIndex(index)}>
+                    <Icon name={folder?.title?.text ? "folder" : 'forum'} size={28} />
                     <span>{folder?.title?.text ?? 'All Chats'}</span>
                 </div>
             )}

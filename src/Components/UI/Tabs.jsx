@@ -45,9 +45,11 @@ function Tabs({ tabs, children, index, setIndex, showOneTab = false, bottom = fa
     }
 
     const TabsButtons = ((showOneTab && tabCount > 0) || tabCount > 1) &&
-        <div className="Tabs">
-            {tabs}
-        </div>
+        <Transition state={true}>
+            <div className="Tabs">
+                {tabs}
+            </div>
+        </Transition>
 
     return <div className="TabContainer" ref={containerRef}>
         {!bottom && TabsButtons}

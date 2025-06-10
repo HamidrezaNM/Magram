@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../../Page";
-import { BackArrow, CheckBox, Icon, Switch } from "../../common";
+import { BackArrow, CheckBox, Icon, Item, Switch } from "../../common";
 import { UserContext } from "../../../Auth/Auth";
 import { Slider } from "@mui/material";
 import Message from "../../Message";
@@ -38,8 +38,6 @@ export default function SettingsStorageUsage() {
     // }, [subPage])
 
     const calculateCacheSize = async () => {
-        // returns approximate size of a single cache (in bytes)
-
         let photoSize = 0
         let videoSize = 0
         let documentSize = 0
@@ -73,7 +71,6 @@ export default function SettingsStorageUsage() {
             });
         }
 
-        // returns approximate size of all caches (in bytes)
         function cachesSize() {
             return caches.keys().then(a => {
                 return Promise.all(
@@ -207,7 +204,7 @@ export default function SettingsStorageUsage() {
                     textTransform: 'none'
                 }}>Storage Usage</div>
                 <div className="Items">
-                    {data.map(item => <div className="Item" key={'storageItem' + item.label} onClick={() =>
+                    {data.map(item => <Item key={'storageItem' + item.label} unchangeable={finalData.length <= 1 && item.checked} onClick={() =>
                         setData(prev => prev.map(i =>
                             i.label === item.label
                                 ? { ...i, checked: !item.checked }
@@ -216,7 +213,7 @@ export default function SettingsStorageUsage() {
                         <CheckBox style={{ '--accent-color': item.color }} checked={item.checked} />
                         <span>{item.label} <span style={{ fontSize: 14 }}>{Math.round(item.value / entireTotalSize.current * 100)}%</span></span>
                         <div className="meta">{formatBytes(item.value, 1)}</div>
-                    </div>)}
+                    </Item>)}
                     <div className="Button" onClick={() => dispatch(handleDialog({ type: 'clearCache', onClearCache: () => { } }))}>
                         <div className="title">Clear Cache <TextTransition text={formatBytes(totalSize, 1)} style={{ fontSize: 14, color: '#fffa' }} /></div>
                     </div>

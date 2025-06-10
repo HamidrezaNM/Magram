@@ -265,6 +265,7 @@
 .Search .topPeers {
     display: flex;
     overflow-x: overlay;
+    padding: 4px;
 }
 
 .Search .topPeers .Item {

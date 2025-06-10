@@ -14,6 +14,7 @@ export default function SettingsThemes() {
     const bottomBar = useSelector((state) => state.settings.customTheme.bottomBar)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
     const gradientMessage = useSelector((state) => state.settings.customTheme.gradientMessage)
+    const newSidebar = useSelector((state) => state.settings.customTheme.newSidebar)
     const primaryColor = useSelector((state) => state.settings.customTheme.primaryColor)
 
     const dispatch = useDispatch()
@@ -36,6 +37,10 @@ export default function SettingsThemes() {
 
     const setGradientMessage = (value) => {
         dispatch(handleCustomTheme({ gradientMessage: value }))
+    }
+
+    const setNewSidebar = (value) => {
+        dispatch(handleCustomTheme({ newSidebar: value }))
     }
 
     const setPrimaryColor = (value) => {
@@ -68,6 +73,9 @@ export default function SettingsThemes() {
                 </div>
                 <div className="Item"><span>Gradient Background in Messages</span>
                     <Switch checked={gradientMessage} setChecked={setGradientMessage} />
+                </div>
+                <div className="Item"><span>New Sidebar <span className="beta">BETA</span></span>
+                    <Switch checked={newSidebar} setChecked={setNewSidebar} />
                 </div>
             </div>
         </div>

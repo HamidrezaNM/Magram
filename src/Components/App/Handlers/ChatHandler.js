@@ -74,6 +74,7 @@ const ChatHandler = forwardRef(({ }, ref) => {
         (async () => {
             if (activeChat) {
                 try {
+                    console.log('setfulklchat')
                     dispatch(setActiveFullChat())
                     if (activeChat.isChannel) {
                         if (!activeChat.fullChat) {

@@ -185,7 +185,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
 
     console.log('Messages Rerender')
 
-    return <div className="Messages scrollable" ref={ThreadRef} onScroll={onScrollMessages}>
+    return <div className="MessageList scrollable" ref={ThreadRef} onScroll={onScrollMessages}>
         <div className="ThreadMessage">
             <Message key={activeChat.id?.value + '_' + thread?.id} data={thread} prevMsgFrom={thread.date} prevMsgDate={thread.date} nextMsgFrom={thread._senderId?.value} />
         </div>

@@ -55,8 +55,8 @@ export default function Members() {
                             {item.participant?.adminRights &&
                                 <div className="meta">
                                     {item.participant?.rank ??
-                                        item.participant?.className === 'ChannelParticipantCreator' ?
-                                        'Owner' : 'Admin'}
+                                        (item.participant?.className === 'ChannelParticipantCreator' ?
+                                            'Owner' : 'Admin')}
                                 </div>}
                         </div>
                     ))}

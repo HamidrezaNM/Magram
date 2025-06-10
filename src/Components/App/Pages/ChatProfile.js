@@ -40,6 +40,8 @@ export default function ChatProfile() {
 
     const chatType = getChatType(activeChat?.entity)
 
+    console.log('fullChat', fullChat)
+
     useEffect(() => {
         setIsLoaded(true);
 

@@ -4,7 +4,7 @@ import { Icon, Profile } from "./common";
 import './LeftColumn.css'
 import './MiddleColumn.css'
 import '../../MATheme.css'
-import '../../CustomTheme.css'
+import '../../CustomTheme.scss'
 import { useRef } from "react";
 import { useContext } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
@@ -121,9 +121,17 @@ function Home() {
 
     useEffect(() => {
         if (customTheme.primaryColor) {
+            const rgb = `${customTheme.primaryColor.rgb.r}, ${customTheme.primaryColor.rgb.g}, ${customTheme.primaryColor.rgb.b}`
+
             document.querySelector(':root').style.setProperty('--primary', customTheme.primaryColor.hex)
-            document.querySelector('.Dark').style.setProperty('--primary', customTheme.primaryColor.hex)
-            document.querySelector('.iOSTheme').style.setProperty('--primary', customTheme.primaryColor.hex)
+            if (darkMode)
+                document.querySelector('.Dark').style.setProperty('--primary', customTheme.primaryColor.hex)
+            if (customTheme.iOSTheme)
+                document.querySelector('.iOSTheme').style.setProperty('--primary', customTheme.primaryColor.hex)
+
+            document.querySelector(':root').style.setProperty('--primary-rgb', rgb)
+            if (darkMode)
+                document.querySelector('.Dark').style.setProperty('--primary-rgb', rgb)
         }
         setTimeout(() => {
             homeRef.current.classList.remove('animate')
@@ -300,7 +308,7 @@ function Home() {
                         <Transition state={showCall} action={() => dispatch(handleCall())}>
                             <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
                         </Transition>
-                        <div className={`MiddleColumn ${activeChat ? 'active' + (!page ? ' focused' : '') : ''} ${(showCall && !callMinimal) ? 'C' : ''} ${callLeftPanelClose ? 'L' : ''} ${callMaximized ? 'X' : ''} `}>
+                        <div className={buildClassName('MiddleColumn', activeChat && 'active', (activeChat && !page) && 'focused', (showCall && !callMinimal) && 'C', callLeftPanelClose && 'L', callMaximized && 'X')}>
                             <MiddleColumn />
                         </div>
                         {groupCallJoined && <CallHeader />}

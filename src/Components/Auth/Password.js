@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthComplete, AuthContext } from "./Auth";
-import { client, socket } from "../../App";
+import { API_HASH, API_ID, client, socket } from "../../App";
 
 export default function Password() {
     const [password, setPassword] = useState("");
@@ -16,8 +16,8 @@ export default function Password() {
             setIsLoading(true)
             await client.signInWithPassword(
                 {
-                    apiId: 22692190,
-                    apiHash: 'd392a9a3f167823d8c42aaa77270c0be',
+                    apiId: API_ID,
+                    apiHash: API_HASH,
                 },
                 {
                     password: () => password,

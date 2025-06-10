@@ -23,8 +23,8 @@ const getSession = () => {
 }
 
 const SESSION = getSession()
-const API_ID = process.env.REACT_APP_API_ID
-const API_HASH = process.env.REACT_APP_API_HASH
+export const API_ID = process.env.REACT_APP_API_ID
+export const API_HASH = process.env.REACT_APP_API_HASH
 
 const deviceData = GetDeviceData()
 
