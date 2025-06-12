@@ -62,6 +62,7 @@ import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import DeleteEffect from "../common/DeleteEffect";
 import CallHeader from "./CallHeader";
+import StoryModal from "./StoryModal";
 
 export const urlEndpoint = '';
 export const publicKey = '';
@@ -92,11 +93,13 @@ function Home() {
     const activeChat = useSelector((state) => state.ui.activeChat?.id)
     const thread = useSelector((state) => state.ui.thread)
     const page = useSelector((state) => state.ui.page)
+    const storyModal = useSelector((state) => state.ui.storyModal)
     const showCall = useSelector((state) => state.ui.showCall)
     const callMinimal = useSelector((state) => state.ui.callMinimal)
     const callMaximized = useSelector((state) => state.ui.callMaximized)
     const groupCallJoined = useSelector((state) => state.ui.groupCall?.joined)
     const callLeftPanelClose = useSelector((state) => state.ui.callLeftPanelClose)
+
     const background = useSelector((state) => state.ui.background)
     const darkMode = useSelector((state) => state.settings.darkMode)
     const animations = useSelector((state) => state.settings.animations)
@@ -316,6 +319,8 @@ function Home() {
                     {groupCallJoined && <VoiceChat />}
 
                     <MediaPreview />
+
+                    {storyModal && <StoryModal stories={storyModal.stories} peerIndex={storyModal.peerIndex} itemIndex={storyModal.itemIndex} />}
 
                     <Toasts />
                     <Dialogs />

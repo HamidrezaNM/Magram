@@ -34,6 +34,8 @@ export const uiSlice = createSlice({
         deleteEffect: null,
         voiceOutputVolume: 50,
         mediaPreview: null,
+        stories: [],
+        storyModal: null,
         musicPlayer: {
             data: {},
             chatId: null,
@@ -238,6 +240,12 @@ export const uiSlice = createSlice({
         handleMediaPreviewClose: (state) => {
             state.mediaPreview.active = false;
         },
+        handleStories: (state, action) => {
+            state.stories = action.payload
+        },
+        handleStoryModal: (state, action) => {
+            state.storyModal = action.payload
+        },
         handleMusicPlayer: (state, action) => {
             const { messageId, chatId, document } = action.payload
             const _musicPlayer = state.musicPlayer || {}
@@ -313,6 +321,8 @@ export const {
     handleVoiceOutputVolume,
     handleMediaPreview,
     handleMediaPreviewClose,
+    handleStories,
+    handleStoryModal,
     handleMusicPlayer,
     handleMusicPlayerTogglePlaying,
     handleToast,

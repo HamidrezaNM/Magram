@@ -19,6 +19,7 @@ import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import TextTransition from "../common/TextTransition";
 import Forward from "./Pages/Forward";
+import Stories from "./Stories";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -93,13 +94,13 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                         </span>
                     </div>
                     <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}>
-                        <Icon name="lock" />
                         <Icon name="search" />
                     </div>
                 </>}
             </div>
         </div>
         <Transition state={showPage}><Page>{getPageLayout()}</Page></Transition>
+        <Stories />
         <div className="Chats scrollable">
             <ChatList />
         </div>

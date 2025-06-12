@@ -275,7 +275,6 @@ export const MediaVideo = memo(({ media }) => {
         media={media}
         visible={true}
         details={{
-            name: getDocumentFileName(media.document),
             duration: videoAttributes?.duration,
             size: Number(media.document.size?.value)
         }}

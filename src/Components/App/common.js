@@ -53,7 +53,7 @@ export function Profile({ entity, image, name, id, size = 48, isSavedMessages, s
             <>
                 <span>{name ? Array.from(name.toString())[0].toUpperCase() : ''}</span>
                 <Transition state={!!photo}>
-                    <img ref={img} style={{ width: size + 'px', height: size + 'px' }} src={photo} />
+                    <img ref={img} style={{ width: size + 'px', height: size + 'px' }} decoding="async" src={photo} />
                 </Transition>
             </>}
     </div>
