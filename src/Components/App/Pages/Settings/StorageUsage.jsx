@@ -1,19 +1,12 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { PageClose, PageHandle, PageHeader, SubPage } from "../../Page";
-import { BackArrow, CheckBox, Icon, Item, Switch } from "../../common";
-import { UserContext } from "../../../Auth/Auth";
-import { Slider } from "@mui/material";
-import Message from "../../Message";
-import SettingsAnimations from "./Animations";
-import Transition from "../../Transition";
+import { PageClose, PageHeader } from "../../Page";
+import { BackArrow, CheckBox, Item } from "../../common";
 import buildClassName from "../../../Util/buildClassName";
-import SettingsThemes from "./Themes";
-import { handleToggleDarkMode } from "../../../Stores/Settings";
-import { chartsToolbarClasses, pieArcLabelClasses, PieChart } from "@mui/x-charts";
+import { pieArcLabelClasses, PieChart } from "@mui/x-charts";
 import { formatBytes } from "../../Message/MessageMedia";
 import TextTransition from "../../../common/TextTransition";
-import { handleDialog } from "../../../Stores/UI";
+import { handleDialog, handleToast } from "../../../Stores/UI";
 
 export default function SettingsStorageUsage() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -102,6 +95,49 @@ export default function SettingsStorageUsage() {
 
         return final
     }, [data])
+
+    const handleClearCache = () => {
+        const photos = data.find(i => i.label === 'Photos')?.checked
+        const videos = data.find(i => i.label === 'Videos')?.checked
+        const documents = data.find(i => i.label === 'Documents')?.checked
+        const avatars = data.find(i => i.label === 'Profile Photos')?.checked
+        const stickers = data.find(i => i.label === 'Stickers & Emoji')?.checked
+        const music = data.find(i => i.label === 'Music')?.checked
+        const miscellaneous = data.find(i => i.label === 'Miscellaneous')?.checked
+
+        dispatch(handleToast({ icon: 'error', title: 'Cleaning Cache...' }))
+
+        clearCaches()
+
+        function clearCaches() {
+            return caches.keys().then(a => {
+                return Promise.all(
+                    a.map(n => caches.open(n).then(c => clearCache(c)))
+                ).then(() => dispatch(handleToast({ icon: 'error', title: 'Cache cleared' })));
+            });
+        }
+
+        function clearCache(c) {
+            let type
+            return c.keys().then(a => {
+                return Promise.all(
+                    a.map(req => {
+                        type = req.url.split(`${window.location.origin}/`)[1]
+                        if (videos && type.startsWith('Video')) c.delete(req)
+                        else if (photos && type.startsWith('Photo')) c.delete(req)
+                        else if (documents && type.startsWith('Document')) c.delete(req)
+                        else if (avatars && type.startsWith('avatar')) c.delete(req)
+                        else if (stickers && (type.startsWith('Sticker') ||
+                            type.startsWith('CustomEmoji'))) c.delete(req)
+                        else if (music && type.startsWith('Music')) c.delete(req)
+                        // else if (miscellaneous) c.delete(req) // TODO
+
+                        return
+                    }
+                    ))
+            }).then(() => true);
+        }
+    }
 
     useEffect(() => {
         setIsLoaded(true);
@@ -214,7 +250,7 @@ export default function SettingsStorageUsage() {
                         <span>{item.label} <span style={{ fontSize: 14 }}>{Math.round(item.value / entireTotalSize.current * 100)}%</span></span>
                         <div className="meta">{formatBytes(item.value, 1)}</div>
                     </Item>)}
-                    <div className="Button" onClick={() => dispatch(handleDialog({ type: 'clearCache', onClearCache: () => { } }))}>
+                    <div className="Button" onClick={() => dispatch(handleDialog({ type: 'clearCache', onClearCache: handleClearCache }))}>
                         <div className="title">Clear Cache <TextTransition text={formatBytes(totalSize, 1)} style={{ fontSize: 14, color: '#fffa' }} /></div>
                     </div>
                 </div>

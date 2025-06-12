@@ -1,5 +1,6 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from "react";
 import '@thorvg/lottie-player';
+import { PUBLIC_URL } from "../../config";
 
 const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autoplay = true, loop = false, fromFrame, toFrame }, ref) => {
     // const [data, setData] = useState()
@@ -36,7 +37,7 @@ const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autopl
     useEffect(() => {
         (async () => {
             if (!data.current) {
-                const res = await fetch(process.env.PUBLIC_URL + '/tgs/' + sticker + '.json')
+                const res = await fetch(PUBLIC_URL + '/tgs/' + sticker + '.json')
                 data.current = await res.json()
             }
 

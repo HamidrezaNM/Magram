@@ -462,52 +462,54 @@
     padding: 0;
 }
 
-.iOSTheme .Dialog {
-    position: absolute;
-    height: fit-content;
-    width: 420px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 3;
-    background-color: var(--primary-container);
-    padding: 16px;
-    border-radius: 16px;
-    user-select: none;
-}
+@media screen and (min-width: 926px) {
+    .iOSTheme .Dialog {
+        position: absolute;
+        height: fit-content;
+        width: 420px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        background-color: var(--primary-container);
+        padding: 16px;
+        border-radius: 16px;
+        user-select: none;
+    }
 
-.iOSTheme .Dialog .Content {
-    gap: 8px;
-    display: flex;
-    flex-direction: column;
-}
+    .iOSTheme .Dialog .Content {
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
+    }
 
-.iOSTheme .Dialog .Content .title {
-    text-align: center;
-    color: #888;
-}
+    .iOSTheme .Dialog .Content .title {
+        text-align: center;
+        color: #888;
+    }
 
-.iOSTheme .Dialog .button {
-    padding-block: 12px;
-    border-radius: 10px;
-    font-size: 18px;
-    transition: all .3s ease;
-    text-align: center;
-    background-color: var(--secondary);
-    color: #ffffff77;
-    font-weight: 500;
-    cursor: pointer;
-}
+    .iOSTheme .Dialog .button {
+        padding-block: 12px;
+        border-radius: 10px;
+        font-size: 18px;
+        transition: all .3s ease;
+        text-align: center;
+        background-color: var(--secondary);
+        color: #ffffff77;
+        font-weight: 500;
+        cursor: pointer;
+    }
 
-.iOSTheme .Dialog .Content .button {
-    margin: 8px 0;
-}
+    .iOSTheme .Dialog .Content .button {
+        margin: 8px 0;
+    }
 
-.iOSTheme .Dialog .button.danger {
-    background-color: #770000;
-    color: #fff !important;
+    .iOSTheme .Dialog .button.danger {
+        background-color: #770000;
+        color: #fff !important;
+    }
 }
 
 .newSidebar {

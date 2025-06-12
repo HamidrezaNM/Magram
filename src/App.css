@@ -2059,7 +2059,7 @@ a:hover {
 }
 
 .StoryModal .Story .Content .MediaDetails {
-  display: none;
+  /* display: none; */
 }
 
 .StoryModal .BottomBar {

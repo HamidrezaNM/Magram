@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 const REM = 16;
 const BLUE = ['#34C578', '#3CA3F3'];
@@ -18,7 +19,8 @@ const EXTRA_GAP_SIZE = (GAP_PERCENT_EXTRA / 100) * (2 * Math.PI);
 const EXTRA_GAP_START = EXTRA_GAP_ANGLE - EXTRA_GAP_SIZE / 2;
 const EXTRA_GAP_END = EXTRA_GAP_ANGLE + EXTRA_GAP_SIZE / 2;
 
-export function StoryCircle({ size }) {
+export function StoryCircle({ size, stories, maxReadId }) {
+  const darkMode = useSelector(state => state.settings.darkMode)
 
   const canvas = useRef()
 
@@ -27,17 +29,22 @@ export function StoryCircle({ size }) {
   const adaptedSize = size + STROKE_WIDTH;
 
   useEffect(() => {
+
+    let readCount = 0
+
+    stories.map(item => { if (item.id <= maxReadId) readCount++ })
+
     drawGradientCircle({
       canvas: canvas.current,
       size: adaptedSize * dpr,
-      segmentsCount: 3,
+      segmentsCount: stories.length,
       color: false ? 'green' : 'blue',
-      readSegmentsCount: 0,
+      readSegmentsCount: readCount,
       withExtraGap: false,
-      readSegmentColor: true ? DARK_GRAY : GRAY,
+      readSegmentColor: darkMode ? DARK_GRAY : GRAY,
       dpr,
     });
-  }, [adaptedSize])
+  }, [adaptedSize, darkMode])
 
   return <canvas style={{ maxWidth: adaptedSize, maxHeight: adaptedSize }} ref={canvas} />
 }

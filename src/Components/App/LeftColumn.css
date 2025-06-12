@@ -333,6 +333,7 @@
     font-size: 12px;
     max-width: 64px;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .Stories .Story .StoryAvatar {

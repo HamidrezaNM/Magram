@@ -5,7 +5,7 @@ import buildClassName from "../Util/buildClassName";
 export default function Dialog({ children, state, onClose }) {
     return <Transition state={state} eachElement>
         <div className="bg animate" style={{ backgroundColor: '#00000050' }} onClick={onClose}></div>
-        <div className="Dialog">
+        <div className="Dialog animate">
             {children}
             {/* <div className="button primary" onClick={primaryBtn.action}>{primaryBtn.text}</div> */}
             {/* <div className="button secondary" onClick={secondaryBtn.action}>{secondaryBtn.text}</div> */}

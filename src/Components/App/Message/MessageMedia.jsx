@@ -466,7 +466,7 @@ export const Image = memo(forwardRef(({ children,
     </>
 }))
 
-export const Video = memo(forwardRef(({ children, visible, media, details, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, autoplay = false }, ref) => {
+export const Video = memo(forwardRef(({ children, visible, media, details, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc, setIsDownloading, multipleSources = false, autoplay = false }, ref) => {
     const [thumb, setThumb] = useState()
     const [content, setContent] = useState()
     const [loaded, setLoaded] = useState()
@@ -554,7 +554,9 @@ export const Video = memo(forwardRef(({ children, visible, media, details, size,
                 <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
             </Transition>
             :
-            <video ref={video} src={content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={autoplay && isLoaded} loop={autoplay} />
+            <video ref={video} src={!multipleSources && content} width={dimensions.width} height={dimensions.height} className={isLoaded ? '' : 'blurred'} autoPlay={autoplay && isLoaded} loop={autoplay} playsInline>
+                {multipleSources && <source src={content} type="video/mp4; codecs=avc1.64001E" />}
+            </video>
         }
         <div className="MediaDetails">
             <div className="FlexColumn">

@@ -91,6 +91,7 @@ const MediaVideo = memo(({ media }) => {
         isLoaded={isLoaded}
         setIsLoaded={setIsLoaded}
         setProgress={() => { }}
+        multipleSources={true}
         autoplay={true} />
 })
 

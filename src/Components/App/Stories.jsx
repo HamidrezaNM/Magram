@@ -44,7 +44,7 @@ const StoryButton = memo(({ story, stories, index, dispatch }) => {
 
     return <div className="Story" onClick={() => dispatch(handleStoryModal({ peerIndex: index, itemIndex: 0, stories }))}>
         <div className="StoryAvatar">
-            <StoryCircle size={54} />
+            <StoryCircle size={54} stories={story.stories} maxReadId={story.maxReadId} />
             <Profile entity={story.entity} id={story.entity.id} name={story.entity.title || story.entity.firstName} />
         </div>
         <div className="title"><FullNameTitle chat={story.entity} /></div>

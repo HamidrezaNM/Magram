@@ -26,18 +26,23 @@ function LottiePlayer({ data, fileId, loop, autoPlay, width, height }) {
     // }, [])
 
     useEffect(() => {
+        const dpr = window.devicePixelRatio;
+
         const options = {
             container: player.current,
             loop,
             autoplay: autoPlay,
             animationData: data,
             fileId,
-            width,
-            height
+            width: width * dpr,
+            height: height * dpr
         };
         window.RLottie.loadAnimation(options, _anim => {
             // setAnim(_anim);
             anim.current = _anim
+
+            player.current.querySelector('canvas').style.maxWidth = width + 'px'
+            player.current.querySelector('canvas').style.maxHeight = height + 'px'
 
             // if (window.RLottie.hasFirstFrame(this.anim)) {
             // if (!eventListeners) return;
