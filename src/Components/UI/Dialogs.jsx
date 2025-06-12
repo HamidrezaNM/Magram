@@ -1,7 +1,6 @@
 import { memo } from "react"
 import { useSelector } from "react-redux"
 import JoinChatDialog from "../common/JoinChatDialog"
-import Dialog, { DialogButton, DialogCancel, DialogContent, DialogContentBody, DialogTitle } from "./Dialog"
 import DeleteMessageDialog from "../common/DeleteMessageDialog"
 import ClearCacheDialog from "../common/ClearCacheDialog"
 

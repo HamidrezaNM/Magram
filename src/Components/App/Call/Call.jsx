@@ -4,7 +4,6 @@ import './Call.css'
 import { useDispatch, useSelector } from "react-redux";
 import { handleCall, handleCallLeftPanelToggle, handleCallMaximizedToggle, handleCallMinimalToggle, handleCloseCall, setActiveChat } from "../../Stores/UI";
 import Peer from "peerjs";
-import { socket } from "../../../App";
 import { AuthContext } from "../../Auth/Auth";
 import { PageHandle } from "../Page";
 
@@ -64,15 +63,15 @@ const Call = forwardRef(({ CallStream, setCallState }, ref) => {
             if (!ui.call.incoming) {
                 const chatId = Object.values(chats).find((obj) => obj.to?._id === ui.call._id)._id
                 console.log('call', chatId)
-                socket.emit('MakeCall', { token: Auth.authJWT, ...ui.call, chatId, peerId: id })
-                socket.on('MakeCall', (response) => {
-                    if (response.ok) {
-                        setStatusText('Waiting...')
-                        setCallState('Waiting...')
-                        setCallId(response.data.callId)
-                        socket.off('MakeCall')
-                    }
-                })
+                // socket.emit('MakeCall', { token: Auth.authJWT, ...ui.call, chatId, peerId: id })
+                // socket.on('MakeCall', (response) => {
+                //     if (response.ok) {
+                //         setStatusText('Waiting...')
+                //         setCallState('Waiting...')
+                //         setCallId(response.data.callId)
+                //         socket.off('MakeCall')
+                //     }
+                // })
                 setIsConnected(true)
                 setIsIncoming(false)
             } else {
@@ -108,12 +107,12 @@ const Call = forwardRef(({ CallStream, setCallState }, ref) => {
                         setStatusText('Call Declined')
                         setCallState('Call Declined')
                         const text = '{"status": "Declined Call"}'
-                        socket.emit('UpdateCallStatus', { token: Auth.authJWT, peerId: conn.provider._id, status: 'declined' })
-                        socket.on('UpdateCallStatus', (response) => {
-                            if (response.ok) {
+                        // socket.emit('UpdateCallStatus', { token: Auth.authJWT, peerId: conn.provider._id, status: 'declined' })
+                        // socket.on('UpdateCallStatus', (response) => {
+                        //     if (response.ok) {
 
-                            }
-                        })
+                        //     }
+                        // })
 
                         // updateCallMessage(text).then((data) => {
                         //     console.log(data);
@@ -491,12 +490,12 @@ const Call = forwardRef(({ CallStream, setCallState }, ref) => {
     useEffect(() => {
         if (isClosed) {
             if (isCallAnswered && isHost) {
-                socket.emit('UpdateCallStatus', { token: Auth.authJWT, peerId, status: 'answered', duration: Math.floor(duration / 1000) })
-                socket.on('UpdateCallStatus', (response) => {
-                    if (response.ok) {
+                // socket.emit('UpdateCallStatus', { token: Auth.authJWT, peerId, status: 'answered', duration: Math.floor(duration / 1000) })
+                // socket.on('UpdateCallStatus', (response) => {
+                //     if (response.ok) {
 
-                    }
-                })
+                //     }
+                // })
             }
             try {
                 CallStream.current.getTracks().forEach((track) => {

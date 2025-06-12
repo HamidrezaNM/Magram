@@ -10,7 +10,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import ChatContextMenu from "./ChatContextMenu";
 import { handleContextMenu } from "../Stores/UI";
 import { removeChat, updateLastMessage } from "../Stores/Chats";
-import { client, socket } from "../../App";
+import { client } from "../../App";
 import FullNameTitle from "../common/FullNameTitle";
 import { Api } from "telegram";
 import { deleteChat, getChatType, getDeleteChatText } from "../Helpers/chats";

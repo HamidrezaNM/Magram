@@ -1,8 +1,8 @@
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { client } from "../../../App";
 import { Api } from "telegram";
-import { chatAdded, handleTypingStatus, removeTypingStatus, setFullChat, updateChatRead, updateChatUserStatus, updateTypingStatus } from "../../Stores/Chats";
+import { chatAdded, handleTypingStatus, removeTypingStatus, setFullChat, updateChatRead, updateChatUserStatus } from "../../Stores/Chats";
 import { handleGroupCallParticipants, handleToast, setActiveChat, setActiveFullChat } from "../../Stores/UI";
 import { generateChatWithPeer, getChatIdFromPeer } from "../../Helpers/chats";
 import { returnBigInt } from "telegram/Helpers";

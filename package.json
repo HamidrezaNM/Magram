@@ -15,6 +15,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@thorvg/lottie-player": "^1.0.0-pre.20",
+    "@vitejs/plugin-basic-ssl": "^2.0.0",
     "emoji-datasource": "^15.1.2",
     "emoji-js": "^3.8.0",
     "emoji-mart": "^5.5.2",
@@ -26,13 +27,12 @@
     "mongodb": "^6.2.0",
     "pako": "^2.1.0",
     "peerjs": "^1.5.4",
-    "react": "^18.2.0",
+    "react": "^19.1.0",
     "react-color": "^2.19.3",
     "react-contenteditable": "^3.3.7",
-    "react-dom": "^18.2.0",
+    "react-dom": "^19.1.0",
     "react-lottie": "^1.2.10",
     "react-redux": "^9.1.0",
-    "react-scripts": "5.0.1",
     "sass": "^1.89.1",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
@@ -41,18 +41,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build"
   },
   "homepage": "https://hamidrezanm.github.io/Magram",
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -64,5 +56,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "vite": "^6.3.5"
   }
 }

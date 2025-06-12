@@ -1,7 +1,5 @@
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "./Auth";
-import { socket } from "../../App";
-import { DetectDevice, GetDeviceData } from "./Verify";
 
 export default function Register() {
     const [firstname, setFirstname] = useState("");

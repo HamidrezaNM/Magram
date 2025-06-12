@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useRef, useState } from "react"
+import { memo, useContext, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { TGCalls } from "../../Util/Calls/TGCalls";
 import { client } from "../../../App";
@@ -6,7 +6,7 @@ import { Api } from "telegram";
 import { Profile } from "../common";
 import { getPeerId } from "../../Helpers/chats";
 import Transition from "../Transition";
-import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleUserMedia, handleUserMediaStream } from "../../Stores/UI";
+import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleUserMediaStream } from "../../Stores/UI";
 import { UserContext } from "../../Auth/Auth";
 import { black } from "../../Util/Calls/voiceChat";
 

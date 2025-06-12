@@ -1,13 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { AuthContext, UserContext } from "../../Auth/Auth";
+import { useCallback, useEffect, useState } from "react";
 import { BackArrow, Icon, Profile } from "../common";
 import './NewGroup.css';
-import { PageClose, PageHeader, pageClose } from "../Page";
-import DropdownMenu from "../../UI/DropdownMenu";
-import Menu from "../../UI/Menu";
-import MenuItem from "../../UI/MenuItem";
+import { PageClose, PageHeader } from "../Page";
 import { useDispatch, useSelector } from "react-redux";
-import { client, socket } from "../../../App";
+import { client } from "../../../App";
 import { Api } from "telegram";
 import { chatAdded } from "../../Stores/Chats";
 import { generateChatWithPeer } from "../../Helpers/chats";

@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { AuthComplete, AuthContext } from "./Auth";
-import { client, socket } from "../../App";
+import { client } from "../../App";
 import { Api } from "telegram";
 
 export default function Verify() {

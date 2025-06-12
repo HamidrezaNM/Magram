@@ -1,11 +1,9 @@
-import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import ContentEditable from "../../common/WrappedContentEditable";
-import { IKUpload } from "imagekitio-react";
 import { Icon } from "../common";
-import EmojiData from '@emoji-mart/data/sets/14/apple.json'
 import { useDispatch, useSelector } from "react-redux";
-import { handleMessageError, messageAdded, updateMessage, updateMessageId, updateMessageMedia, updateMessageMediaUploadProgress, updateMessageText } from "../../Stores/Messages";
-import { client, socket } from "../../../App";
+import { handleMessageError, messageAdded, updateMessage, updateMessageId, updateMessageMedia, updateMessageMediaUploadProgress } from "../../Stores/Messages";
+import { client } from "../../../App";
 import { chatAdded, setChat, updateLastMessage } from "../../Stores/Chats";
 import { AuthContext, UserContext } from "../../Auth/Auth";
 import { handleEditMessage, handleForwardMessage, handleReplyToMessage, handleSendBotCommand } from "../../Stores/UI";

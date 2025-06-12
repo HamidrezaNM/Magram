@@ -2,16 +2,10 @@ import './App.css';
 import './assets/styles/Material Symbol Rounded.css';
 import './Mobile.css';
 import { Auth } from './Components/Auth/Auth';
-import { io } from "socket.io-client";
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import packageInfo from '../package.json';
 import { GetDeviceData } from './Components/Auth/Verify';
-
-export const socket = io("wss://temp", {
-  reconnectionDelayMax: 100,
-  reconnection: false
-});
 
 const getSession = () => {
   try {
@@ -23,8 +17,8 @@ const getSession = () => {
 }
 
 const SESSION = getSession()
-export const API_ID = process.env.REACT_APP_API_ID
-export const API_HASH = process.env.REACT_APP_API_HASH
+export const API_ID = import.meta.env.VITE_API_ID
+export const API_HASH = import.meta.env.VITE_API_ID
 
 const deviceData = GetDeviceData()
 

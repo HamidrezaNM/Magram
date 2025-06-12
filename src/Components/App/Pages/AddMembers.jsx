@@ -1,15 +1,9 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthContext, UserContext } from "../../../Auth/Auth";
-import { ChatContext } from "../../ChatContext";
-import { PageClose, PageHandle, PageHeader, SubPage } from "../../Page";
-import { Icon, Profile, Switch } from "../../common";
-import { showUserProfile } from "../UserProfile";
+import { PageClose, PageHeader, SubPage } from "../../Page";
+import { Icon, Profile } from "../../common";
 import Transition from "../../Transition";
-import { setChat } from "../../../Stores/Chats";
-import { setActiveChat } from "../../../Stores/UI";
-import { socket } from "../../../../App";
-import AdminRights from "./AdminRights";
 
 export default function AddMembers() {
     const dispatch = useDispatch()

@@ -1,12 +1,12 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PageClose, PageHandle, PageHeader, SubPage } from "../../Page";
 import { BackArrow, Icon, Profile } from "../../common";
 import Transition from "../../Transition";
 import Permissions from "./Permissions";
-import { client, socket } from "../../../../App";
-import { setChat, setFullChat } from "../../../Stores/Chats";
-import { setActiveChat, setActiveFullChat } from "../../../Stores/UI";
+import { client } from "../../../../App";
+import { setFullChat } from "../../../Stores/Chats";
+import { setActiveFullChat } from "../../../Stores/UI";
 import Administrators from "./Administrators";
 import Members from "./Members";
 import { Api } from "telegram";

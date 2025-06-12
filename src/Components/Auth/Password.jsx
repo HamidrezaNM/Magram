@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthComplete, AuthContext } from "./Auth";
-import { API_HASH, API_ID, client, socket } from "../../App";
+import { API_HASH, API_ID, client } from "../../App";
 
 export default function Password() {
     const [password, setPassword] = useState("");

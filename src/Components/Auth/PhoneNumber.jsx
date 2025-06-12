@@ -1,6 +1,6 @@
 import { useState, useContext, useCallback, useRef } from "react";
 import { AuthContext } from "./Auth";
-import { API_HASH, API_ID, client, socket } from "../../App";
+import { API_HASH, API_ID, client } from "../../App";
 import { Api } from "telegram";
 
 export default function PhoneNumber() {

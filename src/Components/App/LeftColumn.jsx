@@ -4,7 +4,6 @@ import Transition from "./Transition";
 import CallMinimal from "./Call/CallMinimal";
 import Page, { PageHandle } from "./Page";
 import { UserContext } from "../Auth/Auth";
-import { client, socket } from "../../App";
 import Settings from "./Settings";
 import Search from "./Pages/Search";
 import NewGroup from "./Pages/NewGroup";

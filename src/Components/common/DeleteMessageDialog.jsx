@@ -1,10 +1,6 @@
-import { memo, useEffect, useState } from "react";
-import { Profile } from "../App/common";
-import { client } from "../../App";
-import { Api } from "telegram";
+import { memo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { handleToast } from "../Stores/UI";
-import Dialog, { DialogButton, DialogCancel, DialogContent, DialogContentBody, DialogTitle } from "../UI/Dialog";
+import Dialog, { DialogButton, DialogContent, DialogContentBody, DialogTitle } from "../UI/Dialog";
 import { getChatType } from "../Helpers/chats";
 
 function DeleteMessageDialog({ data, onDeleteMessage }) {

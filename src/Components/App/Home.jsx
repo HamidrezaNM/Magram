@@ -1,65 +1,33 @@
-import { createContext, memo, useCallback, useEffect, useState } from "react";
-import ChatList from "./ChatList";
-import { Icon, Profile } from "./common";
+import { memo, useEffect, useState } from "react";
 import './LeftColumn.css'
 import './MiddleColumn.css'
 import '../../MATheme.css'
 import '../../CustomTheme.scss'
 import { useRef } from "react";
 import { useContext } from "react";
-import { AuthContext, UserContext } from "../Auth/Auth";
-import Message from "./Message";
-import { client, socket } from "../../App";
-import DropdownMenu from "../UI/DropdownMenu";
-import MenuItem from "../UI/MenuItem";
-import Menu from "../UI/Menu";
+import { UserContext } from "../Auth/Auth";
+import { client } from "../../App";
 import Transition from "./Transition";
-import Page, { PageHandle } from "./Page";
-import Settings from "./Settings";
 import './Settings.css'
-import { Skeleton, ThemeProvider, createTheme } from "@mui/material";
-import MessagesLoading from "../UI/MessagesLoading";
-import Messages from "./MessageList";
-import ChatContextProvider, { ChatContext } from "./ChatContext";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import store from "../Stores/store";
-import { handleCachedMessages, handleMessageError, messageAdded, setMessages, updateMessageId, updateMessageMediaUploadProgress, updateMessageSeen, updateMessageText } from "../Stores/Messages";
+import { ThemeProvider, createTheme } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { handleCachedMessages, messageAdded } from "../Stores/Messages";
 import { handleBackground, handleCall, setActiveChat } from "../Stores/UI";
-import { chatAdded, handleCachedChats, setChat, setChats, updateLastMessage, updateTypingStatus } from "../Stores/Chats";
-import EmojiData from '@emoji-mart/data/sets/14/apple.json'
-import Picker from '@emoji-mart/react'
-import { Emoji } from "emoji-mart";
-import ContentEditable from "../common/WrappedContentEditable";
-import MessageText from "./MessageText";
-import { IKContext, IKUpload } from "imagekitio-react";
-import NewGroup from "./Pages/NewGroup";
-import ChatProfile from "./Pages/ChatProfile";
-import UserProfile, { showUserProfile } from "./Pages/UserProfile";
-import Search from "./Pages/Search";
+import { chatAdded, handleCachedChats, updateLastMessage } from "../Stores/Chats";
+import { IKContext } from "imagekitio-react";
 import Call from "./Call/Call";
-import CallMinimal from "./Call/CallMinimal";
 import VoiceChat from "./VoiceChat/VoiceChat";
 import MediaPreview from "./MediaPreview";
-import { getChatData } from "./Chat";
 import LeftColumn from "./LeftColumn";
-import ChatInfo from "./MiddleColumn/ChatInfo";
-import PinnedMessage from "./MiddleColumn/PinnedMessage";
-import Composer from "./MiddleColumn/Composer";
-import ContextMenu from "./MiddleColumn/ContextMenu";
-import MessagesHandler from "./Handlers/MessagesHandler";
-import ChatHandler from "./Handlers/ChatHandler";
 import { NewMessage } from "telegram/events";
-import { Api } from "telegram";
 import { UpdateConnectionState } from "telegram/network";
 import { readHistory } from "../Util/messages";
-import Thread from "./MiddleColumn/Thread";
 import MiddleColumn from "./MiddleColumn";
 import Toasts from "../UI/Toasts";
 import Dialogs from "../UI/Dialogs";
 import UpdateManager from "./UpdateManager";
 import buildClassName from "../Util/buildClassName";
 import { handleToggleDarkMode } from "../Stores/Settings";
-import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import DeleteEffect from "../common/DeleteEffect";
 import CallHeader from "./CallHeader";
 import StoryModal from "./StoryModal";

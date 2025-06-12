@@ -4,7 +4,7 @@ import { PageClose, PageHeader } from "../../Page";
 import { BackArrow, Icon, Switch } from "../../common";
 import { AuthContext, UserContext } from "../../../Auth/Auth";
 import { DetectDevice, GetDeviceData } from "../../../Auth/Verify";
-import { client, socket } from "../../../../App";
+import { client } from "../../../../App";
 import DropdownMenu from "../../../UI/DropdownMenu";
 import MenuItem from "../../../UI/MenuItem";
 import Menu from "../../../UI/Menu";
