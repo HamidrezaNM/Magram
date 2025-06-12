@@ -1,9 +1,9 @@
 /* fallback */
 @font-face {
-  font-family: "Material Symbols Rounded";
+  font-family: Material Symbols Rounded;
   font-style: normal;
   font-weight: 400;
-  src: url(/Magram/src/assets/fonts/Material\ Symbol/MaterialSymbol.woff2) format("woff2");
+  src: url(../fonts/MaterialSymbol/MaterialSymbol.woff2);
 }
 
 .icon {
