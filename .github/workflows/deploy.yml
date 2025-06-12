@@ -20,13 +20,13 @@ jobs:
 
     - name: Create .env
       run: |
-        echo "REACT_APP_API_ID=${{ secrets.REACT_APP_API_ID }}" > .env
-        echo "REACT_APP_API_HASH=${{ secrets.REACT_APP_API_HASH }}" >> .env
+        echo "VITE_API_ID=${{ secrets.VITE_API_ID }}" > .env
+        echo "VITE_API_HASH=${{ secrets.VITE_API_HASH }}" >> .env
 
     - id: build-publish
       uses: bitovi/github-actions-react-to-github-pages@v1.2.4
       with:
         path: build
       env:
-        REACT_APP_API_ID: ${{ secrets.REACT_APP_API_ID }}
-        REACT_APP_API_HASH: ${{ secrets.REACT_APP_API_HASH }}
+        VITE_API_ID: ${{ secrets.VITE_API_ID }}
+        VITE_API_HASH: ${{ secrets.VITE_API_HASH }}
