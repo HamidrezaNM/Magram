@@ -1,7 +1,7 @@
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import Transition from "../../Transition";
-import EmojiData from '@emoji-mart/data/sets/14/apple.json'
-import EmojiPicker from "@emoji-mart/react";
+// import EmojiData from '@emoji-mart/data/sets/14/apple.json'
+// import EmojiPicker from "@emoji-mart/react";
 import { calculateMediaDimensions, isMobile, Video } from "../../Message/MessageMedia";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "../../common";
@@ -26,14 +26,14 @@ function Picker({ show, onEmojiSelect, onBackspace }) {
 
     const handlePicker = () => {
         if (isMobile) {
-            setTimeout(() => {
-                const emojiPickerSection = emojiPicker.current.querySelector('em-emoji-picker')
-                    .shadowRoot.querySelector("section")
+            // setTimeout(() => {
+            //     const emojiPickerSection = emojiPicker.current.querySelector('em-emoji-picker')
+            //         .shadowRoot.querySelector("section")
 
-                emojiPickerSection.setAttribute("style", "width: 100%");
+            //     emojiPickerSection.setAttribute("style", "width: 100%");
 
-                emojiPickerSection.children[2].children[0].setAttribute("style", "width: 100%");
-            }, 20);
+            //     emojiPickerSection.children[2].children[0].setAttribute("style", "width: 100%");
+            // }, 20);
         }
     }
 
@@ -79,12 +79,12 @@ function Picker({ show, onEmojiSelect, onBackspace }) {
                 </div>
             </>}>
                 <TabContent state={true}>
-                    <EmojiPicker
+                    {/* <EmojiPicker
                         onEmojiSelect={onEmojiSelect}
                         theme={darkMode ? "dark" : "light"}
                         set="native"
                         previewPosition="none"
-                        data={EmojiData} />
+                        data={EmojiData} /> */}
 
                 </TabContent>
                 <TabContent state={true}>

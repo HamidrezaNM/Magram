@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleCachedMessages, messageAdded } from "../Stores/Messages";
 import { handleBackground, handleCall, setActiveChat } from "../Stores/UI";
 import { chatAdded, handleCachedChats, updateLastMessage } from "../Stores/Chats";
-import { IKContext } from "imagekitio-react";
 import Call from "./Call/Call";
 import VoiceChat from "./VoiceChat/VoiceChat";
 import MediaPreview from "./MediaPreview";
@@ -31,9 +30,6 @@ import { handleToggleDarkMode } from "../Stores/Settings";
 import DeleteEffect from "../common/DeleteEffect";
 import CallHeader from "./CallHeader";
 import StoryModal from "./StoryModal";
-
-export const urlEndpoint = '';
-export const publicKey = '';
 
 function Home() {
     const [backgroundAngle, setBackgroundAngle] = useState(120);
@@ -272,33 +268,31 @@ function Home() {
     console.log('Home Rerendered')
     return (
         <ThemeProvider theme={darkTheme}>
-            <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint}>
-                <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
-                    <div className="Main">
-                        <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
-                        <Transition state={showCall} action={() => dispatch(handleCall())}>
-                            <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
-                        </Transition>
-                        <div className={buildClassName('MiddleColumn', activeChat && 'active', (activeChat && !page) && 'focused', (showCall && !callMinimal) && 'C', callLeftPanelClose && 'L', callMaximized && 'X')}>
-                            <MiddleColumn />
-                        </div>
-                        {groupCallJoined && <CallHeader />}
+            <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
+                <div className="Main">
+                    <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
+                    <Transition state={showCall} action={() => dispatch(handleCall())}>
+                        <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
+                    </Transition>
+                    <div className={buildClassName('MiddleColumn', activeChat && 'active', (activeChat && !page) && 'focused', (showCall && !callMinimal) && 'C', callLeftPanelClose && 'L', callMaximized && 'X')}>
+                        <MiddleColumn />
                     </div>
-                    {groupCallJoined && <VoiceChat />}
-
-                    <MediaPreview />
-
-                    {storyModal && <StoryModal stories={storyModal.stories} peerIndex={storyModal.peerIndex} itemIndex={storyModal.itemIndex} />}
-
-                    <Toasts />
-                    <Dialogs />
-                    {deleteEffect && <DeleteEffect />}
-                    {background &&
-                        <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
+                    {groupCallJoined && <CallHeader />}
                 </div>
+                {groupCallJoined && <VoiceChat />}
 
-                <UpdateManager />
-            </IKContext>
+                <MediaPreview />
+
+                {storyModal && <StoryModal stories={storyModal.stories} peerIndex={storyModal.peerIndex} itemIndex={storyModal.itemIndex} />}
+
+                <Toasts />
+                <Dialogs />
+                {deleteEffect && <DeleteEffect />}
+                {background &&
+                    <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
+            </div>
+
+            <UpdateManager />
         </ThemeProvider>
     )
 }
