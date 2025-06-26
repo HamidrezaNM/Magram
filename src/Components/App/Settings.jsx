@@ -82,9 +82,14 @@ function Settings() {
 
     }
 
-    const SetUsername = useCallback(() => {
+    const SetUsername = async (value) => {
         setUsernameLoading(true)
-    }, [])
+
+        const updateUsername = await client.invoke(new Api.account.UpdateUsername({ username: value }))
+        console.log('UpdateUsername', updateUsername)
+
+        setUsernameLoading(false)
+    }
 
     useEffect(() => {
         setIsLoaded(true)
@@ -132,7 +137,7 @@ function Settings() {
                     <Profile showPreview entity={User} name={User.firstName} id={User.id?.value} />
                     <div className="name"><FullNameTitle chat={User} /></div>
                 </div>
-                <div className="Items">
+                <div className="Items" style={{ overflow: 'visible' }}>
                     <div className="Item"><Icon name="phone" /><span>+{User.countryCode} {User.phone}</span></div>
                     <Menu ref={usernameMenu} animateWidth={false} closeManually custom={
                         <div className="Item"><Icon name="alternate_email" /><span>{User.username ?? 'Username'}</span></div>}>

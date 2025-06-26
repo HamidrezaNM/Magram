@@ -5,6 +5,7 @@ import { formatTime } from "../Util/dateFormat";
 import { getDate } from "./Message";
 import { useSelector } from "react-redux";
 import { getParticipantRights } from "../Helpers/chats";
+import buildClassName from "../Util/buildClassName";
 
 export default function MessageContextMenu({
     canReply,
@@ -18,6 +19,7 @@ export default function MessageContextMenu({
     canEdit,
     canForward,
     canDelete,
+    canReaction,
     canReadParticipants,
     canReadDate,
 
@@ -31,6 +33,7 @@ export default function MessageContextMenu({
     onEdit,
     onForward,
     onDelete,
+    onReaction,
     readParticipants,
     readDate
 }) {
@@ -43,10 +46,11 @@ export default function MessageContextMenu({
     }
 
     return <>
+        {canReaction && <Reactions onReaction={onReaction} />}
         {canReply && <MenuItem icon="reply" title="Reply" onClick={onReply} />}
         {canCopy && <MenuItem icon="content_copy" title="Copy" onClick={onCopy} />}
         {canCopyLink && <MenuItem icon="link" title="Copy Link" onClick={onCopyLink} />}
-        {isPhoto && <MenuItem icon="download" title="Save Photo" onClick={onSavePhoto} />}
+        {isPhoto && <MenuItem icon="download" title="Save1 Photo" onClick={onSavePhoto} />}
         {canPin && <MenuItem icon="keep" title="Pin" onClick={onPin} />}
         {canUnpin && <MenuItem icon="keep" title="Unpin" onClick={onPin} />}
         {canEdit && <MenuItem icon="edit" title="Edit" onClick={onEdit} />}
@@ -77,7 +81,7 @@ function MessageReadParticipants({ readParticipants }) {
         })()
     }, [readParticipants])
 
-    return <div className="MenuItem" style={{ flexDirection: 'row', paddingRight: 4 }} onClick={() => { }}>
+    return <div className={buildClassName("MenuItem", !data && 'Loading')} style={{ flexDirection: 'row', paddingRight: 4 }} onClick={() => { }}>
         <div className="icon">done_all</div>
         <div className="ReadParticipants">
             <div className="title">{data?.length} Seen</div>
@@ -112,4 +116,20 @@ function MessageReadDate({ readDate }) {
     }, [readDate])
 
     return <MenuItem icon="done_all" title={date && (isNaN(date) ? date : `read at ${getDate(date * 1000, true, true)} ${formatTime(date * 1000)}`)} />
+}
+
+function Reactions({ onReaction }) {
+    const reactions = ['👍', '👎', '🔥', '🥰', '👏', '😁']
+
+    const handleClick = (emoticon, e) => {
+        const rect = e.target.getBoundingClientRect()
+
+        onReaction(emoticon, rect, e.target)
+    }
+
+    return <div className="Reactions">
+        {reactions.map(emoticon =>
+            <span className="Reaction" onClick={e => handleClick(emoticon, e)}>{emoticon}</span>
+        )}
+    </div>
 }

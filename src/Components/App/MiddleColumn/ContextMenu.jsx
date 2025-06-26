@@ -77,6 +77,17 @@ function ContextMenu({ type }) {
                 })
             }
         }
+        if (contextMenuDiv.current.querySelector('.Reactions') && isMobile && isiOS) {
+            let reactions = contextMenuDiv.current.querySelector('.Reactions')
+            console.log('has reactions', height)
+
+            if (clientY - height > 50)
+                reactions.style.top = -height - 50 + 'px'
+            else {
+                reactions.style.backgroundColor = 'var(--theme)'
+                reactions.style.top = -clientY + 8 + 'px'
+            }
+        }
         requestAnimationFrame(() => {
             contextMenuBG.current?.classList.remove('animate')
             contextMenuDiv.current.classList.remove('animate')

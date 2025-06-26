@@ -1,7 +1,8 @@
 import { Api } from "telegram"
 import { client } from "../../App"
 import { updateChatUnreadCount } from "../Stores/Chats"
-import { handleDeleteMessage, removeMessage, updateMessagePoll } from "../Stores/Messages"
+import { handleDeleteMessage, removeMessage, updateMessagePoll, updateMessageReactions } from "../Stores/Messages"
+import { handlePositionTransition } from "../Stores/UI"
 
 export async function readHistory(peerId, dispatch) {
     await client.markAsRead(peerId)
@@ -44,6 +45,43 @@ export async function retractVote(peerId, messageId, dispatch) {
     dispatch(updateMessagePoll({ chatId: Number(peerId), messageId, media: { poll: poll.poll, results: poll.results } }))
 }
 
+export async function sendReaction(peerId, messageId, emoticon, currentReactions = [], rect, element, dispatch) {
+    const reactionExist = currentReactions && currentReactions.find(item => item.reaction.emoticon === emoticon)
+
+    let result;
+    if (reactionExist) {
+        if (reactionExist.flags === 1) {
+            reactionExist.count--
+            reactionExist.flags = 0
+            console.log('flag true')
+        } else {
+            reactionExist.count++
+            reactionExist.flags = 1
+            console.log('flag false')
+        }
+
+        result = currentReactions
+    }
+    else {
+        result = [...currentReactions, new Api.ReactionCount({ count: 1, flags: 1, reaction: new Api.ReactionEmoji({ emoticon }) })]
+    }
+
+    dispatch(handlePositionTransition({ from: rect, id: messageId + emoticon, type: 'reaction' }))
+
+    console.log('reaction result', result)
+    dispatch(updateMessageReactions({ chatId: Number(peerId), messageId, reactions: result }))
+
+    console.log(peerId, messageId, emoticon)
+
+    const sendReactionResult = await client.invoke(new Api.messages.SendReaction({
+        peer: peerId,
+        msgId: messageId,
+        reaction: [new Api.ReactionEmoji({ emoticon })]
+    }))
+
+    return sendReactionResult
+}
+
 export async function getMessageReadParticipants(peerId, messageId) {
     const result = await client.invoke(new Api.messages.GetMessageReadParticipants({
         peer: peerId,
@@ -65,4 +103,11 @@ export async function getMessageReadDate(peerId, messageId) {
     }))
 
     return result.date
+}
+
+export async function getStoriesById(peer, storiesId) {
+    return await client.invoke(new Api.stories.GetStoriesByID({
+        id: storiesId,
+        peer
+    }))
 }

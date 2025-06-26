@@ -24,6 +24,10 @@ export function getDocumentImageAttributes(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeImageSize')
 }
 
+export function getWebPageStory(webpage) {
+    return webpage.attributes?.find(i => i.className === 'WebPageAttributeStory')
+}
+
 export function getMediaDimensions(media, noAvatar = false) {
     switch (media.className) {
         case 'MessageMediaPhoto':
@@ -68,6 +72,10 @@ export function isDocumentAudio(document) {
 
 export function isDocumentVoice(document) {
     return document.attributes?.find(i => i.className === 'DocumentAttributeAudio')?.voice
+}
+
+export function isWebPageStory(webpage) {
+    return !!webpage.attributes?.find(i => i.className === 'WebPageAttributeStory')?.id
 }
 
 export function getMediaType(media) {

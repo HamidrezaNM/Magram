@@ -1,46 +1,74 @@
 import { memo, useEffect, useRef, useState } from "react";
 import buildClassName from "../Util/buildClassName";
+import { useSelector } from "react-redux";
+import { handlePositionTransitionEnd } from "../Stores/UI";
 
-function PositionTransition({ state, children }) {
+function PositionTransition() {
+    const elements = useSelector(state => state.ui.positionTransition)
+
+    return elements.map(item => <PositionTransitionElement from={item.from} to={item.to} elementt={item.element} />)
+}
+
+function PositionTransitionElement({ from, to, elementt }) {
     const [active, setActive] = useState(false)
 
     const container = useRef()
     const element = container.current?.children[0]
-    const prevRect = useRef()
 
     useEffect(() => {
         if (!element) return
 
-        const rect = element.getBoundingClientRect()
+        if (from) {
+            element.style.left = from.left + 'px'
+            element.style.top = from.top + 'px'
+            element.style.width = from.width + 'px'
+            element.style.height = from.height + 'px'
 
-        if (prevRect.current) {
-            element.style.left = prevRect.left + 'px'
-            element.style.top = prevRect.top + 'px'
-            element.style.width = prevRect.width + 'px'
-            element.style.height = prevRect.height + 'px'
-
-            setActive(true)
+            // setActive(true)
 
             requestAnimationFrame(() => {
-                element.style.left = rect.left + 'px'
-                element.style.top = rect.top + 'px'
-                element.style.width = rect.width + 'px'
-                element.style.height = rect.height + 'px'
+                element.style.left = to.left + 'px'
+                element.style.top = to.top + 'px'
+                element.style.width = to.width + 'px'
+                element.style.height = to.height + 'px'
             })
         }
-
-        prevRect.current = rect
 
         setTimeout(() => {
             // setActive(false)
         }, 300);
-    }, [state])
+    }, [from, to])
 
-    console.log('children', children)
+    console.log('children', elementt)
 
     return <div className={buildClassName("PositionTransition", active && 'active')} ref={container}>
-        {children}
+        {elementt}
     </div>
+}
+
+export function handlePositionTransitionElement(id, from, to, element, dispatch, onEnd) {
+    if (from) {
+        element.style.transition = 'all .3s ease'
+        element.style.position = 'fixed'
+        element.style.left = from.left + 'px'
+        element.style.top = from.top + 'px'
+        element.style.width = from.width + 'px'
+        element.style.height = from.height + 'px'
+
+        // setActive(true)
+
+        requestAnimationFrame(() => {
+            element.style.left = to.left + 'px'
+            element.style.top = to.top + 'px'
+            element.style.width = to.width + 'px'
+            element.style.height = to.height + 'px'
+            setTimeout(() => {
+                element.style.position = ''
+                dispatch(handlePositionTransitionEnd(id))
+                onEnd()
+            }, 300);
+        })
+    }
 }
 
 export default memo(PositionTransition)

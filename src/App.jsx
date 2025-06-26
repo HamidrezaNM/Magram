@@ -18,7 +18,7 @@ const getSession = () => {
 
 const SESSION = getSession()
 export const API_ID = import.meta.env.VITE_API_ID
-export const API_HASH = import.meta.env.VITE_API_ID
+export const API_HASH = import.meta.env.VITE_API_HASH
 
 const deviceData = GetDeviceData()
 

@@ -74,7 +74,7 @@
     transform: scale(1);
 }
 
-.MessageList>:first-child {
+.MessageList:not(.NoMessages)>:first-child {
     margin-top: auto;
 }
 
@@ -146,6 +146,10 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
+}
+
+.Message.Out .bubble .bubble-content {
+    align-self: flex-end;
 }
 
 .Message.transparent .bubble .bubble-content {
@@ -495,6 +499,16 @@
     gap: 4px;
     cursor: pointer;
     transition: all .3s ease;
+}
+
+.MessageReactions .reaction.animate {
+    transform: scale(.8);
+    opacity: 0;
+}
+
+.MessageReactions .reaction .emoticon.placeholder {
+    filter: grayscale(1);
+    opacity: .5;
 }
 
 .Message.transparent .MessageReactions .reaction {
@@ -1030,7 +1044,7 @@
     display: flex;
     justify-content: center;
     padding: 12px;
-    background-color: var(--on-primary);
+    background-color: rgba(var(--primary-rgb), .1);
     color: var(--text-color);
     font-weight: 500;
     border-radius: 8px;
@@ -1044,7 +1058,7 @@
 }
 
 .Message .InlineButtons .Button:hover {
-    background-color: var(--active-primary);
+    background-color: rgba(var(--primary-rgb), .2);
 }
 
 .Message .InlineButtons .Button:active {

@@ -10,6 +10,7 @@ import { client } from "../../App";
 import { Provider, useDispatch } from "react-redux";
 import store from "../Stores/store";
 import { handleToast } from "../Stores/UI";
+import { Api } from "telegram";
 
 export const AuthContext = createContext();
 export const UserContext = createContext();
@@ -85,6 +86,12 @@ export function Auth() {
             await client.connect()
 
             const getMe = await client.getMe()
+
+            // const getConfig = await client.invoke(new Api.help.GetConfig({}))
+
+            // console.log('getConfig', getConfig)
+
+            client.setLogLevel('warning')
 
             client.addEventHandler((update) => console.log(update));
 

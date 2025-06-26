@@ -20,17 +20,23 @@ import Menu from "../../UI/Menu";
 import TurndownService from "turndown";
 import Picker from "./Composer/Picker";
 import Transition from "../Transition";
+import { resolveUsername } from "../../Util/username";
+import BotInlineResults from "./Composer/BotInlineResults";
+import { handleCoolDown } from "../../Util/coolDown";
+import buildClassName from "../../Util/buildClassName";
 
 function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScrollToBottom }) {
     const [messageInput, setMessageInput] = useState("");
     const [messageInputHandled, setMessageInputHandled] = useState("");
+    const [forcedPlaceholder, setForcedPlaceholder] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [botStarted, setBotStarted] = useState(false);
     const [muted, setMuted] = useState(false);
     const [joined, setJoined] = useState(false);
+    const [botInlineResults, setBotInlineResults] = useState();
+    const [botInlineResultsLoading, setBotInlineResultsLoading] = useState(false);
 
-    const Auth = useContext(AuthContext)
     const User = useContext(UserContext)
 
     const chats = useSelector((state) => state.chats.value)
@@ -239,6 +245,21 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
         setMessageInputHandled(output)
         setMessageInput(input);
 
+        if (input.startsWith('@')) {
+            handleInlineBot(input).then(result => {
+                if (!result) {
+                    setForcedPlaceholder()
+                    setBotInlineResults()
+                }
+            })
+        } else {
+            if (forcedPlaceholder)
+                setForcedPlaceholder()
+            if (botInlineResults)
+                setBotInlineResults()
+            setBotInlineResultsLoading(false)
+        }
+
         if (value !== "" || forwardMessage) {
             setIsTyping(true)
 
@@ -271,7 +292,133 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
                 sendButton.current.children[0].classList.remove("send");
             }, 150);
         }
-    }, [messageInput, forwardMessage]);
+    }, [messageInput, forwardMessage, botInlineResults, forcedPlaceholder]);
+
+    const handleInlineBot = async (html) => {
+        if (!html.startsWith('@')) return
+
+        const input = html.replace(/&nbsp;/g, ' ').trimStart()
+
+        console.log(input)
+
+        const match = input.match(/^(@\w*) (.*)?/)
+
+        if (!match) return
+
+        const username = match[1]
+        const query = match[2]
+
+        const resolvedUsername = await resolveUsername(username.substring(1))
+
+        if (!resolvedUsername.bot) return
+
+        if (!query && resolvedUsername.botInlinePlaceholder) {
+            setForcedPlaceholder(`${username} ${resolvedUsername.botInlinePlaceholder}`)
+
+            placeholderRef.current
+                .classList.remove("hidden");
+        } else
+            setForcedPlaceholder()
+
+        const action = async () => {
+            setBotInlineResultsLoading(true)
+
+            try {
+                const results = await client.invoke(new Api.messages.GetInlineBotResults({
+                    bot: username,
+                    peer: chat.id,
+                    query: query || '',
+                    offset: ''
+                }))
+
+                if (results?.results?.length > 0)
+                    setBotInlineResults(results)
+                else if (botInlineResults)
+                    setBotInlineResults()
+
+                setBotInlineResultsLoading(false)
+                console.log('results', results)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        handleCoolDown(action)
+
+        return true
+    }
+
+    const sendInlineBotResult = async (result, queryId) => {
+        const chatId = chat.id.value
+        const messageId = Date.now()
+
+        var _message = {
+            chatId: chat.id,
+            date: Date.now() / 1000,
+            _forward: null,
+            _sender: User,
+            _senderId: User.id,
+            fromId: User.id,
+            out: true,
+            id: messageId,
+            message: result.sendMessage.message || '',
+            fwdFrom: null,
+            replyTo: replyToMessage ? replyToMessage.id : null,
+            replyToMessage: replyToMessage ?? null,
+            sended: null,
+            ...result.sendMessage
+        }
+
+        setBotInlineResults()
+
+        dispatch(messageAdded(_message));
+        setTimeout(() => {
+            handleScrollToBottom()
+        }, 40);
+        if (replyToMessage) dispatch(handleReplyToMessage());
+
+        handleSendButtonAnimation()
+
+        try {
+            let sendResult
+
+            sendResult = await client.invoke(new Api.messages.SendInlineBotResult({
+                id: result.id,
+                queryId,
+                peer: chatId,
+                randomId: messageId,
+                replyTo: replyToMessage ? replyToMessage.id : thread ? thread.id : null,
+            }))
+
+            console.log('message result', sendResult)
+
+            dispatch(updateMessageId({ messageId, chatId, id: sendResult.updates[0].id }))
+
+            if (!chats[chatId]) {
+                console.log('Chat not exists')
+                // await result.getChat()
+
+                // const chat = {
+                //     id: returnBigInt(chatId),
+                //     entity: result.chat,
+                //     message: result,
+                //     title: result.chat.title ?? result.chat.firstName,
+                //     date: result.date,
+                //     isChannel: result.isChannel,
+                //     isGroup: result.isGroup,
+                //     isUser: result.isPrivate
+                // }
+
+                // dispatch(chatAdded(chat))
+            }
+
+            dispatch(updateLastMessage({ id: chat.id.value, message: { ..._message, id: sendResult.id } }))
+
+        } catch (error) {
+            console.error(error)
+            dispatch(handleMessageError({ messageId: _message.id, chatId }))
+        }
+    }
 
     useEffect(() => {
         if (replyToMessage || editMessage || forwardMessage?.chat) {
@@ -563,6 +710,9 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
                 </div>
             </div>
         </Transition>
+        <Transition state={botInlineResults}>
+            <BotInlineResults results={botInlineResults} sendInlineBotResult={sendInlineBotResult} />
+        </Transition>
         {renderComposerButton() ?? <>
             <div className="Composer">
                 {getChatType(chat?.entity) === 'Bot' &&
@@ -593,7 +743,7 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
                 {
                     iOSTheme ? Attach : Emoji
                 }
-                <div className="message-input" ref={messageInputEl}>
+                <div className={buildClassName("message-input", botInlineResultsLoading && 'Loading')} ref={messageInputEl}>
                     {allowSendingText() ? <>
                         <ContentEditable
                             dir="auto"
@@ -605,7 +755,7 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
                             onKeyDown={handleKeyDown}
                             tagName='div' // Use a custom HTML tag (uses a div by default)
                         />
-                        <span className="placeholder" ref={placeholderRef}>Message</span>
+                        <span className="placeholder" ref={placeholderRef}>{forcedPlaceholder || 'Message'}</span>
                     </> : <><Icon name="lock" /><span className="disabled">Text not allowed</span></>}
                     {
                         iOSTheme ? Emoji : Attach

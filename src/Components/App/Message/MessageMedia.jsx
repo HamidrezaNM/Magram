@@ -705,6 +705,36 @@ const Sticker = forwardRef(({ children, media, size, _width, _height, noAvatar =
     return <img ref={img} width={width > 0 ? dimensions.width : ''} />
 })
 
+export const Thumbnail = memo(forwardRef(({ children, visible, media, size, width, height, dimensions, noAvatar = false, uploading, setProgress, isLoaded, setIsLoaded, setSrc }, ref) => {
+    const [thumb, setThumb] = useState()
+    const [loaded, setLoaded] = useState()
+
+    dimensions = dimensions ?? calculateMediaDimensions(width, height, noAvatar)
+    const thumbnail = useRef()
+    const isLowQualityLoaded = useRef(false)
+
+    useEffect(() => {
+        if (isLowQualityLoaded.current && size === 16 || uploading || !media)
+            return
+
+        (async () => {
+            const param = size ? { thumb: new Api.PhotoSize({ type: 'm' }) } : {}
+            const result = await downloadMedia(media, param, () => { }, size)
+
+            if (!result) return
+            setThumb(result.data)
+            isLowQualityLoaded.current = true
+        })()
+    }, [media, size])
+
+    return visible && <div className="Thumbnail" style={{ height: dimensions.height }}>
+        <Transition state={true}>
+            <img ref={thumbnail} src={thumb} width={width > 0 ? dimensions.width : ''} />
+        </Transition>
+        {children}
+    </div>
+}))
+
 export function fancyTimeFormat(duration) {
     const hrs = ~~(duration / 3600);
     const mins = ~~((duration % 3600) / 60);

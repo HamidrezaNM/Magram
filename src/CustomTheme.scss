@@ -97,7 +97,7 @@
 }
 
 .iOSTheme .bottom .message-input .placeholder {
-    padding: 6px 12px;
+    padding: 6px 10px;
 }
 
 .iOSTheme .bottom .attach-button {
@@ -322,6 +322,10 @@
     background-color: transparent;
 }
 
+.iOSTheme .Page input[type=text] {
+    height: auto !important;
+}
+
 .iOSTheme .Page .User,
 .iOSTheme .Page .Group {
     flex-direction: column;
@@ -455,7 +459,7 @@
 }
 
 .iOSTheme .Buttons .Button:hover {
-    background-color: var(--primary-container);
+    background-color: var(--on-primary);
 }
 
 .iOSTheme .Buttons .Button .icon {
@@ -644,6 +648,10 @@
         font-size: 18px !important;
     }
 
+    .iOSTheme .Page {
+        height: calc(100% - 48px);
+    }
+
     .iOSTheme:has(.MiddleColumn.focused) .LeftColumn {
         transform: translateX(calc(-50% + 68px));
     }
@@ -676,15 +684,19 @@
         border-radius: 16px;
         padding: 0;
         gap: 0;
-        background-color: #fffa;
+        background-color: var(--context-menu-bg);
         transition: transform 0.3s ease, opacity 0.2s ease;
         transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.25), opacity 0.2s ease;
         transform-origin: top !important;
         box-shadow: none;
     }
 
+    .iOSTheme .ContextMenu {
+        --context-menu-bg: #fffa;
+    }
+
     .Dark .iOSTheme .ContextMenu {
-        background-color: #0009;
+        --context-menu-bg: #0009;
     }
 
     .iOSTheme .ContextMenu.animate {
@@ -720,6 +732,10 @@
     .iOSTheme .MenuItem .icon {
         padding: 0;
         margin: 0;
+    }
+
+    .iOSTheme .Reactions {
+        background-color: var(--context-menu-bg);
     }
 
     .iOSTheme .MenuItem:last-child {

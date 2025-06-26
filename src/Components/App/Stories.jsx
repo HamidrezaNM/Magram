@@ -7,6 +7,7 @@ import { getPeerId } from "../Helpers/chats"
 import { Profile } from "./common"
 import FullNameTitle from "../common/FullNameTitle"
 import { StoryCircle } from "../common/StoryCircle"
+import Transition from "./Transition"
 
 function Stories() {
     const stories = useSelector(state => state.ui.stories)
@@ -35,9 +36,11 @@ function Stories() {
         })()
     }, [])
 
-    return <div className="Stories">
-        {stories.map((story, index) => <StoryButton story={story} stories={stories} index={index} dispatch={dispatch} />)}
-    </div>
+    return <Transition state={stories?.length > 0}>
+        <div className="Stories">
+            {stories.map((story, index) => <StoryButton story={story} stories={stories} index={index} dispatch={dispatch} />)}
+        </div>
+    </Transition>
 }
 
 const StoryButton = memo(({ story, stories, index, dispatch }) => {

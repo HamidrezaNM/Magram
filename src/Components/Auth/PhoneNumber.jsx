@@ -64,7 +64,7 @@ export default function PhoneNumber() {
         await client.connect() // Connecting to the server
 
         return await client.sendCode({
-            apiId: API_ID,
+            apiId: Number(API_ID),
             apiHash: API_HASH
         }, countryCode + phoneNumber);
     }

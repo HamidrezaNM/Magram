@@ -125,6 +125,13 @@ export const messagesSlice = createSlice({
                     state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], id: action.payload.id, media: { ...state.value[action.payload.chatId][messageIndex].media, ...action.payload.media } }
             }
         },
+        updateMessageReactions: (state, action) => {
+            if (state.value[action.payload.chatId]) {
+                let messageIndex = state.value[action.payload.chatId].findIndex(message => message.id === action.payload.messageId)
+                if (messageIndex)
+                    state.value[action.payload.chatId][messageIndex] = { ...state.value[action.payload.chatId][messageIndex], reactions: { ...state.value[action.payload.chatId][messageIndex].reactions, results: action.payload.reactions } }
+            }
+        },
         updateMessageMediaUploadProgress: (state, action) => {
             const message = state.value[action.payload.chatId].find(message => message.id === action.payload.id)
             if (message) {
@@ -154,6 +161,7 @@ export const { messageAdded,
     updateMessage,
     updateMessageSeen,
     updateMessagePoll,
+    updateMessageReactions,
     handleMessageError,
     updateMessageMediaUploadProgress,
     updateMessageMedia

@@ -381,6 +381,7 @@
 .MiddleColumn .bottom .message-input .placeholder,
 .Input .placeholder {
     font-size: 16px;
+    line-height: 1.2;
     color: #888;
     left: 0;
     position: absolute;
@@ -494,6 +495,51 @@
 
 .MiddleColumn .bottom .Button:hover {
     background-color: var(--surface-hover);
+}
+
+.InlineResults {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 16px);
+    max-height: 240px;
+    border-radius: 16px 16px 0 0;
+    background-color: var(--primary-container);
+    gap: 4px;
+    padding: 8px;
+    left: 0;
+    margin-left: 16px;
+    bottom: 100%;
+    position: absolute;
+    transition: all .3s ease;
+}
+
+.InlineResults.animate {
+    transform: translateY(100%);
+}
+
+.InlineResults .item {
+    padding: 12px;
+    display: flex;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.InlineResults .item:hover {
+    background-color: var(--on-primary);
+}
+
+.InlineResults .item .FlexColumn {
+    gap: 4px;
+}
+
+.InlineResults .item .title {
+    font-weight: 500;
+}
+
+.InlineResults .item .subtitle {
+    font-size: 12px;
+    color: var(--secondary-text);
 }
 
 .sticky-date {

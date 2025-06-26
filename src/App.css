@@ -288,6 +288,7 @@
 
 .Home.animate {
   transform: scale(.95);
+  border-radius: 16px;
 }
 
 .Main {
@@ -448,6 +449,11 @@
   .Home .MiddleColumn .bottom {
     padding-left: 0;
     margin-left: 0;
+  }
+
+  .Home .MiddleColumn .bottom .InlineResults {
+    margin-left: 0;
+    width: 100%;
   }
 
   .App>.background {
@@ -613,28 +619,31 @@
   overflow-y: overlay;
   scroll-behavior: smooth;
   touch-action: auto;
+  padding-right: 0 !important;
 }
 
 @-moz-document url-prefix() {
   .scrollable {
     /* Firefix supports */
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.2) #0000;
+    scrollbar-color: var(--on-primary) #0000;
   }
 }
 
 .scrollable::-webkit-scrollbar {
-  width: 5px !important;
+  width: 12px !important;
 }
 
 .scrollable::-webkit-scrollbar-thumb {
   border-radius: 10px !important;
-  -webkit-box-shadow: inset 0 0 6px rgb(0 0 0 / 10%) !important;
-  background-color: rgb(0 0 0 / 10%) !important;
+  -webkit-box-shadow: inset 0 0 6px var(--on-primary) !important;
+  background-color: var(--on-primary) !important;
+  border: 3px solid transparent;
+  background-clip: content-box;
 }
 
 .scrollable::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(0 0 0 / 30%) !important;
+  background-color: var(--active-primary) !important;
 }
 
 .scrollable::-webkit-scrollbar-track {
@@ -737,7 +746,8 @@
   transform: scale(.95);
 }
 
-.MenuItem.Loading {
+.MenuItem.Loading,
+.Composer .message-input.Loading {
   background-image: linear-gradient(90deg, #ffffff10, #ffffff30, #ffffff10);
   background-size: 200%;
   animation: ItemLoading 1s linear infinite;
@@ -827,6 +837,43 @@
 
 .DropdownMenu.withoutTitle {
   top: 36px !important;
+}
+
+.ContextMenu .Reactions {
+  position: absolute;
+  background-color: var(--theme);
+  backdrop-filter: blur(20px);
+  top: -50px;
+  left: -16px;
+  height: 42px;
+  max-width: calc(100% + 32px);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
+  line-height: 1;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.ContextMenu.animate .Reactions {
+  max-width: 0px;
+}
+
+.ContextMenu:has(.Reactions) {
+  overflow: visible;
+}
+
+.ContextMenu .Reactions .Reaction {
+  width: 32px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.ContextMenu .Reactions .Reaction:hover {
+  transform: scale(1.2);
 }
 
 .highlight {
@@ -1022,7 +1069,7 @@
 }
 
 .Tab {
-  background-color: var(--secondary);
+  background-color: transparent;
   padding: 8px;
   border-radius: 8px;
   font-weight: 500;
@@ -1552,6 +1599,7 @@ a:hover {
   gap: 16px;
   height: 72px;
   padding: 0 12px;
+  padding-bottom: 8px;
   align-items: center;
   border-radius: 20px 20px 0 0;
   background-color: var(--surface-color);
@@ -1606,6 +1654,16 @@ a:hover {
 
 .MusicPlayer .Controls {
   display: flex;
+}
+
+.MusicPlayer .Seek {
+  position: absolute;
+  bottom: 2px;
+  width: calc(100% - 24px);
+  height: 6px;
+  border-radius: 12px;
+  background-color: var(--primary-active);
+  overflow: hidden;
 }
 
 .VoiceChat {
@@ -2192,6 +2250,10 @@ a:hover {
 
 .visible {
   display: initial !important;
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 .beta {

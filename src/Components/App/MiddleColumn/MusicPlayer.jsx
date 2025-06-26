@@ -24,6 +24,8 @@ function MusicPlayer({ }) {
 
     const { title, performer } = getDocumentAudioAttributes(content)
 
+    console.log('music player rerendered')
+
     useEffect(() => {
         console.log('Getting Music...');
 
@@ -94,6 +96,7 @@ function MusicPlayer({ }) {
                 <Icon name="skip_next" size={36} className="IconFill" />
             </div>
         </div>
+        <div className="Seek" style={{ width: `calc(${playProgress * 100}% - 24px)` }}></div>
 
         {/* Player */}
         <audio
@@ -101,8 +104,8 @@ function MusicPlayer({ }) {
             src={src}
             loop={true}
             autoPlay
-            // onTimeUpdate={e =>
-            //     setPlayProgress(e.target.currentTime / e.target.duration)}
+            onTimeUpdate={e =>
+                setPlayProgress(e.target.currentTime / e.target.duration)}
             onPlay={() =>
                 dispatch(handleMusicPlayerTogglePlaying(true))}
             onPause={() =>

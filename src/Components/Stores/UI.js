@@ -58,6 +58,7 @@ export const uiSlice = createSlice({
         // },
         toasts: [],
         dialogs: [],
+        positionTransition: [],
         background: null
     },
     reducers: {
@@ -274,6 +275,12 @@ export const uiSlice = createSlice({
         handleDialog: (state, action) => {
             state.dialogs.push(action.payload)
         },
+        handlePositionTransition: (state, action) => {
+            state.positionTransition = [...state.positionTransition, action.payload]
+        },
+        handlePositionTransitionEnd: (state, action) => {
+            state.positionTransition = state.positionTransition.filter(x => x.id !== action.payload)
+        },
         handleBackground: (state, action) => {
             state.background = action.payload
         },
@@ -327,6 +334,8 @@ export const {
     handleMusicPlayerTogglePlaying,
     handleToast,
     handleDialog,
+    handlePositionTransition,
+    handlePositionTransitionEnd,
     handleBackground,
     handleDeleteMessageEffect
 } = uiSlice.actions

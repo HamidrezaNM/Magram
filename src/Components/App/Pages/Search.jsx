@@ -115,7 +115,7 @@ export default function Search() {
                 <div className="topPeers">
                     {topPeers?.users?.length > 0 && Object.values(topPeers.users).map((item) => (
                         !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
-                            <Profile entity={item} size={54} name={item?.title} id={item.id?.value} />
+                            <Profile entity={item} size={54} name={item?.title ?? item?.firstName} id={item.id?.value} />
                             <div className="title">{item?.title ?? item.firstName}</div>
                         </div>
                     ))}
@@ -132,7 +132,7 @@ export default function Search() {
                         <div className="Items">
                             {chats.length > 0 && Object.values(chats).map((item) => (
                                 !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
-                                    <Profile entity={item} size={44} name={item?.title} id={item.id?.value} />
+                                    <Profile entity={item} size={44} name={item?.title ?? item?.firstName} id={item.id?.value} />
                                     <div className="UserDetails">
                                         <div className="title">{item?.title ?? item.firstName}</div>
                                         <div className="subtitle">{getChatSubtitle(item)}</div>

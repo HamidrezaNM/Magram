@@ -30,6 +30,7 @@ import { handleToggleDarkMode } from "../Stores/Settings";
 import DeleteEffect from "../common/DeleteEffect";
 import CallHeader from "./CallHeader";
 import StoryModal from "./StoryModal";
+import PositionTransition from "../common/PositionTransition";
 
 function Home() {
     const [backgroundAngle, setBackgroundAngle] = useState(120);
@@ -287,6 +288,7 @@ function Home() {
 
                 <Toasts />
                 <Dialogs />
+                {/* <PositionTransition /> */}
                 {deleteEffect && <DeleteEffect />}
                 {background &&
                     <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}

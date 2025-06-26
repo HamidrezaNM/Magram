@@ -1,12 +1,28 @@
-import { memo, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import buildClassName from "../../Util/buildClassName"
 import { getChatColor } from "../common"
-import MessageMedia, { Image } from "./MessageMedia"
+import MessageMedia, { Thumbnail } from "./MessageMedia"
 import { Api } from "telegram"
-import { getPhotoDimensions } from "../../Helpers/messages"
-import Transition from "../Transition"
+import { getDocumentVideoAttributes, getWebPageStory, isWebPageStory } from "../../Helpers/messages"
+import { getStoriesById } from "../../Util/messages"
 
 function WebPage({ media, userId }) {
+    const [story, setStory] = useState()
+
+    useEffect(() => {
+        (async () => {
+            if (isWebPageStory(media.webpage)) {
+                const storyAttributes = getWebPageStory(media.webpage)
+                console.log(storyAttributes)
+
+                const getStory = await getStoriesById(storyAttributes.peer, [storyAttributes.id])
+
+                setStory(getStory)
+                console.log(getStory)
+            }
+        })()
+    }, [media])
+
     return media.webpage.className !== 'WebPageEmpty' && <div className={buildClassName("WebPage", getChatColor(userId ?? 0))}>
         <div className="MessageLine"></div>
         <div className="body">
@@ -15,6 +31,14 @@ function WebPage({ media, userId }) {
             <div className="description">{media.webpage.description}</div>
             {media.webpage.photo &&
                 <MessageMedia media={new Api.MessageMediaPhoto({ photo: media.webpage.photo })} />}
+            {story &&
+                <Thumbnail
+                    media={story.stories[0]?.media}
+                    visible={true}
+                    size={16} noAvatar={true}
+                    width={getDocumentVideoAttributes(story.stories[0]?.media.document)?.w} height={getDocumentVideoAttributes(story.stories[0]?.media.document)?.h}
+                    setProgress={() => { }}
+                />}
         </div>
 
     </div>

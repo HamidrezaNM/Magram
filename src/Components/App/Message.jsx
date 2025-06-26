@@ -11,7 +11,7 @@ import MessageMedia, { getMediaPosition } from "./Message/MessageMedia";
 import MessageProfileMenu from "./MessageProfileMenu";
 import { showUserProfile } from "./Pages/UserProfile";
 import { getMediaDimensions, getMediaType, isDocumentGIF, isDocumentPhoto } from "../Helpers/messages";
-import { deleteMessage, getMessageReadDate, getMessageReadParticipants, retractVote, saveGIF } from "../Util/messages";
+import { deleteMessage, getMessageReadDate, getMessageReadParticipants, retractVote, saveGIF, sendReaction } from "../Util/messages";
 import { generateChatWithPeer, getChatEntity, getChatIdFromPeer } from "../Helpers/chats";
 import MessageReactions from "./Message/MessageReactions";
 import MessageMeta from "./Message/MessageMeta";
@@ -300,6 +300,11 @@ function Message({
         // setOpenDeleteModal(true); handleContextMenuClose()
     }, [data])
 
+    const handleReaction = useCallback((reaction, rect, element) => {
+        handleContextMenuClose()
+        return sendReaction(data.chatId, data.id, reaction, data.reactions?.results, rect, element, dispatch)
+    }, [data])
+
     const handleGetReadParticipants = useCallback(() => {
         return getMessageReadParticipants(data.chatId, data.id)
     }, [data])
@@ -364,6 +369,7 @@ function Message({
                         User.id.value === data._senderId?.value ||
                         chatType === 'User' ||
                         chatType === 'Bot'}
+                    canReaction={true}
                     canReadParticipants={chatType === 'Group' && isOutMessage.current && seen}
                     canReadDate={chatType === 'User' && isOutMessage.current && seen}
                     onReply={handleReply}
@@ -376,6 +382,7 @@ function Message({
                     onEdit={handleEdit}
                     onForward={handleForward}
                     onDelete={handleDelete}
+                    onReaction={handleReaction}
                     readParticipants={handleGetReadParticipants}
                     readDate={handleGetReadDate}
                 />
