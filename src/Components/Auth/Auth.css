@@ -2,7 +2,6 @@
     background-color: var(--secondary);
     display: flex;
     /* background-color: #ffffff08; */
-    backdrop-filter: blur(50px);
     width: -moz-fit-content;
     width: fit-content;
     padding: 20px;

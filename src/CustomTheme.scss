@@ -466,6 +466,18 @@
     padding: 0;
 }
 
+.noBlur {
+    * {
+        --blur-filter: none !important;
+    }
+
+    .ContextMenu,
+    .DropdownMenu,
+    .TopBar .ChatInfo {
+        background-color: var(--theme);
+    }
+}
+
 @media screen and (min-width: 926px) {
     .iOSTheme .Dialog {
         position: absolute;
@@ -817,9 +829,10 @@
 
     .Dialog .Content,
     .Dialog>.button {
+        --blur-filter: blur(16px);
         background-color: rgba(var(--secondary-rgb), .5);
         border-radius: 10px;
-        backdrop-filter: blur(16px);
+        backdrop-filter: var(--blur-filter);
         overflow: hidden;
     }
 

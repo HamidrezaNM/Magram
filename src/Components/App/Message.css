@@ -1040,6 +1040,7 @@
 }
 
 .Message .InlineButtons .Button {
+    --blur-filter: blur(10px);
     flex: 1;
     display: flex;
     justify-content: center;
@@ -1049,7 +1050,7 @@
     font-weight: 500;
     border-radius: 8px;
     line-height: 1.4;
-    backdrop-filter: blur(10px);
+    backdrop-filter: var(--blur-filter);
     position: relative;
     overflow: hidden;
     cursor: pointer;

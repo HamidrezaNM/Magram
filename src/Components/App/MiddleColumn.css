@@ -3,11 +3,12 @@
 }
 
 .MiddleColumn .TopBar {
+    --blur-filter: blur(50px);
     display: flex;
     flex-direction: column;
     position: absolute;
     width: calc(100% - 16px);
-    backdrop-filter: blur(50px);
+    backdrop-filter: var(--blur-filter);
     z-index: 1;
 }
 
@@ -290,6 +291,7 @@
 .MiddleColumn .bottom .Composer {
     width: 100%;
     min-height: 48px;
+    padding-block: 6px;
     display: flex;
     align-items: center;
     color: var(--dyn-text-color);
