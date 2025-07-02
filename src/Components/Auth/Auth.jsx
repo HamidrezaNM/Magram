@@ -91,8 +91,6 @@ export function Auth() {
 
             // console.log('getConfig', getConfig)
 
-            client.setLogLevel('warning')
-
             client.addEventHandler((update) => console.log(update));
 
             console.log(getMe)

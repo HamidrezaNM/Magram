@@ -171,7 +171,12 @@ function Message({
         (async () => {
             if (data.replyTo && !data.replyToMessage) {
                 if (!data.replyTo.replyFrom) {
-                    const reply = await data.getReplyMessage()
+                    var reply
+                    if (data._replyMessage)
+                        reply = data._replyMessage
+                    else
+                        reply = await data.getReplyMessage()
+
 
                     if (data.replyTo.quoteText)
                         reply.message = data.replyTo.quoteText
@@ -730,6 +735,7 @@ function Message({
                                     chat={data._sender ??
                                         data.chat ??
                                         { title: 'Anonymous' }} />
+                                {data._viaBot && <span className="viaBot">via @{data._viaBot.username}</span>}
                             </div>}
                         {data.fwdFrom &&
                             <div className={buildClassName(

@@ -22,7 +22,7 @@ const Thread = forwardRef(({ ThreadRef }, ref) => {
     const activeChat = useSelector((state) => state.ui.activeChat)
     const thread = useSelector((state) => state.ui.thread)
 
-    const chatId = `${thread.chatId.value}_${thread.id}`
+    const chatId = `${Number(thread.chatId)}_${thread.id}`
 
     const messages = useSelector((state) => state.messages.value[chatId])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
