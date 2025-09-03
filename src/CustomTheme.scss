@@ -478,6 +478,92 @@
     }
 }
 
+/* Profile Design */
+
+.Page .UserProfile {
+    overflow: visible;
+
+    .Info {
+        margin: 0;
+        gap: 16px;
+
+        .ProfileSection {
+            padding: 16px;
+            padding-top: 48px;
+            margin-top: -48px;
+            position: relative;
+
+            .BackgroundEmojis {
+                position: absolute;
+                top: -24px;
+
+                @media screen and (max-width: 480px) {
+                    left: -8px;
+                    left: 0;
+                }
+
+                .RLottie {
+                    width: 340px;
+                    height: 180px;
+                }
+            }
+
+            .User {
+                border-bottom: none;
+            }
+
+            .Buttons {
+                margin-bottom: 0;
+
+                .Button {
+                    padding: 8px;
+                    gap: 8px;
+                    display: flex;
+                    flex-direction: column;
+                    background-color: #00000020;
+
+                    .icon {
+                        font-variation-settings: 'FILL' 1;
+                    }
+
+                    .title {
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+
+        .Items {
+            margin: 0 16px;
+        }
+    }
+}
+
+.LeftColumn:has(.Page .UserProfile) .TopBar {
+    background-color: transparent;
+    z-index: 5;
+
+    .BackButton {
+        color: var(--text-color);
+        border-radius: 50%;
+        padding: 6px;
+        background-color: #00000020;
+        margin-left: 12px;
+
+        .icon {
+            font-size: 20px !important;
+        }
+
+        >span {
+            display: none;
+        }
+    }
+
+    .Meta {
+        display: none;
+    }
+}
+
 @media screen and (min-width: 926px) {
     .iOSTheme .Dialog {
         position: absolute;

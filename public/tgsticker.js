@@ -184,13 +184,15 @@ window.RLottie = (function () {
         rlPlayer.imageData = new ImageData(rlPlayer.width, rlPlayer.height);
         rlottie.players[reqId] = rlPlayer;
 
-        rlPlayer.canvas = document.createElement('canvas');
-        rlPlayer.canvas.width = pic_width;
-        rlPlayer.canvas.height = pic_height;
-        rlPlayer.el.innerHTML = null;
-        rlPlayer.el.appendChild(rlPlayer.canvas);
-        rlPlayer.context = rlPlayer.canvas.getContext('2d');
-        rlPlayer.forceRender = true;
+        if (!options.returnData) {
+            rlPlayer.canvas = document.createElement('canvas');
+            rlPlayer.canvas.width = pic_width;
+            rlPlayer.canvas.height = pic_height;
+            rlPlayer.el.innerHTML = null;
+            rlPlayer.el.appendChild(rlPlayer.canvas);
+            rlPlayer.context = rlPlayer.canvas.getContext('2d');
+            rlPlayer.forceRender = true;
+        }
 
         const rWorker = rlottieWorkers[curWorkerNum++];
         if (curWorkerNum >= rlottieWorkers.length) {
@@ -202,7 +204,7 @@ window.RLottie = (function () {
 
         const dataKey = getDataKey(reqId);
         const data = rlottie.frames.get(dataKey);
-        if (data) {
+        if (data && !options.returnData) {
             const frameData = data.frames[0];
 
             if (frameData) {
@@ -225,6 +227,9 @@ window.RLottie = (function () {
         } else {
             rWorker.sendQuery('loadFromData', rlPlayer.reqId, fileId, rlPlayer.width, rlPlayer.height);
         }
+
+        if (options.returnData)
+            return rlPlayer
 
         return rlPlayer.reqId;
     }

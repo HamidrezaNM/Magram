@@ -35,13 +35,14 @@ export const messagesSlice = createSlice({
                 if (state.value[action.payload.chatId]?.length > 0 && !action.payload.overwrite) {
                     state.value[action.payload.chatId] = [...state.value[action.payload.chatId], ...action.payload.messages]
                 } else
-                    state.value[action.payload.chatId] = action.payload.messages
+                    state.value[action.payload.chatId] = [...new Set(action.payload.messages)]
             }
         },
         unshiftMessages: (state, action) => {
             if (action.payload.messages?.length) {
                 if (state.value[action.payload.chatId]?.length > 0) {
-                    state.value[action.payload.chatId] = [...action.payload.messages, ...state.value[action.payload.chatId]]
+                    let uniq = [...new Set([...action.payload.messages, ...state.value[action.payload.chatId]])];
+                    state.value[action.payload.chatId] = uniq
                 } else
                     state.value[action.payload.chatId] = action.payload.messages
             }

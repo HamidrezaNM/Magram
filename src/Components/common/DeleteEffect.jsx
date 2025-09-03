@@ -58,6 +58,7 @@ function DeleteEffect({ }) {
                             y: rect.top + y,
                             vx: (Math.random() - 0.5) * 3,
                             vy: -(Math.random() * 3 + 1),
+                            size: 2,
                             alpha: 1,
                             color: `rgba(${r},${g},${b},${a / 255})`,
                             delay: delay,
@@ -83,12 +84,12 @@ function DeleteEffect({ }) {
                         p.alpha -= 0.02;
                     } else {
                         ctx.fillStyle = p.color;
-                        ctx.fillRect(p.ox, p.oy, 2, 2);
+                        ctx.fillRect(p.ox, p.oy, p.size, p.size);
                     }
 
                     if (p.alpha > 0 && p.age >= p.delay) {
                         ctx.fillStyle = p.color.replace(/[\d.]+\)$/g, `${p.alpha})`);
-                        ctx.fillRect(p.x, p.y, 2, 2);
+                        ctx.fillRect(p.x, p.y, p.size, p.size);
                     }
 
                     p.age++;

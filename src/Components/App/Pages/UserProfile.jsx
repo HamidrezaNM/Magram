@@ -19,6 +19,8 @@ import TabContent from "../../UI/TabContent";
 import { Image, Video } from "../Message/MessageMedia";
 import { getDocumentFileName, getDocumentVideoAttributes, isDocumentVideo } from "../../Helpers/messages";
 import ContextMenu from "../MiddleColumn/ContextMenu";
+import { decimalToHex } from "../../Util/colors";
+import CustomEmoji from "../Message/CustomEmoji";
 
 
 function UserProfile() {
@@ -28,6 +30,7 @@ function UserProfile() {
     const [tabIndex, setTabIndex] = useState(0)
     const [media, setMedia] = useState([])
     const [GIFs, setGIFs] = useState([])
+    const [profileColors, setProfileColors] = useState([])
 
     const dispatch = useDispatch()
 
@@ -39,7 +42,6 @@ function UserProfile() {
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
-
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
             PageHandle(dispatch, 'Settings', 'Settings')
@@ -47,6 +49,14 @@ function UserProfile() {
         } else
             setIsLoaded(true);
         (async () => {
+            const getProfileColors = await client.invoke(new Api.help.GetPeerProfileColors({}))
+
+            const bgColors = getProfileColors.colors[userProfile.profileColor.color + 1].colors.bgColors
+
+            setProfileColors(bgColors)
+
+            console.log('profileColors', getProfileColors, bgColors)
+
             setFullUser(((await client.invoke(new Api.users.GetFullUser({ id: userProfile.id }))).fullUser))
 
             // Get Media Messages
@@ -138,39 +148,50 @@ function UserProfile() {
                 </div>
             </PageHeader>
             <div className="section Info">
-                <div className="User">
-                    <Profile showPreview entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
-                    <div className="FlexColumn" style={{ width: '100%' }}>
-                        <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
-                        <div className="subtitle" style={{ fontSize: 14 }}>{userInfoSubtitle()}</div>
+                <div className="ProfileSection" style={{ background: profileColors && `radial-gradient(${decimalToHex(profileColors[1])}, ${decimalToHex(profileColors[0])})` }}>
+                    {userProfile?.profileColor?.backgroundEmojiId && <div className="BackgroundEmojis">
+                        <CustomEmoji returnData documentId={userProfile.profileColor?.backgroundEmojiId?.value} autoPlay={false} />
+                    </div>}
+                    <div className="User">
+                        <Profile showPreview entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
+                        <div className="FlexColumn" style={{ width: '100%' }}>
+                            <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
+                            <div className="subtitle" style={{ fontSize: 14 }}>{userInfoSubtitle()}</div>
+                        </div>
+                        {!iOSTheme &&
+                            <div className="StartChat" onClick={privateMessage}>
+                                <Icon name="chat" />
+                            </div>}
                     </div>
-                    {!iOSTheme &&
-                        <div className="StartChat" onClick={privateMessage}>
-                            <Icon name="chat" />
-                        </div>}
+                    {iOSTheme && <>
+                        <div className="Buttons">
+                            <div className="Button" onClick={privateMessage}>
+                                <Icon name="chat" />
+                                <div className="title">
+                                    Message
+                                </div>
+                            </div>
+                            <div className="Button" onClick={privateMessage}>
+                                <Icon name="notifications" />
+                                <div className="title">
+                                    Mute
+                                </div>
+                            </div>
+                            <div className="Button">
+                                <Icon name="call" />
+                                <div className="title">
+                                    Call
+                                </div>
+                            </div>
+                            <div className="Button">
+                                <Icon name="more_horiz" />
+                                <div className="title">
+                                    More
+                                </div>
+                            </div>
+                        </div>
+                    </>}
                 </div>
-                {iOSTheme && <>
-                    <div className="Buttons">
-                        <div className="Button">
-                            <Icon name="call" />
-                            <div className="title">
-                                Call
-                            </div>
-                        </div>
-                        <div className="Button" onClick={privateMessage}>
-                            <Icon name="chat" />
-                            <div className="title">
-                                Message
-                            </div>
-                        </div>
-                        <div className="Button">
-                            <Icon name="more_horiz" />
-                            <div className="title">
-                                More
-                            </div>
-                        </div>
-                    </div>
-                </>}
                 <div className="Items">
                     {userProfile.phone && <div className="Item"><Icon name="phone" /><span>+{userProfile.countryCode} {userProfile.phone}</span></div>}
                     {userProfile.username && <div className="Item"><Icon name="alternate_email" /><span>{userProfile.username}</span></div>}

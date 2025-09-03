@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react"
 import AnimatedSticker from "./AnimatedSticker"
 
-function CustomEmoji({ documentId, autoPlay = false }) {
+function CustomEmoji({ documentId, autoPlay = false, returnData = false }) {
     return <div className="CustomEmoji">
         <AnimatedSticker
             isCustomEmoji={true}
@@ -15,6 +15,7 @@ function CustomEmoji({ documentId, autoPlay = false }) {
             _width={20}
             _height={20}
             autoPlay={autoPlay}
+            returnData={returnData}
         />
     </div>
 }
