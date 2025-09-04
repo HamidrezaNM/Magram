@@ -355,7 +355,7 @@
 
 .iOSTheme .Page .User .subtitle {
     color: var(--secondary-text);
-    font-size: 18px !important;
+    font-size: 18px;
 }
 
 .iOSTheme .Page .Group {
@@ -481,7 +481,7 @@
 /* Profile Design */
 
 .Page .UserProfile {
-    overflow: visible;
+    scroll-behavior: smooth;
 
     .Info {
         margin: 0;
@@ -490,21 +490,40 @@
         .ProfileSection {
             padding: 16px;
             padding-top: 48px;
-            margin-top: -48px;
             position: relative;
 
             .BackgroundEmojis {
                 position: absolute;
                 top: -24px;
-
-                @media screen and (max-width: 480px) {
-                    left: -8px;
-                    left: 0;
-                }
+                left: -20px;
+                right: 0;
+                margin: 0 auto;
+                width: 375px;
 
                 .RLottie {
-                    width: 340px;
+                    width: calc(100% - 0px);
                     height: 180px;
+                }
+            }
+
+            .GooeyEffect {
+                filter: url(#gooey);
+
+                .gooey {
+                    margin: 0 auto;
+                    position: sticky;
+                    top: -10px;
+                    width: 48px;
+                    height: 18px;
+                    background-color: #000;
+                    margin-top: -48px;
+                    margin-bottom: 32px;
+                }
+
+                svg {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
                 }
             }
 
@@ -514,6 +533,7 @@
 
             .Buttons {
                 margin-bottom: 0;
+                overflow: hidden;
 
                 .Button {
                     padding: 8px;
@@ -521,6 +541,7 @@
                     display: flex;
                     flex-direction: column;
                     background-color: #00000020;
+                    overflow: hidden;
 
                     .icon {
                         font-variation-settings: 'FILL' 1;
@@ -539,7 +560,12 @@
     }
 }
 
+.LeftColumn:has(.Page .UserProfile) .Page {
+    height: 100%;
+}
+
 .LeftColumn:has(.Page .UserProfile) .TopBar {
+    position: absolute;
     background-color: transparent;
     z-index: 5;
 

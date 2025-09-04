@@ -414,6 +414,11 @@ window.RLottie = (function () {
                     }
                 }
             }
+
+            const rlEvents = rlottie.events[reqId];
+            if (rlEvents) {
+                rlEvents['load'] && rlEvents['load']();
+            }
         }
 
         let nextFrameNo;
@@ -438,6 +443,7 @@ window.RLottie = (function () {
     }
 
     function onLoaded(reqId, frameCount, fps) {
+        console.log('tgsticker Loaded', reqId)
         const dataKey = getDataKey(reqId);
         const data = rlottie.frames.get(dataKey);
         const rlPlayer = rlottie.players[reqId];
