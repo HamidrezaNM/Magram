@@ -2147,7 +2147,7 @@ a:hover {
   align-items: center;
   font-size: 18px;
   cursor: pointer;
-  transition: opacity .2s ease;
+  transition: opacity .2s ease, margin-left .3s ease;
 }
 
 .BackButton:active {
@@ -2171,7 +2171,8 @@ a:hover {
   font-size: 16px;
   position: absolute;
   left: 20px;
-  transition: left .3s ease;
+  /* transform-origin: left; */
+  transition: left .3s ease, transform .3s ease;
 }
 
 .BackButton.showAnim span {

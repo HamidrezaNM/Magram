@@ -237,7 +237,27 @@
 }
 
 .iOSTheme .LeftColumn .TopBar {
+    width: 100%;
     background-color: var(--secondary);
+
+    .FlexColumn {
+        position: absolute !important;
+        top: 8px !important;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+
+        .name span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
 }
 
 .iOSTheme .Page {
@@ -516,8 +536,9 @@
                     width: 48px;
                     height: 18px;
                     background-color: #000;
-                    margin-top: -48px;
-                    margin-bottom: 32px;
+                    margin-top: -32px;
+                    margin-bottom: 16px;
+                    opacity: 0;
                 }
 
                 svg {
@@ -529,11 +550,28 @@
 
             .User {
                 border-bottom: none;
+
+                .profile {
+                    --opacity: 0;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        opacity: var(--opacity);
+                        background-color: #000;
+                        z-index: 1;
+                    }
+                }
             }
 
             .Buttons {
                 margin-bottom: 0;
+                // height: var(--value);
+                // margin-top: calc(62px - var(--value));
                 overflow: hidden;
+                // transition: margin-top .05s .02s ease, height .05s .02s ease;
 
                 .Button {
                     padding: 8px;
@@ -544,11 +582,17 @@
                     overflow: hidden;
 
                     .icon {
+                        transform: scale(var(--value));
+                        transform-origin: top;
                         font-variation-settings: 'FILL' 1;
+                        transition: none;
                     }
 
                     .title {
+                        transform: scale(var(--value));
+                        transform-origin: top;
                         font-size: 12px;
+                        transition: none;
                     }
                 }
             }
@@ -558,15 +602,24 @@
             margin: 0 16px;
         }
     }
+
+    .Tabs {
+        top: 48px;
+    }
 }
 
 .LeftColumn:has(.Page .UserProfile) .Page {
     height: 100%;
 }
 
-.LeftColumn:has(.Page .UserProfile) .TopBar {
+.LeftColumn .TopBar.absolute {
     position: absolute;
-    background-color: transparent;
+    z-index: 5;
+}
+
+.LeftColumn .TopBar.floating {
+    position: absolute;
+    background-color: transparent !important;
     z-index: 5;
 
     .BackButton {
@@ -577,11 +630,13 @@
         margin-left: 12px;
 
         .icon {
-            font-size: 20px !important;
+            font-size: 24px !important;
+            font-variation-settings: 'wght' 300;
         }
 
         >span {
-            display: none;
+            transform: scale(0);
+            opacity: 0;
         }
     }
 

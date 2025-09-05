@@ -14,6 +14,7 @@ export const uiSlice = createSlice({
         showPage: false,
         pageTitle: null,
         topbarTitle: null,
+        topBarFloating: false,
         pageHeader: null,
         subPage: [],
         subPageTitle: null,
@@ -104,6 +105,9 @@ export const uiSlice = createSlice({
         },
         handleTopbarTitleChange: (state, action) => {
             state.topbarTitle = action.payload
+        },
+        handleTopBarFloating: (state, action) => {
+            state.topBarFloating = action.payload
         },
         handlePageClose: (state) => {
             state.page = null
@@ -305,6 +309,7 @@ export const {
     handlePage,
     handlePageClose,
     handleTopbarTitleChange,
+    handleTopBarFloating,
     handlePageHeader,
     handleSubPage,
     handleSubPageClose,

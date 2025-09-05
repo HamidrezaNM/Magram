@@ -6,7 +6,7 @@ import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
 import Menu from "../../UI/Menu";
-import { handleCall, handleContextMenu, handleGoToMessage, handleUserProfile, setActiveChat } from "../../Stores/UI";
+import { handleCall, handleContextMenu, handleGoToMessage, handleTopBarFloating, handleUserProfile, setActiveChat } from "../../Stores/UI";
 import FullNameTitle from "../../common/FullNameTitle";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { client } from "../../../App";
@@ -43,6 +43,7 @@ function UserProfile() {
     const userRef = useRef()
     const gooeyRef = useRef()
     const profileButtonsRef = useRef()
+    const userInfoRef = useRef()
 
     const userProfile = useSelector((state) => state.ui.userProfile)
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
@@ -54,10 +55,13 @@ function UserProfile() {
             return;
         } else
             setIsLoaded(true);
+
+        dispatch(handleTopBarFloating({ floating: true, absolute: true }));
+
         (async () => {
             const getProfileColors = await client.invoke(new Api.help.GetPeerProfileColors({}))
 
-            const bgColors = getProfileColors.colors[userProfile.profileColor.color + 1].colors.bgColors
+            const bgColors = userProfile.profileColor?.color && getProfileColors.colors[userProfile.profileColor.color + 1].colors.bgColors
 
             setProfileColors(bgColors)
 
@@ -71,19 +75,21 @@ function UserProfile() {
                 filter: Api.InputMessagesFilterPhotoVideo,
             })
 
-            setMedia(getMedia)
+            // setMedia(getMedia)
 
             const getGIFs = await client.getMessages(userProfile.id, {
                 limit: 100,
                 filter: Api.InputMessagesFilterGif,
             })
 
-            setGIFs(getGIFs)
+            // setGIFs(getGIFs)
 
             setCommonChats((await client.invoke(new Api.messages.GetCommonChats({
                 userId: userProfile.id
             }))).chats)
         })()
+
+        return () => dispatch(handleTopBarFloating({ floating: false, absolute: false }));
     }, [])
 
     const userInfoSubtitle = () => {
@@ -239,30 +245,37 @@ function UserProfile() {
         const blurClamp = clamp(scrollTop, 30, 120)
         const blurValue = (blurClamp - 30) / 90
 
-        const scaleClamp = Math.max(scrollTop, 10)
+        const scaleClamp = Math.max(scrollTop, 0)
 
         const gooeyClamp = Math.min(scrollTop / 42, 1)
 
-        const infoMin = 10
+        const infoMin = 0
         const infoMax = 108
         const infoClamp = clamp(scrollTop, infoMin, infoMax)
         const infoSize = (infoClamp - infoMin) / (infoMax - infoMin)
 
         userRef.current.querySelector('.profile').style.filter = `blur(${blurValue * 10}px)`
-        userRef.current.querySelector('.profile').style.transform = `scale(${1 - (scaleClamp - 10) / 110})`
-        userRef.current.querySelector('.profile').style.marginBottom = `-${((scaleClamp - 10) / 110) * 48}px`
+        userRef.current.querySelector('.profile').style.transform = `scale(${1 - (scaleClamp - 0) / 120})`
+        userRef.current.querySelector('.profile').style.setProperty('--opacity', blurValue * 2)
+        userRef.current.querySelector('.profile').style.marginBottom = `-${((scaleClamp - 0) / 120) * 48}px`
 
         gooeyRef.current.style.opacity = gooeyClamp
 
-        if (scrollTop >= infoMax) {
-            userRef.current.querySelector('.FlexColumn').style = `position: fixed;top:8px;`
-            userRef.current.style.height = '120px'
-        } else {
-            userRef.current.querySelector('.FlexColumn').style = ''
-            userRef.current.style.height = ''
-        }
-        userRef.current.querySelector('.name').style.fontSize = (1 - infoSize) * 12 + 16 + 'px'
-        userRef.current.querySelector('.subtitle').style.fontSize = (1 - infoSize) * 6 + 12 + 'px'
+        // if (scrollTop > infoMax)
+        //     document.querySelector('.LeftColumn .TopBar').appendChild(userInfoRef.current)
+        // else {
+        //     userRef.current.appendChild(userInfoRef.current)
+        // }
+
+        // if (scrollTop >= infoMax) {
+        //     userInfoRef.current.style = `position: fixed;top:8px;`
+        //     userRef.current.style.height = '120px'
+        // } else {
+        //     userInfoRef.current.style = ''
+        //     userRef.current.style.height = ''
+        // }
+        userInfoRef.current.querySelector('.name').style.fontSize = (1 - infoSize) * 12 + 16 + 'px'
+        userInfoRef.current.querySelector('.subtitle').style.fontSize = (1 - infoSize) * 6 + 12 + 'px'
 
         const buttonsMin = infoMax
         const buttonsMax = 170
@@ -270,10 +283,16 @@ function UserProfile() {
         const buttonsHeight = buttonsMax - buttonsClamp
 
         profileButtonsRef.current.style.height = buttonsHeight + 'px'
-        profileButtonsRef.current.style.marginTop = 62 - buttonsHeight + 'px'
+        profileButtonsRef.current.style.marginTop = 70 - buttonsHeight + 'px'
         profileButtonsRef.current.style.opacity = buttonsHeight / 62
+        profileButtonsRef.current.style.setProperty('--value', buttonsHeight / 62)
 
-        handleCoolDown(handleScrollDebounce, 150)
+        if (scrollTop > 180) {
+            dispatch(handleTopBarFloating({ floating: false, absolute: true }))
+        } else
+            dispatch(handleTopBarFloating({ floating: true, absolute: true }))
+
+        // handleCoolDown(handleScrollDebounce, 150)
     }, [])
 
     const handleScrollDebounce = () => {
@@ -281,13 +300,13 @@ function UserProfile() {
 
         if (scrollTop < 40) {
             page.current.scrollTop = 0
-        } else if (scrollTop < 108) {
+        } else if (scrollTop < 109) {
             page.current.scrollTop = 108
         }
     }
 
     return <>
-        <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page} onScroll={handleScrollEffects}>
+        <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page} onScroll={handleScrollEffects} onTouchEnd={handleScrollDebounce}>
             <PageHeader>
                 <div><BackArrow index={1} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
                 <div className="Title"><span></span></div>
@@ -314,14 +333,14 @@ function UserProfile() {
                             <svg>
                                 <defs>
                                     <filter id="gooey">
-                                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
                                         <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="filter" />
                                         <feComposite in="SourceGraphic" in2="filter" operator="atop" />
                                     </filter>
                                 </defs>
                             </svg>
                         </div>
-                        <div className="FlexColumn" style={{ width: '100%' }}>
+                        <div ref={userInfoRef} className="FlexColumn" style={{ width: '100%' }}>
                             <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
                             <div className="subtitle">{userInfoSubtitle()}</div>
                         </div>
