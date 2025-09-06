@@ -12,13 +12,14 @@ import UserProfile from "./Pages/UserProfile";
 import MenuItem from "../UI/MenuItem";
 import DropdownMenu from "../UI/DropdownMenu";
 import Menu from "../UI/Menu";
-import ChatList from "./ChatList";
+import ChatList, { viewChat } from "./ChatList";
 import { Icon } from "./common";
 import { handleToggleDarkMode } from "../Stores/Settings";
 import MusicPlayer from "./MiddleColumn/MusicPlayer";
 import TextTransition from "../common/TextTransition";
 import Forward from "./Pages/Forward";
 import Stories from "./Stories";
+import { generateChatWithPeer } from "../Helpers/chats";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -51,6 +52,10 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         PageHandle(dispatch, 'Settings', 'Settings')
     }, [page, showPage])
 
+    const handleSavedMessages = useCallback(() => {
+        viewChat(generateChatWithPeer(User), dispatch)
+    }, [User])
+
     const getPageLayout = useCallback(() => {
         switch (page) {
             case 'Settings':
@@ -82,6 +87,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                             </div>
                             <MenuItem icon="person" title="Contacts" onClick={() => { }} />
                             <MenuItem icon="call" title="Calls" onClick={() => { }} />
+                            <MenuItem icon="bookmark" title="Saved Messages" onClick={() => handleSavedMessages()} />
                             <MenuItem icon="settings" title="Settings" onClick={showSettings} />
                             <hr />
                             <MenuItem profile={User} title={User.firstName + ' ' + (User.lastName ?? '')} onClick={() => { }} />
