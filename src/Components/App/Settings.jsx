@@ -122,7 +122,7 @@ function Settings() {
         <div className={"Settings" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
             <PageHeader>
                 <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Settings</span></div>
+                <div className="Content"><span>Settings</span></div>
                 <div className="Meta">
                     <Menu icon="more_vert">
                         <DropdownMenu className="top right withoutTitle">

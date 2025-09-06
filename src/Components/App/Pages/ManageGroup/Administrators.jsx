@@ -44,7 +44,7 @@ export default function Administrators() {
         <div className={"Administrators" + (!isLoaded ? ' fadeThrough' : '') + (subPage[2] ? ' pushUp' : '')}>
             <PageHeader key={subPage[2]}>
                 <div><BackArrow index={3} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Administrators</span></div>
+                <div className="Content"><span>Administrators</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

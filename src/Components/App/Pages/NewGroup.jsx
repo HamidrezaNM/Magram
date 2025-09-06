@@ -44,7 +44,7 @@ export default function NewGroup() {
     return <div className="NewGroup fadeThrough">
         <PageHeader key={title + username + bio}>
             <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>New Group</span></div>
+            <div className="Content"><span>New Group</span></div>
             <div className="Meta">
                 <button onClick={() => createGroup()}>Create</button>
             </div>

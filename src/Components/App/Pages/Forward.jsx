@@ -24,7 +24,7 @@ export default function Forward() {
     return <div className={"Forward" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
             <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Forward to...</span></div>
+            <div className="Content"><span>Forward to...</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="Chats scrollable">

@@ -44,7 +44,7 @@ function SettingsVoiceVideo() {
     return <div className={"SettingsVoiceVideo" + (!isLoaded ? ' fadeThrough' : '')} ref={page}>
         <PageHeader>
             <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch, true)} /></div>
-            <div className="Title"><span>Voice & Video</span></div>
+            <div className="Content"><span>Voice & Video</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">

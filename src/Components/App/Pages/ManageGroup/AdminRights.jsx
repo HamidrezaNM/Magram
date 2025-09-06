@@ -73,7 +73,7 @@ export default function AdminRights() {
     return <div className={"AdminRights" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader key={changeGroupInfo + deleteMessages + banUsers + pinMessages + addNewAdmins + anonymous + hasChanged}>
             <div><BackArrow index={4} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Admin Rights</span></div>
+            <div className="Content"><span>Admin Rights</span></div>
             <div className="Meta">
                 <button className={hasChanged ? '' : 'disabled'} onClick={applyChanges}>Apply</button>
             </div>

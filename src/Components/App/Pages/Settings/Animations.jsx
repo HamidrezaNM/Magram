@@ -35,7 +35,7 @@ export default function SettingsAnimations() {
     return <div className={buildClassName("SettingsAnimations", !isLoaded && 'fadeThrough')}>
         <PageHeader>
             <div><BackArrow index={2} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Animations</span></div>
+            <div className="Content"><span>Animations</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">

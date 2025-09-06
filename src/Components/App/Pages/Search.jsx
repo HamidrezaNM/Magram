@@ -96,7 +96,7 @@ export default function Search() {
         <div className={"Search" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
             <PageHeader>
                 <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Search</span></div>
+                <div className="Content"><span>Search</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

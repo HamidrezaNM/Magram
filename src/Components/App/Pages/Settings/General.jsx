@@ -21,7 +21,7 @@ export default function SettingsGeneral() {
     return <div className={"SettingsGeneral" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
             <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>General</span></div>
+            <div className="Content"><span>General</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">

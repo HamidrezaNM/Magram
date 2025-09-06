@@ -6,7 +6,7 @@ import { BackArrow, Icon, Profile } from "../common";
 import DropdownMenu from "../../UI/DropdownMenu";
 import MenuItem from "../../UI/MenuItem";
 import Menu from "../../UI/Menu";
-import { handleCall, handleContextMenu, handleGoToMessage, handleTopBarFloating, handleUserProfile, setActiveChat } from "../../Stores/UI";
+import { handleCall, handleContextMenu, handleGoToMessage, handleTopbarContentChange, handleTopBarFloating, handleUserProfile, setActiveChat } from "../../Stores/UI";
 import FullNameTitle from "../../common/FullNameTitle";
 import { getUserStatus } from "../MiddleColumn/ChatInfo";
 import { client } from "../../../App";
@@ -34,6 +34,7 @@ function UserProfile() {
     const [media, setMedia] = useState([])
     const [GIFs, setGIFs] = useState([])
     const [profileColors, setProfileColors] = useState([])
+    const [showInfoInTopBar, setShowInfoInTopBar] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -247,7 +248,7 @@ function UserProfile() {
 
         const scaleClamp = Math.max(scrollTop, 0)
 
-        const gooeyClamp = Math.min(scrollTop / 42, 1)
+        const gooeyClamp = Math.min(scrollTop / 54, 1)
 
         const infoMin = 0
         const infoMax = 108
@@ -255,7 +256,7 @@ function UserProfile() {
         const infoSize = (infoClamp - infoMin) / (infoMax - infoMin)
 
         userRef.current.querySelector('.profile').style.filter = `blur(${blurValue * 10}px)`
-        userRef.current.querySelector('.profile').style.transform = `scale(${1 - (scaleClamp - 0) / 120})`
+        userRef.current.querySelector('.profile').style.transform = `scale(${1 - (scaleClamp - 0) / 148})`
         userRef.current.querySelector('.profile').style.setProperty('--opacity', blurValue * 2)
         userRef.current.querySelector('.profile').style.marginBottom = `-${((scaleClamp - 0) / 120) * 48}px`
 
@@ -283,11 +284,19 @@ function UserProfile() {
         const buttonsHeight = buttonsMax - buttonsClamp
 
         profileButtonsRef.current.style.height = buttonsHeight + 'px'
-        profileButtonsRef.current.style.marginTop = 70 - buttonsHeight + 'px'
+        profileButtonsRef.current.style.marginTop = buttonsClamp - buttonsMin + 'px'
         profileButtonsRef.current.style.opacity = buttonsHeight / 62
         profileButtonsRef.current.style.setProperty('--value', buttonsHeight / 62)
 
-        if (scrollTop > 180) {
+        if (scrollTop > 110) {
+            userInfoRef.current.style.visibility = 'hidden'
+            setShowInfoInTopBar(true)
+        } else {
+            userInfoRef.current.style.visibility = ''
+            setShowInfoInTopBar(false)
+        }
+
+        if (scrollTop > 175) {
             dispatch(handleTopBarFloating({ floating: false, absolute: true }))
         } else
             dispatch(handleTopBarFloating({ floating: true, absolute: true }))
@@ -300,139 +309,146 @@ function UserProfile() {
 
         if (scrollTop < 40) {
             page.current.scrollTop = 0
-        } else if (scrollTop < 109) {
-            page.current.scrollTop = 108
+        } else if (scrollTop < 113) {
+            page.current.scrollTop = 112
         }
     }
 
-    return <>
-        <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page} onScroll={handleScrollEffects} onTouchEnd={handleScrollDebounce}>
-            <PageHeader>
-                <div><BackArrow index={1} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span></span></div>
-                <div className="Meta">
-                    <Icon name="call" onClick={() => dispatch(handleCall(userProfile))} />
-                    <Menu icon="more_vert">
-                        <DropdownMenu className="top right withoutTitle">
-                            <MenuItem icon="edit" title="Edit Contact" onClick={() => { }} />
-                            <MenuItem icon="delete" title="Delete Contact" onClick={() => { }} />
-                            <MenuItem icon="block" title="Block User" className="danger" onClick={() => { }} />
-                        </DropdownMenu>
-                    </Menu>
-                </div>
-            </PageHeader>
-            <div className="section Info">
-                <div className="ProfileSection" style={{ background: profileColors && `radial-gradient(${decimalToHex(profileColors[1])}, ${decimalToHex(profileColors[0])})` }}>
-                    {userProfile?.profileColor?.backgroundEmojiId && <div className="BackgroundEmojis">
-                        <CustomEmoji onLoad={handleBackgroundEmojisAnimation} returnData documentId={userProfile.profileColor?.backgroundEmojiId?.value} autoPlay={false} />
-                    </div>}
-                    <div className="User" ref={userRef}>
-                        <div className="GooeyEffect">
-                            <div className="gooey" ref={gooeyRef}></div>
-                            <Profile showPreview entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
-                            <svg>
-                                <defs>
-                                    <filter id="gooey">
-                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-                                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="filter" />
-                                        <feComposite in="SourceGraphic" in2="filter" operator="atop" />
-                                    </filter>
-                                </defs>
-                            </svg>
-                        </div>
-                        <div ref={userInfoRef} className="FlexColumn" style={{ width: '100%' }}>
-                            <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
-                            <div className="subtitle">{userInfoSubtitle()}</div>
-                        </div>
-                        {!iOSTheme &&
-                            <div className="StartChat" onClick={privateMessage}>
-                                <Icon name="chat" />
-                            </div>}
+    return <div className={"UserProfile" + (!isLoaded ? ' fadeThrough' : '')} ref={page} onScroll={handleScrollEffects} onTouchEnd={handleScrollDebounce}>
+        <PageHeader force={showInfoInTopBar}>
+            <div><BackArrow index={1} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
+            <div className="Content">
+                {showInfoInTopBar && <div className="FlexColumn">
+                    <div className="title">
+                        <FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} />
                     </div>
-                    {iOSTheme && <>
-                        <div className="Buttons" ref={profileButtonsRef}>
-                            <div className="Button" onClick={privateMessage}>
-                                <Icon name="chat" />
-                                <div className="title">
-                                    Message
-                                </div>
-                            </div>
-                            <div className="Button" onClick={privateMessage}>
-                                <Icon name="notifications" />
-                                <div className="title">
-                                    Mute
-                                </div>
-                            </div>
-                            <div className="Button">
-                                <Icon name="call" />
-                                <div className="title">
-                                    Call
-                                </div>
-                            </div>
-                            <div className="Button">
-                                <Icon name="more_horiz" />
-                                <div className="title">
-                                    More
-                                </div>
-                            </div>
-                        </div>
-                    </>}
-                </div>
-                <div className="Items">
-                    {userProfile.phone && <div className="Item"><Icon name="phone" /><span>+{userProfile.countryCode} {userProfile.phone}</span></div>}
-                    {userProfile.username && <div className="Item"><Icon name="alternate_email" /><span>{userProfile.username}</span></div>}
-                    {fullUser?.about && <div className="Item preWrap"><Icon name="info" /><span>{fullUser.about}</span></div>}
-                </div>
+                    <div className="subtitle">
+                        {userInfoSubtitle()}
+                    </div>
+                </div>}
             </div>
-            <div className="section TabSection">
-                <Tabs index={tabIndex} setIndex={setTabIndex} showOneTab tabs={
-                    <>
-                        {media?.length > 0 && <div
-                            className={buildClassName("Tab", tabIndex === 0 && 'active')}
-                            onClick={() => setTabIndex(0)}>
-                            <span>Media</span>
-                        </div>}
-                        {GIFs?.length > 0 && <div
-                            className={buildClassName("Tab", tabIndex === 1 && 'active')}
-                            onClick={() => setTabIndex(1)}>
-                            <span>GIFs</span>
-                        </div>}
-                        {commonChats?.length > 0 && <div
-                            className={buildClassName("Tab", tabIndex === 2 && 'active')}
-                            onClick={() => setTabIndex(2)}>
-                            <span>Groups</span>
-                        </div>}
-                    </>
-                }>
-                    {media?.length > 0 && <TabContent state={true}>
-                        <div className="Items Media">
-                            {media && media.map(item =>
-                                <MediaItem key={item.id} messageId={item.id} chat={userProfile} dispatch={dispatch}>
-                                    {renderMedia(item.media)}
-                                </MediaItem>
-                            )}
-                        </div>
-                    </TabContent>}
-                    {GIFs?.length > 0 && <TabContent state={true}>
-                        <div className="Items Media">
-                            {GIFs && GIFs.map(item =>
-                                <MediaItem key={item.id} messageId={item.id} dispatch={dispatch}>
-                                    <MediaVideo media={item.media} />
-                                </MediaItem>
-                            )}
-                        </div>
-                    </TabContent>}
-                    {commonChats?.length > 0 && <TabContent state={true}>
-                        <div className="Items">
-                            {renderCommonChats()}
-                        </div>
-                    </TabContent>}
-                </Tabs>
+            <div className="Meta">
+                <Icon name="call" onClick={() => dispatch(handleCall(userProfile))} />
+                <Menu icon="more_vert">
+                    <DropdownMenu className="top right withoutTitle">
+                        <MenuItem icon="edit" title="Edit Contact" onClick={() => { }} />
+                        <MenuItem icon="delete" title="Delete Contact" onClick={() => { }} />
+                        <MenuItem icon="block" title="Block User" className="danger" onClick={() => { }} />
+                    </DropdownMenu>
+                </Menu>
             </div>
-            <ContextMenu type="media" />
+        </PageHeader>
+        <div className="section Info">
+            <div className="ProfileSection" style={{ background: profileColors && `radial-gradient(${decimalToHex(profileColors[1])}, ${decimalToHex(profileColors[0])})` }}>
+                {userProfile?.profileColor?.backgroundEmojiId && <div className="BackgroundEmojis">
+                    <CustomEmoji onLoad={handleBackgroundEmojisAnimation} returnData documentId={userProfile.profileColor?.backgroundEmojiId?.value} autoPlay={false} />
+                </div>}
+                <div className="User" ref={userRef}>
+                    <div className="GooeyEffect">
+                        <div className="gooey" ref={gooeyRef}></div>
+                        <Profile showPreview entity={userProfile} name={userProfile.firstName} id={userProfile.id.value} />
+                        <svg>
+                            <defs>
+                                <filter id="gooey">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="filter" />
+                                    <feComposite in="SourceGraphic" in2="filter" operator="atop" />
+                                </filter>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div ref={userInfoRef} className="FlexColumn" style={{ width: '100%' }}>
+                        <div className="name"><FullNameTitle chat={userProfile} isSavedMessages={userProfile.id.value === User.id.value} /></div>
+                        <div className="subtitle">{userInfoSubtitle()}</div>
+                    </div>
+                    {!iOSTheme &&
+                        <div className="StartChat" onClick={privateMessage}>
+                            <Icon name="chat" />
+                        </div>}
+                </div>
+                {iOSTheme && <>
+                    <div className="Buttons" ref={profileButtonsRef}>
+                        <div className="Button" onClick={privateMessage}>
+                            <Icon name="chat" />
+                            <div className="title">
+                                Message
+                            </div>
+                        </div>
+                        <div className="Button" onClick={privateMessage}>
+                            <Icon name="notifications" />
+                            <div className="title">
+                                Mute
+                            </div>
+                        </div>
+                        <div className="Button">
+                            <Icon name="call" />
+                            <div className="title">
+                                Call
+                            </div>
+                        </div>
+                        <div className="Button">
+                            <Icon name="more_horiz" />
+                            <div className="title">
+                                More
+                            </div>
+                        </div>
+                    </div>
+                </>}
+            </div>
+            <div className="Items">
+                {userProfile.phone && <div className="Item"><Icon name="phone" /><span>+{userProfile.countryCode} {userProfile.phone}</span></div>}
+                {userProfile.username && <div className="Item"><Icon name="alternate_email" /><span>{userProfile.username}</span></div>}
+                {fullUser?.about && <div className="Item preWrap"><Icon name="info" /><span>{fullUser.about}</span></div>}
+            </div>
         </div>
-        {/* <Transition state={ui.subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition> */}
-    </>
+        <div className="section TabSection">
+            <Tabs index={tabIndex} setIndex={setTabIndex} showOneTab tabs={
+                <>
+                    {media?.length > 0 && <div
+                        className={buildClassName("Tab", tabIndex === 0 && 'active')}
+                        onClick={() => setTabIndex(0)}>
+                        <span>Media</span>
+                    </div>}
+                    {GIFs?.length > 0 && <div
+                        className={buildClassName("Tab", tabIndex === 1 && 'active')}
+                        onClick={() => setTabIndex(1)}>
+                        <span>GIFs</span>
+                    </div>}
+                    {commonChats?.length > 0 && <div
+                        className={buildClassName("Tab", tabIndex === 2 && 'active')}
+                        onClick={() => setTabIndex(2)}>
+                        <span>Groups</span>
+                    </div>}
+                </>
+            }>
+                {media?.length > 0 && <TabContent state={true}>
+                    <div className="Items Media">
+                        {media && media.map(item =>
+                            <MediaItem key={item.id} messageId={item.id} chat={userProfile} dispatch={dispatch}>
+                                {renderMedia(item.media)}
+                            </MediaItem>
+                        )}
+                    </div>
+                </TabContent>}
+                {GIFs?.length > 0 && <TabContent state={true}>
+                    <div className="Items Media">
+                        {GIFs && GIFs.map(item =>
+                            <MediaItem key={item.id} messageId={item.id} dispatch={dispatch}>
+                                <MediaVideo media={item.media} />
+                            </MediaItem>
+                        )}
+                    </div>
+                </TabContent>}
+                {commonChats?.length > 0 && <TabContent state={true}>
+                    <div className="Items">
+                        {renderCommonChats()}
+                    </div>
+                </TabContent>}
+            </Tabs>
+        </div>
+        <ContextMenu type="media" />
+    </div>
+    {/* <Transition state={ui.subPage[0]}><SubPage>{getSubPageLayout()}</SubPage></Transition> */ }
 }
 
 export default memo(UserProfile)

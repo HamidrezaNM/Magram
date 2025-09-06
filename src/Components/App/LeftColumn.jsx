@@ -28,7 +28,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
     const pageHeader = useSelector((state) => state.ui.pageHeader)
     const showPage = useSelector((state) => state.ui.showPage)
     const page = useSelector((state) => state.ui.page)
-    const topbarTitle = useSelector((state) => state.ui.topbarTitle)
+    const topbarContent = useSelector((state) => state.ui.topbarContent)
     const topBarFloating = useSelector((state) => state.ui.topBarFloating)
     const callMinimal = useSelector((state) => state.ui.callMinimal)
     const showCall = useSelector((state) => state.ui.showCall)
@@ -95,9 +95,9 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                             <MenuItem profile={User} title={User.firstName + ' ' + (User.lastName ?? '')} onClick={() => { }} />
                         </DropdownMenu>
                     </Menu>
-                    <div className="Title" onDoubleClick={() => window.location.reload()}>
+                    <div className="Content" onDoubleClick={() => window.location.reload()}>
                         <span>
-                            <TextTransition text={connectionState === 'connected' ? (topbarTitle ?? 'Magram') : connectionState} />
+                            <TextTransition text={connectionState === 'connected' ? (topbarContent?.title ?? 'Magram') : connectionState} />
                         </span>
                     </div>
                     <div className="Meta" onClick={() => PageHandle(dispatch, 'Search', 'Search')}>

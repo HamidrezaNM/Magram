@@ -40,7 +40,7 @@ export default function Members() {
             (subPage[3] ?? subPage[2]?.page === 'AdminRights') && 'pushUp')}>
             <PageHeader key={subPage[3] + subPage[2]}>
                 <div><BackArrow index={3} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Members</span></div>
+                <div className="Content"><span>Members</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

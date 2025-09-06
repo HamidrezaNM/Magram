@@ -57,7 +57,7 @@ export default function Permissions() {
         <div className={"Permissions" + (!isLoaded ? ' fadeThrough' : '')}>
             <PageHeader key={sendPlain + sendMedia + inviteUsers + pinMessages + hasChanged}>
                 <div><BackArrow index={4} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Permissions</span></div>
+                <div className="Content"><span>Permissions</span></div>
                 <div className="Meta">
                     <button className={hasChanged ? '' : 'disabled'} onClick={applyChanges}>Apply</button>
                 </div>

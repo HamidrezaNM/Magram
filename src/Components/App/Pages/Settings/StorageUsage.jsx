@@ -200,7 +200,7 @@ export default function SettingsStorageUsage() {
         <div className={buildClassName("SettingsStorageUsage", !isLoaded && 'fadeThrough', subPage[2] && 'pushUp')}>
             <PageHeader>
                 <div><BackArrow index={2} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Storage Usage</span></div>
+                <div className="Content"><span>Storage Usage</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section StorageUsage">

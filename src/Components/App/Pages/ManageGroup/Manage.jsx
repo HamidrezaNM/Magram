@@ -87,7 +87,7 @@ export default function ManageGroup() {
         <div className={"ManageGroup" + (!isLoaded ? ' fadeThrough' : '') + (subPage[1] ? ' pushUp' : '')}>
             <PageHeader key={subPage[1] + title + username + bio + hasChanged}>
                 <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Manage</span></div>
+                <div className="Content"><span>Manage</span></div>
                 <div className="Meta">
                     <button className={hasChanged ? '' : 'disabled'} onClick={applyChanges}>Apply</button>
                 </div>

@@ -40,7 +40,7 @@ export default function SettingsStorage() {
         <div className={buildClassName("SettingsStorage", !isLoaded && 'fadeThrough', subPage[1] && 'pushUp')}>
             <PageHeader>
                 <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Storage</span></div>
+                <div className="Content"><span>Storage</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

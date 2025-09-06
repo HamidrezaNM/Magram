@@ -1,7 +1,7 @@
 import { memo, useContext, useEffect } from "react"
 import { ChatContext } from "./ChatContext"
 import { useDispatch, useSelector } from "react-redux"
-import { handlePage, handlePageAndSubPage, handlePageClose, handlePageHeader, handleSubPage, handleSubPageClose, handleTopbarTitleChange } from "../Stores/UI"
+import { handlePage, handlePageAndSubPage, handlePageClose, handlePageHeader, handleSubPage, handleSubPageClose, handleTopbarContentChange } from "../Stores/UI"
 import { Menu } from "@mui/material";
 import DropdownMenu from "../UI/DropdownMenu";
 
@@ -26,7 +26,7 @@ export function ShowPage({ title, page }) {
     Chat.setPage(page)
 }
 
-export function PageHeader({ children }) {
+export function PageHeader({ children, force }) {
     const dispatch = useDispatch()
 
     const showPage = useSelector((state) => state.ui.showPage)
@@ -34,7 +34,7 @@ export function PageHeader({ children }) {
 
     useEffect(() => {
         dispatch(handlePageHeader(children))
-    }, [])
+    }, [force])
 
     useEffect(() => {
         if (!subPage[0])
@@ -44,22 +44,22 @@ export function PageHeader({ children }) {
 }
 
 export function PageClose(dispatch, subPage = false) {
-    document.querySelector('.TopBar .Title').style.animation = 'changeTitle .5s ease-in-out'
+    document.querySelector('.TopBar .Content').style.animation = 'changeTitle .5s ease-in-out'
     if (subPage)
         dispatch(handleSubPageClose())
     else
         dispatch(handlePageClose())
     setTimeout(() => {
-        dispatch(handleTopbarTitleChange())
+        dispatch(handleTopbarContentChange())
     }, 250);
     setTimeout(() => {
-        document.querySelector('.TopBar .Title').style = ''
+        document.querySelector('.TopBar .Content').style = ''
     }, 500);
 }
 
 export function PageHandle(dispatch, page, title, subPage = false, data = null, PageHandle = null) {
     if (document.querySelector('.TopBar .Menu .icon')) document.querySelector('.TopBar .Menu .icon').style.animation = '0.3s ease-in-out 0s 1 normal none running menuToBack1'
-    document.querySelector('.TopBar .Title').style.animation = 'changeTitle .5s ease-in-out'
+    document.querySelector('.TopBar .Content').style.animation = 'changeTitle .5s ease-in-out'
     document.querySelectorAll('.TopBar .Meta>*').forEach((element) => {
         element.style.transform = 'scale(.8)'
     })
@@ -71,12 +71,12 @@ export function PageHandle(dispatch, page, title, subPage = false, data = null, 
                 dispatch(handlePage(page))
         } else
             dispatch(handlePageAndSubPage({ page: PageHandle, subPage: page }))
-        dispatch(handleTopbarTitleChange(title))
+        dispatch(handleTopbarContentChange({ title }))
         document.querySelectorAll('.TopBar .Meta>*').forEach((element) => {
             element.style.transform = ''
         })
     }, 150);
     setTimeout(() => {
-        document.querySelector('.TopBar .Title').style = ''
+        document.querySelector('.TopBar .Content').style = ''
     }, 500);
 }

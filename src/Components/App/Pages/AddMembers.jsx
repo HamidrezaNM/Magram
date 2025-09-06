@@ -23,7 +23,7 @@ export default function AddMembers() {
         <div className={"AddMembers" + (!isLoaded ? ' fadeThrough' : '')}>
             <PageHeader key={subPage[2]}>
                 <div><Icon name="arrow_back" className="backBtn" onClick={() => PageClose(dispatch, true)} /></div>
-                <div className="Title"><span>Add Members</span></div>
+                <div className="Content"><span>Add Members</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

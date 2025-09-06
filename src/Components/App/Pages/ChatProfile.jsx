@@ -98,7 +98,7 @@ export default function ChatProfile() {
             )} ref={page}>
                 <PageHeader>
                     <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-                    <div className="Title"><span></span></div>
+                    <div className="Content"><span></span></div>
                     <div className="Meta">
                         {(
                             activeChat?.entity?.adminRights ||

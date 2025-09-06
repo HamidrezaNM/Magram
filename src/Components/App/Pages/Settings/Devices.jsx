@@ -68,7 +68,7 @@ function SettingsDevices() {
     return <div className={"SettingsDevices" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
             <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Devices</span></div>
+            <div className="Content"><span>Devices</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section ThisDevice">

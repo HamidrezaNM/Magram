@@ -55,7 +55,7 @@ export default function SettingsThemes() {
     return <div className={buildClassName("SettingsThemes", !isLoaded && 'fadeThrough')}>
         <PageHeader key={centerTopBar}>
             <div><BackArrow index={2} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Themes</span></div>
+            <div className="Content"><span>Themes</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">

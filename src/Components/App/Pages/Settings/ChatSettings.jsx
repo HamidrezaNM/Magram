@@ -47,7 +47,7 @@ export default function SettingsChatSettings() {
         <div className={buildClassName("SettingsChatSettings", !isLoaded && 'fadeThrough', subPage[1] && 'pushUp')}>
             <PageHeader>
                 <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-                <div className="Title"><span>Chat Settings</span></div>
+                <div className="Content"><span>Chat Settings</span></div>
                 <div className="Meta"></div>
             </PageHeader>
             <div className="section">

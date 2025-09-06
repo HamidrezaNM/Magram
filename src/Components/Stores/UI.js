@@ -13,7 +13,7 @@ export const uiSlice = createSlice({
         page: null,
         showPage: false,
         pageTitle: null,
-        topbarTitle: null,
+        topbarContent: null,
         topBarFloating: false,
         pageHeader: null,
         subPage: [],
@@ -103,8 +103,8 @@ export const uiSlice = createSlice({
             state.showPage = true
             state.callLeftPanelClose = false
         },
-        handleTopbarTitleChange: (state, action) => {
-            state.topbarTitle = action.payload
+        handleTopbarContentChange: (state, action) => {
+            state.topbarContent = action.payload
         },
         handleTopBarFloating: (state, action) => {
             state.topBarFloating = action.payload
@@ -185,7 +185,7 @@ export const uiSlice = createSlice({
             state.page = null
             state.subPage = []
             state.pageTitle = null
-            state.topbarTitle = null
+            state.topbarContent = null
             state.showPage = false
         },
         handleCallMinimalToggle: (state) => {
@@ -308,7 +308,7 @@ export const {
     handleGoToMessage,
     handlePage,
     handlePageClose,
-    handleTopbarTitleChange,
+    handleTopbarContentChange,
     handleTopBarFloating,
     handlePageHeader,
     handleSubPage,

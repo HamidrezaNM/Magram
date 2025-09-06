@@ -280,7 +280,7 @@ function Message({
         //     }
         // })
         handleContextMenuClose()
-    }, [data, isPinned.current])
+    }, [data, isPinned])
 
     const handleRetractVote = useCallback(async () => {
         retractVote(data.chatId, data.id, dispatch)

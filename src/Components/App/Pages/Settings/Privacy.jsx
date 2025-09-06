@@ -19,7 +19,7 @@ export default function SettingsPrivacy() {
     return <div className={"SettingsPrivacy" + (!isLoaded ? ' fadeThrough' : '')}>
         <PageHeader>
             <div><BackArrow index={1} onClick={() => PageClose(dispatch, true)} isiOS={centerTopBar} /></div>
-            <div className="Title"><span>Privacy and Security</span></div>
+            <div className="Content"><span>Privacy and Security</span></div>
             <div className="Meta"></div>
         </PageHeader>
         <div className="section Notifications">
