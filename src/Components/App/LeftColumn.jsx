@@ -20,6 +20,7 @@ import TextTransition from "../common/TextTransition";
 import Forward from "./Pages/Forward";
 import Stories from "./Stories";
 import { generateChatWithPeer } from "../Helpers/chats";
+import buildClassName from "../Util/buildClassName";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -28,6 +29,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
     const showPage = useSelector((state) => state.ui.showPage)
     const page = useSelector((state) => state.ui.page)
     const topbarTitle = useSelector((state) => state.ui.topbarTitle)
+    const topBarFloating = useSelector((state) => state.ui.topBarFloating)
     const callMinimal = useSelector((state) => state.ui.callMinimal)
     const showCall = useSelector((state) => state.ui.showCall)
     const musicPlayer = useSelector((state) => state.ui.musicPlayer)
@@ -76,7 +78,7 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
     }, [page])
 
     return <div className={"LeftColumn" + (callLeftPanelClose ? ' Compact' : '')}>
-        <div className="TopBar">
+        <div className={buildClassName("TopBar", topBarFloating?.floating && 'floating', topBarFloating?.absolute && 'absolute')}>
             <div>
                 {(pageHeader && showPage) ? <>{pageHeader}</> : <>
                     <Menu icon="menu">

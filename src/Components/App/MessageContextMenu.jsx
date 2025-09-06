@@ -35,11 +35,18 @@ export default function MessageContextMenu({
     onDelete,
     onReaction,
     readParticipants,
-    readDate
+    readDate,
+    isPrivate = false
 }) {
     const activeChat = useSelector((state) => state.ui.activeChat)
 
     const permissions = useMemo(() => getParticipantRights(activeChat?.entity), [activeChat?.entity])
+
+    if (canPin) {
+        canPin = permissions?.pinMessages
+    } else if (canUnpin) {
+        canUnpin = permissions?.pinMessages
+    }
 
     if (!canDelete) {
         canDelete = permissions?.deleteMessages

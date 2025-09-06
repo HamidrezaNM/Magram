@@ -41,7 +41,7 @@ function Message({
 
     const [replyToMessage, setReplyToMessage] = useState()
 
-    const isPinned = useRef(data.pin)
+    const isPinned = data.pinned
 
     // const emoji = new EmojiConvertor()
 
@@ -133,7 +133,7 @@ function Message({
             MessageEl.current?.removeEventListener('touchmove', ontouchmove)
             MessageEl.current?.removeEventListener('touchend', ontouchmove)
         }
-    }, [data.message, isPinned.current])
+    }, [data.message, isPinned])
 
     useEffect(() => {
         const dimensions = BubbleContent.current.getBoundingClientRect()
@@ -364,8 +364,8 @@ function Message({
                     canCopy={true}
                     canCopyLink={data._chat?.username}
                     isPhoto={data.type === 'media'}
-                    canPin={isAdmin && !isPinned.current}
-                    canUnpin={isAdmin && isPinned.current}
+                    canPin={!isPinned}
+                    canUnpin={isPinned}
                     canRetractVote={data.media?.results?.results}
                     canSaveGif={data.media && isDocumentGIF(data.media.document)}
                     canEdit={Number(User.id) === Number(data._senderId)}
@@ -390,6 +390,9 @@ function Message({
                     onReaction={handleReaction}
                     readParticipants={handleGetReadParticipants}
                     readDate={handleGetReadDate}
+
+                    isPrivate={chatType === 'User' ||
+                        chatType === 'Bot'}
                 />
 
             if (isMobile && isiOS) {
@@ -428,7 +431,7 @@ function Message({
             } else
                 dispatch(handleContextMenu({ items, type: 'message', e }))
         }
-    }, [data, isPinned.current])
+    }, [data])
 
     const dragElement = (element) => {
         var originX = 0, originY, x = 0, y = 0, firstTouch = true, vibrate = false;

@@ -183,38 +183,38 @@ function ChatInfo() {
 
 export function getUserStatus(lastSeen, peer, short = true) {
     if (peer && peer.bot) return 'bot'
-    if (!lastSeen) return 'Last seen a long time ago'
+    if (!lastSeen) return 'last seen a long time ago'
     switch (lastSeen.className) {
         case 'UserStatusLastMonth': {
-            return 'Last seen within a month';
+            return 'last seen within a month';
         }
 
         case 'UserStatusLastWeek': {
-            return 'Last seen within a week';
+            return 'last seen within a week';
         }
 
         case 'UserStatusOnline': {
-            return 'Online';
+            return 'online';
         }
 
         case 'UserStatusRecently':
-            return 'Last seen recently'
+            return 'last seen recently'
 
         case 'UserStatusOffline': {
             if (!lastSeen.wasOnline)
-                return 'Last seen recently';
+                return 'last seen recently';
         }
 
         default:
             const wasOnline = lastSeen.wasOnline
 
-            if (!wasOnline) return 'Last seen a long time ago';
+            if (!wasOnline) return 'last seen a long time ago';
 
             const now = new Date(Date.now());
             const wasOnlineDate = new Date(wasOnline * 1000);
 
             if (wasOnlineDate >= now) {
-                return 'Online';
+                return 'online';
             }
 
             const diff = new Date(now.getTime() - wasOnlineDate.getTime());
@@ -222,17 +222,17 @@ export function getUserStatus(lastSeen, peer, short = true) {
             if (short) {
                 // within a minute
                 if (diff.getTime() / 1000 < 30) {
-                    return 'Last seen just now';
+                    return 'last seen just now';
                 }
 
                 if (diff.getTime() / 1000 < 120) {
-                    return 'Last seen a minute ago';
+                    return 'last seen a minute ago';
                 }
 
                 // within an hour
                 if (diff.getTime() / 1000 < 60 * 60) {
                     const minutes = Math.floor(diff.getTime() / 1000 / 60);
-                    return `Last seen ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+                    return `last seen ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
                 }
             }
 
@@ -244,11 +244,11 @@ export function getUserStatus(lastSeen, peer, short = true) {
                 // up to 6 hours ago
                 if (short && diff.getTime() / 1000 < 6 * 60 * 60) {
                     const hours = Math.floor(diff.getTime() / 1000 / 60 / 60);
-                    return `Last seen ${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+                    return `last seen ${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
                 }
 
                 // other
-                return `Last seen today at ${formatTime(wasOnlineDate)}`;
+                return `last seen today at ${formatTime(wasOnlineDate)}`;
             }
 
             // yesterday
@@ -257,10 +257,10 @@ export function getUserStatus(lastSeen, peer, short = true) {
             yesterday.setHours(0, 0, 0, 0);
             const _Yesterday = new Date(yesterday.getTime());
             if (wasOnlineDate > _Yesterday) {
-                return `Last seen yesterday at ${formatTime(wasOnlineDate)}`;
+                return `last seen yesterday at ${formatTime(wasOnlineDate)}`;
             }
 
-            return `Last seen ${getDate(wasOnlineDate, false, true)} at ${formatTime(wasOnlineDate)}`
+            return `last seen ${getDate(wasOnlineDate, false, true)} at ${formatTime(wasOnlineDate)}`
     }
 
 }

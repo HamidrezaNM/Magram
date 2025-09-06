@@ -111,10 +111,19 @@ export function getParticipant(userId, chat) {
 export function getParticipantRights(entity) {
     if (!entity) return;
 
+    const chatType = getChatType(entity)
+
+    const isPrivate = chatType === 'User' || chatType === 'Bot'
+
     if (entity.creator) return {
         deleteMessages: true,
         pinMessages: true,
         banUsers: true
+    }
+
+    if (isPrivate) return {
+        deleteMessages: true,
+        pinMessages: true,
     }
 
     if (entity.adminRights) return entity.adminRights
