@@ -429,7 +429,8 @@
     margin: 0 !important;
     transform: translate3d(26.5rem, 0, 0);
     z-index: 3;
-    transition: all .3s ease;
+    will-change: transform;
+    transition: transform .3s ease;
   }
 
   .MiddleColumn .background {
@@ -681,10 +682,10 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: var(--blur-filter);
   user-select: none;
-  transform-origin: center !important;
+  transform-origin: top left !important;
   overflow: hidden;
   box-shadow: 0px 0px 10px -4px #000000aa;
-  transition: transform 0.2s ease, opacity 0.2s ease, width .2s ease, height .2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .DropdownMenu .icon,
@@ -702,7 +703,13 @@
 .DropdownMenu.animate,
 .ContextMenu.animate {
   /* transform: scale(0.95); */
-  transform: scale(0.95) rotateX(45deg) translateY(-18px);
+  transform: scale(.5) rotateX(45deg) translateY(-18px);
+  opacity: 0;
+}
+
+.DropdownMenu.hideAnim {
+  transform: scale(.95) translateY(-18px);
+  transform-origin: top !important;
   opacity: 0;
 }
 
@@ -893,11 +900,11 @@
   right: 0;
   margin: 16px;
   cursor: pointer;
-  transition: background-color .3s ease, bottom .3s ease, opacity .3s ease;
+  transition: background-color .3s ease, transform .3s ease, opacity .3s ease;
 }
 
 .scrollToBottom.hidden {
-  bottom: 0 !important;
+  transform: translateY(56px);
   opacity: 0;
   z-index: -1;
 }
@@ -1495,13 +1502,12 @@ a:hover {
   overflow: hidden;
   user-select: none;
   interpolate-size: allow-keywords;
-  transition: all .3s ease, opacity .1s ease;
+  transition: transform .3s ease, opacity .1s ease;
 }
 
 .Toast.animate {
-  margin-bottom: -48px;
   opacity: 0;
-  transform: scale(0.95)
+  transform: scale(0.95) translateY(48px);
 }
 
 .Toast .icon {

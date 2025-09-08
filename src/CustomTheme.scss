@@ -508,7 +508,8 @@
 
     .ContextMenu,
     .DropdownMenu,
-    .TopBar .ChatInfo {
+    .TopBar .ChatInfo,
+    .TopBar .PinnedMessage {
         background-color: var(--theme);
     }
 }
@@ -518,6 +519,7 @@
 .Page .UserProfile {
     scroll-behavior: smooth;
     padding-bottom: 150%;
+    will-change: transform;
 
     .Info {
         margin: 0;
@@ -788,7 +790,8 @@
                     flex-direction: column;
 
                     &.animate {
-                        margin-left: -96px;
+                        // margin-left: -96px;
+                        transform: translateX(-96px);
                     }
 
                     .Tab {
@@ -968,7 +971,8 @@
 
             .ChatList {
                 .Tabs.animate {
-                    margin-top: -51px;
+                    // margin-top: -51px;
+                    transform: translateY(51px);
                     margin-left: 0;
                 }
             }

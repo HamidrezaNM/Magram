@@ -93,7 +93,7 @@ function ContextMenu({ type }) {
             contextMenuDiv.current.classList.remove('animate')
             contextMenuDiv.current.style.height = 0;
             requestAnimationFrame(() => {
-                contextMenuDiv.current.style = `height: ${h}px; top: ${clientY}px; left: ${clientX}px; transform-origin: ${originY} !important`
+                contextMenuDiv.current.style = `height: ${h}px; top: ${clientY}px; left: ${clientX}px; transform-origin: ${(isMobile && isiOS) ? 'center' : originX} ${originY} !important`
             });
         });
 

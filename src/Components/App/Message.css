@@ -473,8 +473,8 @@
 }
 
 .message-media .MediaDetails span.animate {
-    max-width: 0px;
-    max-height: 0px;
+    /* max-width: 0px;
+    max-height: 0px; */
 }
 
 .MessageReactions {
@@ -560,7 +560,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all .3s ease;
+    transition: opacity .3s ease;
 }
 
 .message-loading-progress:hover {

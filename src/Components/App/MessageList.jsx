@@ -14,6 +14,7 @@ import { getChatType, getParticipant, getParticipantRights } from "../Helpers/ch
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { UserContext } from "../Auth/Auth";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
+import { isMobile } from "./Message/MessageMedia";
 
 const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -35,6 +36,8 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const previousScrollHeightMinusTop = useRef(0);
     const messageRenderIncrease = useRef(false);
     const loadMore = useRef();
+
+    const startDelay = Date.now()
 
     const chatType = useMemo(() => getChatType(activeChat.entity), [activeChat?.entity])
 
@@ -69,7 +72,13 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
         }, 40)
         if (messages?.length !== data?.total) {
             MessageListRef.current.classList.add('MessagesAnimating')
-            dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse(), overwrite }))
+
+            const elapsed = Date.now() - startDelay;
+            const delay = Math.max(0, 300 - elapsed);
+
+            setTimeout(() => {
+                dispatch(setMessages({ chatId: activeChat.id.value, messages: data.reverse(), overwrite }))
+            }, isMobile ? delay : 0);
 
             handlePinnedMessages()
 

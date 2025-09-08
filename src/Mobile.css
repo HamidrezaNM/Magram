@@ -53,6 +53,14 @@
         display: block !important;
     }
 
+    /* .MiddleColumn {
+        display: none;
+    }
+
+    .MiddleColumn.focused {
+        display: flex;
+    } */
+
     /* .MiddleColumn .background::after {
         content: '';
         position: fixed;

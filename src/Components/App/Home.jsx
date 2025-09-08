@@ -31,6 +31,7 @@ import DeleteEffect from "../common/DeleteEffect";
 import CallHeader from "./CallHeader";
 import StoryModal from "./StoryModal";
 import PositionTransition from "../common/PositionTransition";
+import { isMobile } from "./Message/MessageMedia";
 
 function Home() {
     const [backgroundAngle, setBackgroundAngle] = useState(120);
@@ -267,36 +268,34 @@ function Home() {
     }, [isWindowFocused.current])
 
     console.log('Home Rerendered')
-    return (
-        <ThemeProvider theme={darkTheme}>
-            <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
-                <div className="Main">
-                    <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
-                    <Transition state={showCall} action={() => dispatch(handleCall())}>
-                        <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
-                    </Transition>
-                    <div className={buildClassName('MiddleColumn', activeChat && 'active', (activeChat && !page) && 'focused', (showCall && !callMinimal) && 'C', callLeftPanelClose && 'L', callMaximized && 'X')}>
-                        <MiddleColumn />
-                    </div>
-                    {groupCallJoined && <CallHeader />}
+    return <ThemeProvider theme={darkTheme}>
+        <div className={buildClassName('Home', 'animate', themeOptions.join(' '))} ref={homeRef}>
+            <div className="Main">
+                <LeftColumn CallRef={CallRef} CallStream={CallStream} callState={callState} connectionState={connectionState} />
+                <Transition state={showCall} action={() => dispatch(handleCall())}>
+                    <Call ref={CallRef} CallStream={CallStream} setCallState={setCallState} />
+                </Transition>
+                <div className={buildClassName('MiddleColumn', activeChat && 'active', (activeChat && !page) && 'focused', (showCall && !callMinimal) && 'C', callLeftPanelClose && 'L', callMaximized && 'X')}>
+                    {(!isMobile || (activeChat && !page)) && <MiddleColumn />}
                 </div>
-                {groupCallJoined && <VoiceChat />}
-
-                <MediaPreview />
-
-                {storyModal && <StoryModal stories={storyModal.stories} peerIndex={storyModal.peerIndex} itemIndex={storyModal.itemIndex} />}
-
-                <Toasts />
-                <Dialogs />
-                {/* <PositionTransition /> */}
-                {deleteEffect && <DeleteEffect />}
-                {background &&
-                    <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
+                {groupCallJoined && <CallHeader />}
             </div>
+            {groupCallJoined && <VoiceChat />}
 
-            <UpdateManager />
-        </ThemeProvider>
-    )
+            <MediaPreview />
+
+            {storyModal && <StoryModal stories={storyModal.stories} peerIndex={storyModal.peerIndex} itemIndex={storyModal.itemIndex} />}
+
+            <Toasts />
+            <Dialogs />
+            {/* <PositionTransition /> */}
+            {deleteEffect && <DeleteEffect />}
+            {background &&
+                <div className="bg animate" ref={_bg} onClick={() => { dispatch(handleBackground()); background?.onClick() }}></div>}
+        </div>
+
+        <UpdateManager />
+    </ThemeProvider>
 }
 
 export default memo(Home)

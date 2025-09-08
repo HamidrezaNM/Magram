@@ -94,7 +94,8 @@
     overflow: hidden;
     user-select: none;
     position: relative;
-    transition: all .3s ease;
+    transform-origin: top;
+    transition: transform .3s ease, opacity .3s ease;
 }
 
 .MiddleColumn .TopBar .PinnedMessage::after {
