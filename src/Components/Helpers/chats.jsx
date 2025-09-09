@@ -10,7 +10,11 @@ export function getChatTitle(chat) {
 }
 
 export function getChatIdFromPeer(peer) {
-    return utils.getPeerId(peer)
+    try {
+        return utils.getPeerId(peer)
+    } catch (error) {
+        return peer.id
+    }
 }
 
 export async function getChatEntity(peerId) {

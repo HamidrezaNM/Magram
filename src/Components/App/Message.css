@@ -23,7 +23,7 @@
 } */
 
 .Message.animate {
-    transform: scale(0.9);
+    transform: scale(0.95);
 }
 
 .Message.Out {
@@ -76,6 +76,20 @@
 
 .MessageList:not(.NoMessages)>:first-child {
     margin-top: auto;
+}
+
+.NoMessage .message-text .FlexColumn {
+    gap: 12px;
+    max-width: 240px;
+    text-align: center;
+}
+
+.NoMessage .message-text .FlexColumn .title {
+    font-weight: 500;
+}
+
+.NoMessage .message-text .FlexColumn .subtitle {
+    font-size: 14px;
 }
 
 .ThreadMessage .Message {

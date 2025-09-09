@@ -485,12 +485,14 @@ function Message({
                 vibrate = true
             }
 
-            element.style.left = x + "px";
+            element.style.transform = `translateX(${x}px)`;
         }
 
         function closeDragElement() {
+            if (!element.classList.contains('Dragging')) return
+
             element.classList.remove('Dragging')
-            element.style.left = '';
+            element.style.transform = '';
 
             if (x < -60) handleReply()
 

@@ -28,8 +28,11 @@ const MediaPreview = () => {
         mediaEl.current.style.transition = 'none'
         mediaEl.current.style.width = elementRect.current.width + 'px'
         mediaEl.current.style.height = elementRect.current.height + 'px'
-        mediaEl.current.style.left = elementRect.current.left + 'px'
-        mediaEl.current.style.top = elementRect.current.top + 'px'
+        // const scale = elementRect.current.height / mediaRect.height
+        const scale = 1
+        mediaEl.current.style.left = 0
+        mediaEl.current.style.transform = `translate(${elementRect.current.left * scale}px, ${elementRect.current.top * scale}px) scale(${scale})`
+        mediaEl.current.style.top = 0
         mediaEl.current.style.borderRadius = getComputedStyle(data.element).borderRadius
 
         requestAnimationFrame(() => {
@@ -37,8 +40,8 @@ const MediaPreview = () => {
                 mediaEl.current.style.transition = ''
                 mediaEl.current.style.width = mediaRect.width + 'px'
                 mediaEl.current.style.height = mediaRect.height + 'px'
-                mediaEl.current.style.left = mediaRect.left + 'px'
-                mediaEl.current.style.top = mediaRect.top + 'px'
+                mediaEl.current.style.transform = `translate(${mediaRect.left}px, ${mediaRect.top}px)`
+                // mediaEl.current.style.top = mediaRect.top + 'px'
                 mediaEl.current.style.borderRadius = ''
 
                 setTimeout(() => {
@@ -56,8 +59,8 @@ const MediaPreview = () => {
 
         mediaEl.current.style.width = elementRect.current.width + 'px'
         mediaEl.current.style.height = elementRect.current.height + 'px'
-        mediaEl.current.style.left = elementRect.current.left + 'px'
-        mediaEl.current.style.top = elementRect.current.top + 'px'
+        mediaEl.current.style.transform = `translate(${elementRect.current.left}px, ${elementRect.current.top}px)`
+        // mediaEl.current.style.top = elementRect.current.top + 'px'
         mediaEl.current.style.borderRadius = getComputedStyle(data.element).borderRadius
 
         setTimeout(() => {

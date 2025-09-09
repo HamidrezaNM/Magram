@@ -263,9 +263,10 @@
 }
 
 .Search .topPeers {
-    display: flex;
-    overflow-x: overlay;
+    display: grid;
     padding: 4px;
+    overflow-x: overlay;
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .Search .topPeers .Item {
@@ -276,6 +277,15 @@
     gap: 6px;
     padding: 8px 0;
     width: auto;
+    overflow: hidden;
+}
+
+.Search .topPeers .Item .title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    text-align: center;
 }
 
 .Item.Input {

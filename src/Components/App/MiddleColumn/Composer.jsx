@@ -599,6 +599,8 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
     }, [input])
 
     useEffect(() => {
+        var keyboardHeight = 0
+
         const listener = () => {
             const MIN_KEYBOARD_HEIGHT = 200
 
@@ -607,12 +609,18 @@ function Composer({ chat, thread, gradientRenderer, scrollToBottom, handleScroll
                 && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height
 
             if (isKeyboardOpen) {
-                mobileKeyboardFiller.current.classList.add('active')
-                mobileKeyboardFiller.current.style.height = window.innerHeight - window.visualViewport.height + 'px'
+                keyboardHeight = window.innerHeight - window.visualViewport.height
+                mobileKeyboardFiller.current.parentElement.classList.add('active')
+                mobileKeyboardFiller.current.parentElement.style.transform = ''
+                mobileKeyboardFiller.current.style.height = `${keyboardHeight}px`
                 setShowEmojiPicker(false)
             } else {
-                mobileKeyboardFiller.current.classList.remove('active')
-                mobileKeyboardFiller.current.style.height = '0px'
+                mobileKeyboardFiller.current.parentElement.style.transform = `translateY(-${keyboardHeight}px)`
+                mobileKeyboardFiller.current.style.height = ''
+                setTimeout(() => {
+                    mobileKeyboardFiller.current.parentElement.classList.remove('active')
+                    mobileKeyboardFiller.current.parentElement.style.transform = ''
+                });
             }
         }
 

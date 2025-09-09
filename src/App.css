@@ -1533,6 +1533,7 @@ a:hover {
   height: 100%;
   z-index: 20;
   display: flex;
+  will-change: transform;
   color: var(--text-color);
   flex-direction: column;
   user-select: none;
@@ -1591,6 +1592,7 @@ a:hover {
 .MediaPreview .Media {
   position: fixed;
   display: flex;
+  transform-origin: top left;
   overflow: hidden;
   transition: all .3s ease;
 }

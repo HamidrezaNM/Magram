@@ -6,6 +6,8 @@ function TextTransition({ text, style }) {
     const [currentText, setCurrentText] = useState()
     const [animating, setAnimating] = useState(false)
 
+    // TODO: Update TextTransition Code
+
     // const prevText = useRef()
 
     useEffect(() => {

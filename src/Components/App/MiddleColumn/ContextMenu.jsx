@@ -23,11 +23,6 @@ function ContextMenu({ type }) {
                     activeElement.current.classList.remove('selected')
                 }, 300);
                 activeElement.current.style = ''
-                Array.from(activeElement.current.children).forEach(item => {
-                    if (item.className === 'Transition')
-                        item = item.firstElementChild
-                    item.style.top = '0'
-                })
             }
             return
         };
@@ -69,12 +64,7 @@ function ContextMenu({ type }) {
             originY = 'bottom'
             if (contextMenu.activeElement) {
                 contextMenu.activeElement.style.minHeight = height + 'px'
-                Array.from(contextMenu.activeElement.children).forEach(item => {
-                    if (item.className === 'Transition')
-                        item = item.firstElementChild
-                    item.style.position = 'relative'
-                    item.style.top = `${clientY - top}px`
-                })
+                contextMenu.activeElement.style.transform = `translateY(${clientY - top}px)`
             }
         }
         if (contextMenuDiv.current.querySelector('.Reactions') && isMobile && isiOS) {

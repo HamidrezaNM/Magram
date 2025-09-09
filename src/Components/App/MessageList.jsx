@@ -22,6 +22,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const [messageParts, setMessageParts] = useState([])
 
     const activeChat = useSelector((state) => state.ui.activeChat)
+    const businessIntro = useSelector((state) => state.ui.activeFullChat?.businessIntro)
     const botInfo = useSelector((state) => state.ui.activeFullChat?.botInfo)
     const messages = useSelector((state) => state.messages.value[activeChat.id.value])
     const _goToMessage = useSelector((state) => state.ui.goToMessage)
@@ -361,6 +362,20 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
             isiOS={iOSTheme} />
     }
 
+    const renderNoMessage = () => {
+        if (chatType === 'Bot' && botInfo?.description)
+            return <span>
+                {botInfo.description}
+            </span>
+        else if (chatType === 'User' && businessIntro?.title)
+            return <div className="FlexColumn">
+                <div className="title">{businessIntro.title}</div>
+                <div className="subtitle">{businessIntro.description}</div>
+            </div>
+
+        return <span>No messages here yet...</span>
+    }
+
     console.log('MessageList Rerender')
 
     return <div className={buildClassName(
@@ -386,12 +401,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
                 <div className="bubble">
                     <div className="bubble-content">
                         <div className="message-text">
-                            {getChatType(activeChat?.entity) === 'Bot' ?
-                                <span>
-                                    {botInfo?.description}
-                                </span>
-                                : <span>No messages here yet...</span>
-                            }
+                            {renderNoMessage()}
                         </div>
                     </div>
                 </div>

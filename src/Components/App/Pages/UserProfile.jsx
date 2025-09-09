@@ -50,6 +50,8 @@ function UserProfile() {
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const iOSTheme = useSelector((state) => state.settings.customTheme.iOSTheme)
 
+    // TODO: Fix Design In Default Theme
+
     useEffect(() => {
         if (userProfile.id.value === User.id.value) {
             PageHandle(dispatch, 'Settings', 'Settings')
