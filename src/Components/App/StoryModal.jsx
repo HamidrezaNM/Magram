@@ -40,7 +40,7 @@ const Story = memo(({ story, peer }) => {
 
     return <div className="Story">
         <div className="TopBar">
-            <Profile size={32} entity={peer} id={peer.id} name={peer.firstName || peer.title} />
+            <Profile size={32} entity={peer} id={peer?.id} name={peer?.firstName || peer?.title || 'Deleted Account'} />
             <div className="body">
                 <div className="title"><FullNameTitle chat={peer} /></div>
                 <div className="subtitle">{getDate(story.date * 1000, true, true)} at {formatTime(story.date * 1000)}</div>
@@ -52,7 +52,7 @@ const Story = memo(({ story, peer }) => {
         <div className="BottomBar">
             <div className="views">
                 <Icon name="visibility" />
-                <span>{story.views.viewsCount}</span>
+                <span>{story.views?.viewsCount}</span>
             </div>
         </div>
     </div>

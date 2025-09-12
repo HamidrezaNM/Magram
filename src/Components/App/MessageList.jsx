@@ -387,7 +387,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
         {messages || !isLoaded ? <>
             {
                 !isLoaded && <div className="loading">
-                    <MessagesLoading count={20} />
+                    <MessagesLoading count={7} />
                 </div>
             }
             {messages && messages

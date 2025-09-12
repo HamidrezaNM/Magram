@@ -16,6 +16,7 @@ export default function SettingsThemes() {
     const gradientMessage = useSelector((state) => state.settings.customTheme.gradientMessage)
     const noBlur = useSelector((state) => state.settings.customTheme.noBlur)
     const newSidebar = useSelector((state) => state.settings.customTheme.newSidebar)
+    const gradientCanvas = useSelector((state) => state.settings.customTheme.gradientCanvas)
     const primaryColor = useSelector((state) => state.settings.customTheme.primaryColor)
 
     const dispatch = useDispatch()
@@ -46,6 +47,10 @@ export default function SettingsThemes() {
 
     const setNewSidebar = (value) => {
         dispatch(handleCustomTheme({ newSidebar: value }))
+    }
+
+    const setGradientCanvas = (value) => {
+        dispatch(handleCustomTheme({ gradientCanvas: value }))
     }
 
     const setPrimaryColor = (value) => {
@@ -81,6 +86,9 @@ export default function SettingsThemes() {
                 </div>
                 <div className="Item"><span>No Blur</span>
                     <Switch checked={noBlur} setChecked={setNoBlur} />
+                </div>
+                <div className="Item"><span>Gradient Canvas</span>
+                    <Switch checked={gradientCanvas} setChecked={setGradientCanvas} />
                 </div>
                 <div className="Item"><span>New Sidebar <span className="beta">BETA</span></span>
                     <Switch checked={newSidebar} setChecked={setNewSidebar} />

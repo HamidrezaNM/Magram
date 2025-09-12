@@ -491,6 +491,7 @@
     height: 48px;
     font-weight: 500;
     align-items: center;
+    color: var(--primary);
     justify-content: center;
     cursor: pointer;
     transition: all .3s ease;

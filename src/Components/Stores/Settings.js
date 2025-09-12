@@ -17,6 +17,7 @@ export const settingsSlice = createSlice({
             gradientMessage: true,
             noBlur: false,
             newSidebar: true,
+            gradientCanvas: true,
             primaryColor: null
         },
         darkMode: undefined

@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import './LeftColumn.css'
+import './LeftColumn.scss'
 import './MiddleColumn.css'
 import '../../MATheme.css'
 import '../../CustomTheme.scss'

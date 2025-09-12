@@ -27,6 +27,7 @@ function MiddleColumn({ }) {
     const chats = useSelector((state) => state.chats.value)
     const thread = useSelector((state) => state.ui.thread)
     const darkMode = useSelector((state) => state.settings.darkMode)
+    const gradientCanvas = useSelector((state) => state.settings.customTheme.gradientCanvas)
 
     const maskPattern = darkMode
 
@@ -80,12 +81,12 @@ function MiddleColumn({ }) {
             //   const renderer = ChatBackgroundGradientRenderer.create(colors, gradientCanvasRef.current);
             //   gradientRenderer = renderer;
         }
-    }, [background.current?.clientWidth, maskPattern])
+    }, [background.current?.clientWidth, maskPattern, gradientCanvas])
 
     return <>
         <div className={buildClassName("background", "green", maskPattern && "has-mask-pattern")} ref={background}>
             {<div className={maskPattern && "MaskPattern"}>
-                <canvas style={{ opacity: `${darkMode ? 0.3 : 0.8}` }} width={background.current?.clientWidth} height={background.current?.clientHeight} ref={gradientCanvasRef}></canvas>
+                {gradientCanvas && <canvas style={{ opacity: `${darkMode ? 0.3 : 0.8}` }} width={background.current?.clientWidth} height={background.current?.clientHeight} ref={gradientCanvasRef}></canvas>}
             </div>}
         </div>
         {activeChat && <div className="Content">

@@ -3,9 +3,9 @@ import CustomEmoji from "../App/Message/CustomEmoji";
 import { getChatTitle } from "../Helpers/chats";
 import { getUserFullName } from "../Helpers/users";
 
-function FullNameTitle({ chat, isSavedMessages, showEmojiStatus = true }) {
+function FullNameTitle({ chat, isSavedMessages, hideEmojiStatus = false }) {
     const isUser = chat?.className === 'User';
-    const title = isUser ? getUserFullName(chat) : getChatTitle(chat);
+    const title = isUser ? getUserFullName(chat) : getChatTitle(chat) ?? 'undefined';
     const fromChat = (chat?.title && chat?.firstName) && getChatTitle(chat)
 
     const specialTitle = () => {
@@ -17,7 +17,7 @@ function FullNameTitle({ chat, isSavedMessages, showEmojiStatus = true }) {
     }
 
     const emojiStatus = useMemo(() => {
-        if (showEmojiStatus && chat?.emojiStatus) {
+        if (!hideEmojiStatus && chat?.emojiStatus) {
             return <CustomEmoji documentId={chat.emojiStatus.documentId.value} autoPlay={window.Animations?.AnimatedStickers} />
         }
     })

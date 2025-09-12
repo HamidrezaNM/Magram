@@ -31,7 +31,7 @@ const MediaPreview = () => {
         // const scale = elementRect.current.height / mediaRect.height
         const scale = 1
         mediaEl.current.style.left = 0
-        mediaEl.current.style.transform = `translate(${elementRect.current.left * scale}px, ${elementRect.current.top * scale}px) scale(${scale})`
+        mediaEl.current.style.transform = `translate3d(${elementRect.current.left * scale}px, ${elementRect.current.top * scale}px, 0) scale(${scale})`
         mediaEl.current.style.top = 0
         mediaEl.current.style.borderRadius = getComputedStyle(data.element).borderRadius
 
@@ -40,7 +40,7 @@ const MediaPreview = () => {
                 mediaEl.current.style.transition = ''
                 mediaEl.current.style.width = mediaRect.width + 'px'
                 mediaEl.current.style.height = mediaRect.height + 'px'
-                mediaEl.current.style.transform = `translate(${mediaRect.left}px, ${mediaRect.top}px)`
+                mediaEl.current.style.transform = `translate3d(${mediaRect.left}px, ${mediaRect.top}px, 0)`
                 // mediaEl.current.style.top = mediaRect.top + 'px'
                 mediaEl.current.style.borderRadius = ''
 

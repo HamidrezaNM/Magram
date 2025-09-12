@@ -23,8 +23,8 @@
     }
 
     .LeftColumn .Chats {
-        padding-block: 48px;
-        scroll-snap-type: y mandatory;
+        /* padding-block: 48px;
+        scroll-snap-type: y mandatory; */
     }
 
     .ChatList {
@@ -32,7 +32,7 @@
     }
 
     .ChatList .Tabs {
-        top: -48px;
+        top: 0px;
     }
 
     /* .MiddleColumn {
@@ -132,7 +132,7 @@
     }
 
     .Toasts {
-        width: 100%;
+        width: calc(100% - 16px);
         margin: 8px;
         bottom: 48px;
     }

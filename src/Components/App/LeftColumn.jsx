@@ -1,4 +1,4 @@
-import { memo, useCallback, useContext, useEffect, useRef } from "react"
+import { memo, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import Transition from "./Transition";
 import CallMinimal from "./Call/CallMinimal";
@@ -21,6 +21,7 @@ import Forward from "./Pages/Forward";
 import Stories from "./Stories";
 import { generateChatWithPeer } from "../Helpers/chats";
 import buildClassName from "../Util/buildClassName";
+import StoryToggler from "./StoryToggler";
 
 function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
 
@@ -39,6 +40,9 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
     const dispatch = useDispatch()
 
     const fabQuickChatMenu = useRef()
+    const chatsRef = useRef()
+    const topBarTitleRef = useRef()
+    const storyToggler = useRef()
 
     useEffect(() => {
         if (!showPage)
@@ -77,7 +81,40 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
         }
     }, [page])
 
-    return <div className={"LeftColumn" + (callLeftPanelClose ? ' Compact' : '')}>
+    useEffect(() => {
+        let startY = 0, scrollTop = 0;
+
+        // chatsRef.current.addEventListener("touchstart", (e) => {
+        //     startY = e.touches[0].pageY;
+        //     scrollTop = chatsRef.current.scrollTop;
+        // }, { passive: true });
+
+        // chatsRef.current.addEventListener("touchmove", (e) => {
+        //     const currentY = e.touches[0].pageY;
+        //     const diff = currentY - startY;
+
+        //     if (chatsRef.current.scrollTop > 0) return
+
+
+        //     if (scrollTop === 0 && diff > 0) {
+        //         chatsRef.current.style.transform = `translate3d(0, ${diff * 0.3}px, 0)`;
+        //     }
+
+        //     else if (chatsRef.current.scrollHeight - chatsRef.current.clientHeight - scrollTop <= 0 && diff < 0) {
+        //         chatsRef.current.style.transform = `translate3d(0, ${diff * 0.3}px, 0)`;
+        //     }
+        // });
+
+        // chatsRef.current.addEventListener("touchend", () => {
+        //     chatsRef.current.style.transition = "transform 0.3s ease";
+        //     chatsRef.current.style.transform = "translate3d(0, 0, 0)";
+        //     setTimeout(() => {
+        //         chatsRef.current.style.transition = "";
+        //     }, 300);
+        // });
+    }, [])
+
+    return <div className={buildClassName("LeftColumn", callLeftPanelClose && ' Compact', showPage && 'hasPage')}>
         <div className={buildClassName("TopBar", topBarFloating?.floating && 'floating', topBarFloating?.absolute && 'absolute')}>
             <div>
                 {(pageHeader && showPage) ? <>{pageHeader}</> : <>
@@ -96,7 +133,8 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
                         </DropdownMenu>
                     </Menu>
                     <div className="Content" onDoubleClick={() => window.location.reload()}>
-                        <span>
+                        <StoryToggler ref={storyToggler} />
+                        <span ref={topBarTitleRef}>
                             <TextTransition text={connectionState === 'connected' ? (topbarContent?.title ?? 'Magram') : connectionState} />
                         </span>
                     </div>
@@ -107,8 +145,8 @@ function LeftColumn({ CallRef, CallStream, callState, connectionState }) {
             </div>
         </div>
         <Transition state={showPage}><Page>{getPageLayout()}</Page></Transition>
-        <Stories />
-        <div className="Chats scrollable">
+        <Stories chatsRef={chatsRef} topBarTitleRef={topBarTitleRef} storyToggler={storyToggler} />
+        <div className="Chats scrollable" ref={chatsRef}>
             <ChatList />
         </div>
         {(!showPage && !callMinimal && !musicPlayer?.active) && <div className="fab quickChatButton">

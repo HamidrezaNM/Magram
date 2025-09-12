@@ -10,13 +10,16 @@
 
 .centerTopBar .ChatInfo .info .body,
 .centerTopBar .LeftColumn .TopBar .Content {
-    gap: 0;
     position: absolute;
     left: 0;
     right: 0;
     margin: 0 auto;
     width: fit-content;
     max-width: calc(100% - 170px);
+}
+
+.centerTopBar .ChatInfo .info .body {
+    gap: 0;
 }
 
 .centerTopBar .ChatInfo .info .body .title,
@@ -192,6 +195,11 @@
     background-image: linear-gradient(120deg, var(--message-background-1) 0%, var(--message-background-2) 60%, var(--message-background-3) 100%);
 }
 
+.Dark .Message .bubble .bubble-content {
+    background: var(--secondary);
+    // border-radius: 20px;
+}
+
 .Dark .Message.Out .bubble .bubble-content {
     background: linear-gradient(300deg, rgb(118, 68, 203), rgb(136, 73, 180));
     color: var(--text-color);
@@ -268,6 +276,10 @@
             font-size: 12px;
         }
     }
+}
+
+.iOSTheme .LeftColumn {
+    background-color: var(--secondary);
 }
 
 .iOSTheme .Page {

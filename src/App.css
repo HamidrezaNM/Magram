@@ -293,6 +293,7 @@
 
 .Main {
   display: flex;
+  position: relative;
   flex: 1;
   transition: all .5s ease
 }
@@ -623,6 +624,11 @@
   padding-right: 0 !important;
 }
 
+.scrollable.x {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 @-moz-document url-prefix() {
   .scrollable {
     /* Firefix supports */
@@ -755,10 +761,39 @@
 }
 
 .MenuItem.Loading,
-.Composer .message-input.Loading {
+.Composer .message-input.Loading,
+.Shimmer {
   background-image: linear-gradient(90deg, #ffffff10, #ffffff30, #ffffff10);
   background-size: 200%;
   animation: ItemLoading 1s linear infinite;
+}
+
+.Shimmer {
+  /* background-image: linear-gradient(90deg, #ffffff10, #ffffff20, #ffffff10); */
+  /* background-image: none; */
+  /* background: linear-gradient(#fff1) padding-box,
+    linear-gradient(90deg, #fff1, #fff4, #fff1) border-box; */
+  background: linear-gradient(rgba(var(--primary-rgb), .9)) padding-box,
+    linear-gradient(90deg, #fff0, #fff, #fff0) border-box;
+  opacity: .25;
+  border: 1px solid transparent;
+  background-size: 400%;
+  /* border: 1px solid #fff1; */
+  animation: Shimmer 1.5s ease infinite;
+}
+
+@keyframes Shimmer {
+  0% {
+    background-position-x: 100%;
+  }
+
+  70% {
+    background-position-x: -0%;
+  }
+
+  100% {
+    background-position-x: -0%;
+  }
 }
 
 @keyframes ItemLoading {
@@ -924,7 +959,7 @@
   background-color: var(--secondary);
   position: absolute;
   left: 0;
-  z-index: 2;
+  z-index: 10;
   user-select: none;
   overflow: hidden;
   transition: all .3s ease;
