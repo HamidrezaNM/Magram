@@ -81,7 +81,7 @@ export function CheckBox({ checked = false, setChecked, style }) {
     </label>
 }
 
-export function BackArrow({ onClick, className, isiOS = false, title, index = 0 }) {
+export function BackArrow({ onClick, className, isiOS = false, title, index = 0, withoutAnim = false }) {
     const [state, setState] = useState(true)
 
     const prevIndex = useRef(0)
@@ -94,7 +94,7 @@ export function BackArrow({ onClick, className, isiOS = false, title, index = 0 
 
     return isiOS ?
         <Transition state={state} alwaysShow>
-            <div className="BackButton" onClick={onClick}>
+            <div className={buildClassName("BackButton", withoutAnim && 'withoutAnim')} onClick={onClick}>
                 <Icon name="arrow_back_ios_new" className={buildClassName("BackArrow", className)} size={24} />
                 <span>{title ?? 'Back'}</span>
             </div>

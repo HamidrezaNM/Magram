@@ -352,6 +352,7 @@
         gap: 4px;
         font-size: 12px;
         width: 64px;
+        margin-bottom: 4px;
         overflow: hidden;
         cursor: pointer;
         transition: transform .3s ease, opacity .2s ease;
@@ -420,7 +421,7 @@
 }
 
 .LeftColumn.hasPage .Stories {
-    display: none;
+    visibility: hidden;
 }
 
 .TopBar .Content>span {

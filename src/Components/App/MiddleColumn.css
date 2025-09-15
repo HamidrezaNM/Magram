@@ -199,11 +199,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transform-origin: top;
     padding: 0 6px;
     height: 42px;
     background-color: rgba(var(--surface-rgb), .7);
     user-select: none;
-    transition: all .3s ease;
+    transition: transform .3s ease, opacity .3s ease;
 }
 
 .MiddleColumn .VoiceChatInfo .info {

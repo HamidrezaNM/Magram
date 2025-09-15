@@ -1297,6 +1297,10 @@
   visibility: hidden;
 }
 
+.withoutAnim {
+  transition: none !important;
+}
+
 .Page .section {
   background-color: var(--secondary);
   display: flex;
@@ -2190,7 +2194,7 @@ a:hover {
   align-items: center;
   font-size: 18px;
   cursor: pointer;
-  transition: opacity .2s ease, margin-left .3s ease;
+  transition: opacity .2s ease;
 }
 
 .BackButton:active {
@@ -2215,11 +2219,15 @@ a:hover {
   position: absolute;
   left: 20px;
   /* transform-origin: left; */
-  transition: left .3s ease, transform .3s ease;
+  transition: transform .3s cubic-bezier(0, 0, 0, 1);
+}
+
+.BackButton.withoutAnim span {
+  transition: none !important;
 }
 
 .BackButton.showAnim span {
-  left: 50%;
+  transform: translateX(250%);
   transition: none;
 }
 

@@ -208,10 +208,10 @@ function Stories({ chatsRef, topBarTitleRef, storyToggler }) {
                 // }, 300);
             }
 
-            if (!forceClose) {
-                storiesRef.current.style.setProperty('--opacity', Math.ceil(progress))
-                storiesRef.current.style.setProperty('--progress', progress)
-            }
+            // if (!forceClose) {
+            storiesRef.current.style.setProperty('--opacity', Math.ceil(progress))
+            storiesRef.current.style.setProperty('--progress', progress)
+            // }
         }
 
         let startY = 0;

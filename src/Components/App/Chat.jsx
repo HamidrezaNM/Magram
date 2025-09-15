@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Skeleton } from "@mui/material";
 import ChatContextMenu from "./ChatContextMenu";
 import { handleContextMenu } from "../Stores/UI";
-import { removeChat, updateLastMessage } from "../Stores/Chats";
+import { removeChat, updateChatArchived, updateLastMessage } from "../Stores/Chats";
 import { client } from "../../App";
 import FullNameTitle from "../common/FullNameTitle";
 import { Api } from "telegram";
@@ -65,6 +65,8 @@ function Chat({ info, isActive, onClick }) {
                 peer: info.inputEntity
             })]
         }))
+
+        dispatch(updateChatArchived({ id: Number(info.id), archived: turn }))
 
         console.log(result)
     }

@@ -97,6 +97,12 @@ export const chatsSlice = createSlice({
                 state.value[action.payload.id] = { ...chat, entity: { ...chat.entity, status: action.payload.status } }
             }
         },
+        updateChatArchived: (state, action) => {
+            const chat = state.value[action.payload.id]
+            if (chat) {
+                state.value[action.payload.id] = { ...chat, archived: action.payload.archived }
+            }
+        },
         handleTypingStatus: (state, action) => {
             const chat = state.value[action.payload.chatId]
             if (chat) {
@@ -133,6 +139,7 @@ export const {
     updateLastMessage,
     updateChatUnreadCount,
     updateChatUserStatus,
+    updateChatArchived,
     handleTypingStatus,
     removeTypingStatus
 } = chatsSlice.actions

@@ -6,7 +6,7 @@ import { Menu } from "@mui/material";
 import DropdownMenu from "../UI/DropdownMenu";
 
 function Page({ children }) {
-    return <div className="Page">
+    return <div className="Page animate">
         {children}
     </div>
 }
@@ -14,7 +14,7 @@ function Page({ children }) {
 export default memo(Page)
 
 export function SubPage({ children }) {
-    return <div className="SubPage scrollable">
+    return <div className="SubPage scrollable animate">
         {children}
     </div>
 }

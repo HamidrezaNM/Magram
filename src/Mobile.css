@@ -35,6 +35,10 @@
         top: 0px;
     }
 
+    .ChatList .Chat.active {
+        background-color: transparent !important;
+    }
+
     /* .MiddleColumn {
         display: none;
     }
