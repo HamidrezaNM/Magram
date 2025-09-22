@@ -9,7 +9,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 index: 'index.html',
-                sw: 'sw.js'
+                sw: 'src/sw.js'
             }
         }
     },
