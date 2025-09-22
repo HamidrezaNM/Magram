@@ -8,6 +8,7 @@ export default defineConfig({
         outDir: 'build',
         rollupOptions: {
             input: {
+                index: 'index.html',
                 sw: 'sw.js'
             }
         }
