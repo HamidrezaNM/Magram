@@ -6,6 +6,11 @@ export default defineConfig({
     plugins: [react(), basicSsl()],
     build: {
         outDir: 'build',
+        rollupOptions: {
+            input: {
+                sw: 'sw.js'
+            }
+        }
     },
     base: '/Magram',
     server: {
