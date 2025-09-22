@@ -15,6 +15,7 @@ import ContextMenu from "./MiddleColumn/ContextMenu";
 import { UserContext } from "../Auth/Auth";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import { isMobile } from "./Message/MessageMedia";
+import AnimatedSticker from "./Message/AnimatedSticker";
 
 const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -164,7 +165,7 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
 
                     clearInterval(gradientLoading)
                 } catch (error) {
-                    dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
+                    dispatch(handleToast({ icon: 'error', title: 'Error occurred in Getting Message ' + error.errorMessage }))
                 }
 
 
@@ -369,6 +370,10 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
             </span>
         else if (chatType === 'User' && businessIntro?.title)
             return <div className="FlexColumn">
+                <AnimatedSticker
+                    media={new Api.MessageMediaDocument({ document: businessIntro.sticker })}
+                    autoPlay={true}
+                />
                 <div className="title">{businessIntro.title}</div>
                 <div className="subtitle">{businessIntro.description}</div>
             </div>

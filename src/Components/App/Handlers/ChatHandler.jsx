@@ -74,7 +74,6 @@ const ChatHandler = forwardRef(({ }, ref) => {
         (async () => {
             if (activeChat) {
                 try {
-                    console.log('setfulklchat')
                     dispatch(setActiveFullChat())
                     if (activeChat.isChannel) {
                         if (!activeChat.fullChat) {
@@ -109,7 +108,7 @@ const ChatHandler = forwardRef(({ }, ref) => {
                         dispatch(setActiveFullChat())
                 } catch (error) {
                     dispatch(setActiveFullChat())
-                    dispatch(handleToast({ icon: 'error', title: error.errorMessage }))
+                    dispatch(handleToast({ icon: 'error', title: 'Getting FullChat Error ' + error.errorMessage }))
                 }
             }
         })()

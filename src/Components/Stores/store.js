@@ -2,7 +2,7 @@ import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit'
 import messagesReducer from './Messages'
 import uiReducer from './UI'
 import chatsReducer from './Chats'
-import settingsReducer, { handleAnimationsOptions, handleCustomTheme, handlePlayerVolume, handleToggleDarkMode, handleTopPeers } from './Settings'
+import settingsReducer, { handleAnimationsOptions, handleCustomTheme, handlePlayerVolume, handleSearchHistoryAdd, handleToggleDarkMode, handleTopPeers } from './Settings'
 import { enableMapSet } from 'immer';
 
 enableMapSet();
@@ -38,7 +38,8 @@ listenerMiddleware.startListening({
         action.type === handleAnimationsOptions.type ||
         action.type === handleToggleDarkMode.type ||
         action.type === handlePlayerVolume.type ||
-        action.type === handleTopPeers.type,
+        action.type === handleTopPeers.type ||
+        action.type === handleSearchHistoryAdd.type,
 
     effect: async (action, listenerApi) => {
         const settings = listenerApi.getState().settings

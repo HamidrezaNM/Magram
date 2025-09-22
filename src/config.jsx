@@ -7,3 +7,8 @@ export const RE_TELEGRAM_LINK = /^(https?:\/\/)?telegram\.org\//i;
 export const TME_LINK_PREFIX = 'https://t.me/';
 
 export const PUBLIC_URL = '/Magram'
+
+export const DEBUG = true;
+
+export const ASSET_CACHE_NAME = 'ma-assets';
+export const IS_SERVICE_WORKER_SUPPORTED = 'serviceWorker' in navigator;

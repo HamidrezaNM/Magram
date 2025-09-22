@@ -4,6 +4,7 @@ export const settingsSlice = createSlice({
     name: 'settings',
     initialState: {
         topPeers: { users: [] },
+        searchHistory: [],
         playerVolume: 1,
         animations: {
             AnimatedStickers: false,
@@ -39,6 +40,16 @@ export const settingsSlice = createSlice({
             const date = Date.now()
 
             state.topPeers = { users: action.payload, date }
+        },
+        handleSearchHistoryAdd: (state, action) => {
+            if (!state.searchHistory)
+                state.searchHistory = []
+
+            state.searchHistory = state.searchHistory.filter(x =>
+                Number(x.id) !== Number(action.payload.id)
+            )
+
+            state.searchHistory = [action.payload, ...state.searchHistory]
         }
     },
 })
@@ -49,7 +60,8 @@ export const {
     handleAnimationsOptions,
     handleCustomTheme,
     handleToggleDarkMode,
-    handleTopPeers
+    handleTopPeers,
+    handleSearchHistoryAdd
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

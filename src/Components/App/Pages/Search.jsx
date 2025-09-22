@@ -11,14 +11,13 @@ import { handleCoolDown } from "../../Util/coolDown";
 import Tabs from "../../UI/Tabs";
 import TabContent from "../../UI/TabContent";
 import buildClassName from "../../Util/buildClassName";
-import { handleTopPeers } from "../../Stores/Settings";
+import { handleSearchHistoryAdd, handleTopPeers } from "../../Stores/Settings";
 
 
 export default function Search() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [input, setInput] = useState('')
     // const [topPeers, setTopPeers] = useState([])
-    const [chats, setChats] = useState([])
     const [tabIndex, setTabIndex] = useState(0)
 
     const dispatch = useDispatch()
@@ -30,6 +29,9 @@ export default function Search() {
     const subPage = useSelector((state) => state.ui.subPage)
     const centerTopBar = useSelector((state) => state.settings.customTheme.centerTopBar)
     const topPeers = useSelector((state) => state.settings.topPeers)
+    const history = useSelector((state) => state.settings.searchHistory)
+
+    const [chats, setChats] = useState(history)
 
     useEffect(() => {
         setIsLoaded(true)
@@ -92,6 +94,13 @@ export default function Search() {
         // setMessageInputHandled(input)
     }, [input])
 
+    const handleViewChat = (item) => {
+        dispatch(handleSearchHistoryAdd(item))
+
+        viewChat(generateChatWithPeer(item), dispatch)
+        PageClose(dispatch)
+    }
+
     return <>
         <div className={"Search" + (!isLoaded ? ' fadeThrough' : '') + (subPage[0] ? ' pushUp' : '')} ref={page}>
             <PageHeader>
@@ -131,8 +140,8 @@ export default function Search() {
                     <TabContent state={true}>
                         <div className="Items">
                             {/* TODO: Search History */}
-                            {chats.length > 0 && Object.values(chats).map((item) => (
-                                !item.self && <div key={item.id?.value} className="Item" onClick={() => { viewChat(generateChatWithPeer(item), dispatch); PageClose(dispatch) }}>
+                            {chats?.length > 0 && Object.values(chats).map((item) => (
+                                !item.self && <div key={item.id?.value} className="Item" onClick={() => { handleViewChat(item) }}>
                                     <Profile entity={item} size={44} name={item?.title ?? item?.firstName} id={item.id?.value} />
                                     <div className="UserDetails">
                                         <div className="title">{item?.title ?? item.firstName}</div>
