@@ -1,5 +1,5 @@
+import { pause } from '../Components/Util/schedulers';
 import { ASSET_CACHE_NAME } from '../config';
-import { pause } from '../util/schedulers';
 
 // An attempt to fix freezing UI on iOS
 const TIMEOUT = 3000;
