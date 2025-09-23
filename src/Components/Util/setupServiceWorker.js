@@ -53,7 +53,7 @@ if (IS_SERVICE_WORKER_SUPPORTED) {
                 }
             }
 
-            await navigator.serviceWorker.register('/Magram/sw.js');
+            await navigator.serviceWorker.register('/Magram/sw.js', { type: 'module', scope: './' });
 
             if (DEBUG) {
                 // eslint-disable-next-line no-console
