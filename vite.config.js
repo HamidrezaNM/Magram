@@ -10,7 +10,13 @@ export default defineConfig({
             input: {
                 index: 'index.html',
                 sw: 'src/sw.js'
-            }
+            },
+            output: [
+                {
+                    entryFileNames: '[name].js',
+                    assetFileNames: '[name].[ext]',
+                }
+            ]
         }
     },
     base: '/Magram',
