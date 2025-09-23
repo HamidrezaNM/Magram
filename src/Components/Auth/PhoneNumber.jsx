@@ -6,7 +6,7 @@ import { Api } from "telegram";
 export default function PhoneNumber() {
     const [countryCode, setCountryCode] = useState("98");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [formatedPhoneNumber, setFormatedPhoneNumber] = useState("+98");
+    const [formattedPhoneNumber, setFormattedPhoneNumber] = useState("+98");
     const [isLoading, setIsLoading] = useState(false)
 
     const Auth = useContext(AuthContext);
@@ -29,7 +29,7 @@ export default function PhoneNumber() {
                 ? (_format = "+")
                 : match !== "" && (_format = _format + (i > 2 ? " " : "") + match);
         }
-        setFormatedPhoneNumber(_format);
+        setFormattedPhoneNumber(_format);
         setPhoneNumber(
             value
                 .replace(/\D+/g, "")
@@ -72,7 +72,7 @@ export default function PhoneNumber() {
     return <div className="PhoneNumber">
         <form action="" onSubmit={Validate}>
             <div className="content">
-                <div className="title">Sign in to My App</div>
+                <div className="title">Sign in to Magram</div>
                 <p className="subtitle">
                     Please confirm your country and enter your phone number
                 </p>
@@ -80,7 +80,7 @@ export default function PhoneNumber() {
                     <input
                         placeholder=" "
                         type="text"
-                        value={formatedPhoneNumber}
+                        value={formattedPhoneNumber}
                         onChange={useCallback((e) => {
                             if (phoneNumberRef.current.classList.contains("error")) {
                                 phoneNumberRef.current.querySelector("label").innerHTML =
