@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import { toDoubleDigit } from "./Home";
 import { client } from "../../App";
@@ -13,17 +13,21 @@ import { getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { Icon } from "./common";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 
 function ChatList({ onClick, filter = () => true }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
+    const [chatsRenderCount, setChatsRenderCount] = useState(20)
 
     const ChatListRef = useRef()
 
     const User = useContext(UserContext);
 
     const dispatch = useDispatch()
+
+    const loadMoreObserver = useIntersectionObserver({ threshold: 0 })
 
     const chats = useSelector((state) => state.chats.value)
 
@@ -76,6 +80,28 @@ function ChatList({ onClick, filter = () => true }) {
             }
         }
     }, [chats, showArchives])
+
+    const handleLoadMoreChats = async () => {
+        if (allChats?.length > 20) {
+            setChatsRenderCount(allChats?.length < chatsRenderCount * 2 ? allChats?.length : chatsRenderCount * 2)
+        }
+    }
+
+    const handleIntersect = useCallback((entry) => {
+        console.log('handle load more chats')
+        if (entry.isIntersecting && allChats?.length) {
+            handleLoadMoreChats()
+        }
+    }, [allChats?.length, chatsRenderCount]);
+
+    useEffect(() => {
+        loadMoreObserver.addCallback(handleIntersect);
+        console.log('handleIntersect')
+
+        return () => {
+            loadMoreObserver.removeCallback(handleIntersect);
+        };
+    }, [loadMoreObserver]);
 
     const renderFolderChats = (index) => {
         const folder = folders[index]
@@ -155,15 +181,17 @@ function ChatList({ onClick, filter = () => true }) {
                         />
                     ))}
                 </div>
-                {allChats.filter(chat => !!chat.archived === showArchives && !chat.dialog?.pinned).map((item) => (
-                    !item.entity?.migratedTo &&
-                    <Chat
-                        key={item.id?.value}
-                        info={item}
-                        isActive={Number(activeChatId) == item.id.value}
-                        onClick={onClick}
-                    />
-                ))}
+                {allChats.filter(chat => !!chat.archived === showArchives && !chat.dialog?.pinned)
+                    .slice(0, chatsRenderCount)
+                    .map((item) => (
+                        !item.entity?.migratedTo &&
+                        <Chat
+                            key={item.id?.value}
+                            info={item}
+                            isActive={Number(activeChatId) == item.id.value}
+                            onClick={onClick}
+                        />
+                    ))}
                 {Object.keys(chats).length === 0 &&
                     <ChatsLoading />
                 }
@@ -178,6 +206,7 @@ function ChatList({ onClick, filter = () => true }) {
                 </TabContent>
             )}
         </Tabs>
+        <div className="loadMore" style={{ height: 20 }} ref={(el) => loadMoreObserver.observe(el)}></div>
         <ContextMenu type="chat" />
     </div>
 }
