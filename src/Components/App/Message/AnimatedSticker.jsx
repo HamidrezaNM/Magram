@@ -6,9 +6,7 @@ import { client } from "../../../App";
 import Transition from "../Transition";
 import LottiePlayer from "../../common/LottiePlayer";
 
-const AnimatedSticker = forwardRef(({ media, size, _width, _height, isCustomEmoji = false, returnData = false, onLoad, autoPlay = true, loop = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
-    const [width, setWidth] = useState(_width)
-    const [height, setHeight] = useState(_height)
+const AnimatedSticker = forwardRef(({ media, size, width, height, isCustomEmoji = false, returnData = false, onLoad, autoPlay = true, loop = true, setProgress, isLoaded, setIsLoaded, uploading, setIsDownloading }, ref) => {
     const [data, setData] = useState()
     const [isWebm, setIsWebm] = useState(false)
     const [isWebp, setIsWebp] = useState(false)

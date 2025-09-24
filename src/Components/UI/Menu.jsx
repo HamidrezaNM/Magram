@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { handleBackground } from "../Stores/UI"
 import Transition from "../App/Transition"
 
-const Menu = forwardRef(({ icon, animateWidth = true, animateHeight = true, minHeight = 36, closeManually = false, custom, children }, ref) => {
+const Menu = forwardRef(({ icon, animateWidth = false, animateHeight = false, minHeight = 36, closeManually = false, custom, children }, ref) => {
     const menu = useRef()
     const [isActive, setIsActive] = useState()
 
@@ -13,8 +13,8 @@ const Menu = forwardRef(({ icon, animateWidth = true, animateHeight = true, minH
     const dispatch = useDispatch()
 
     useEffect(() => {
-        menu.current.querySelector('.icon').style.zIndex = isActive ? 12 : null
-        menu.current.style.zIndex = isActive ? 12 : null
+        menu.current.querySelector('.icon').style.zIndex = isActive ? 32 : null
+        menu.current.style.zIndex = isActive ? 32 : null
         if (!isActive) return
         // setTimeout(() => {
         //     bg.current.classList.remove('animate')
@@ -37,9 +37,9 @@ const Menu = forwardRef(({ icon, animateWidth = true, animateHeight = true, minH
         }
 
         menu.current.querySelector('.DropdownMenu').classList.add('animate')
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             menu.current.querySelector('.DropdownMenu').classList.remove('animate')
-        }, 5);
+        });
         if (animateWidth) {
             menu.current.querySelector('.DropdownMenu').style.minWidth = 36 + 'px';
             menu.current.querySelector('.DropdownMenu').style.width = 36 + 'px';

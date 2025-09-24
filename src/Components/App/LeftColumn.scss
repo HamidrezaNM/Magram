@@ -204,7 +204,8 @@
     line-height: 1.4;
 }
 
-.ChatList .Pinned {
+.ChatList .Pinned,
+.ChatList .Archives {
     background-color: var(--secondary);
 }
 
@@ -269,18 +270,20 @@
 
 .Search .topPeers {
     display: grid;
-    padding: 4px;
+    padding: 4px 8px;
     overflow-x: overlay;
     grid-template-columns: repeat(5, 1fr);
 }
 
-.Search .topPeers .Item {
+.Page .Search .topPeers .Item {
     display: flex;
     flex-direction: column;
     height: auto !important;
     font-size: 14px;
+    border-bottom: none;
+    border-radius: 10px;
     gap: 6px;
-    padding: 8px 0;
+    padding: 4px;
     width: auto;
     overflow: hidden;
 }

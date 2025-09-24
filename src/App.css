@@ -689,6 +689,7 @@
   backdrop-filter: var(--blur-filter);
   user-select: none;
   transform-origin: top left !important;
+  transform-origin: var(--origin) !important;
   overflow: hidden;
   box-shadow: 0px 0px 10px -4px #000000aa;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -709,6 +710,30 @@
 .DropdownMenu.animate,
 .ContextMenu.animate {
   /* transform: scale(0.95); */
+  transform: scale(.5) rotateX(45deg) translateY(-18px);
+  opacity: 0;
+}
+
+.ContextMenu:has(.Content) {
+  background-color: transparent !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+.ContextMenu .Content {
+  width: 100%;
+  border-radius: 16px;
+  background-color: var(--context-menu-bg);
+  transform-origin: var(--origin);
+  overflow: hidden;
+  transition: transform .3s ease, opacity .3s ease;
+}
+
+.ContextMenu.animate .Reactions {
+  opacity: 0;
+}
+
+.ContextMenu.animate .Content {
   transform: scale(.5) rotateX(45deg) translateY(-18px);
   opacity: 0;
 }
@@ -896,7 +921,7 @@
   padding: 0 4px;
   line-height: 1;
   overflow: hidden;
-  transition: all .3s ease;
+  transition: max-width .3s ease, opacity .3s ease;
 }
 
 .ContextMenu.animate .Reactions {
@@ -1111,7 +1136,7 @@
 
 .Tab {
   background-color: transparent;
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   font-weight: 500;
   transition: all .3s ease;
@@ -1530,6 +1555,7 @@ a:hover {
 .Toast {
   background-color: #000d;
   color: var(--text-color);
+  backdrop-filter: blur(10px);
   width: fit-content;
   padding: 16px;
   display: flex;

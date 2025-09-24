@@ -59,7 +59,7 @@ function UserProfile() {
         } else
             setIsLoaded(true);
 
-        dispatch(handleTopBarFloating({ floating: true, absolute: true }));
+        dispatch(handleTopBarFloating({ floating: !!userProfile.profileColor?.color, absolute: true }));
 
         (async () => {
             const getProfileColors = await client.invoke(new Api.help.GetPeerProfileColors({}))
@@ -301,7 +301,7 @@ function UserProfile() {
         if (scrollTop > 175) {
             dispatch(handleTopBarFloating({ floating: false, absolute: true }))
         } else
-            dispatch(handleTopBarFloating({ floating: true, absolute: true }))
+            dispatch(handleTopBarFloating({ floating: !!userProfile.profileColor?.color, absolute: true }))
 
         // handleCoolDown(handleScrollDebounce, 150)
     }, [])
@@ -341,7 +341,7 @@ function UserProfile() {
             </div>
         </PageHeader>
         <div className="section Info">
-            <div className="ProfileSection" style={{ background: profileColors && `radial-gradient(${decimalToHex(profileColors[1])}, ${decimalToHex(profileColors[0])})` }}>
+            <div className={buildClassName("ProfileSection", profileColors && 'hasBackground')} style={{ background: profileColors && `radial-gradient(${decimalToHex(profileColors[1])}, ${decimalToHex(profileColors[0])})` }}>
                 {userProfile?.profileColor?.backgroundEmojiId && <div className="BackgroundEmojis">
                     <CustomEmoji onLoad={handleBackgroundEmojisAnimation} returnData documentId={userProfile.profileColor?.backgroundEmojiId?.value} autoPlay={false} />
                 </div>}
