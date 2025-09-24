@@ -260,6 +260,19 @@
     }
 }
 
+.NoChats {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
 .backBtn {
     animation: 0.15s ease-out 0s 1 normal none running menuToBack2;
 }

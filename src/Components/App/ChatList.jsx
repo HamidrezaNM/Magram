@@ -14,12 +14,14 @@ import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { Icon } from "./common";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
+import RLottie from "../common/RLottie";
 
 function ChatList({ onClick, filter = () => true }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
     const [chatsRenderCount, setChatsRenderCount] = useState(20)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     const ChatListRef = useRef()
 
@@ -57,6 +59,7 @@ function ChatList({ onClick, filter = () => true }) {
 
                 const getChats = await client.getDialogs()
                 ChatListRef.current.classList.add('Animating')
+                setIsLoaded(true)
                 dispatch(setChats(getChats))
             } catch (error) {
                 console.log(error)
@@ -146,6 +149,18 @@ function ChatList({ onClick, filter = () => true }) {
             : null
     }
 
+    const renderNoChats = () => {
+        return <div className="NoChats">
+            <RLottie
+                sticker="NoChats"
+                fileId="no_chats"
+                width={128}
+                height={128}
+                autoplay={true} />
+            <div className="title">You have no conversations yet.</div>
+        </div>
+    }
+
     return <div className="ChatList" ref={ChatListRef}>
         <Tabs index={folderTabIndex} setIndex={setFolderTabIndex} tabs={<>
             {folders.map((folder, index) =>
@@ -193,8 +208,8 @@ function ChatList({ onClick, filter = () => true }) {
                         />
                     ))}
                 {Object.keys(chats).length === 0 &&
-                    <ChatsLoading />
-                }
+                    !isLoaded &&
+                    <ChatsLoading />}
             </TabContent>
             {folders.map((folder, index) =>
                 index !== 0 &&
@@ -206,6 +221,9 @@ function ChatList({ onClick, filter = () => true }) {
                 </TabContent>
             )}
         </Tabs>
+        {Object.keys(chats).length === 0 &&
+            isLoaded &&
+            renderNoChats()}
         <div className="loadMore" style={{ height: 20 }} ref={(el) => loadMoreObserver.observe(el)}></div>
         <ContextMenu type="chat" />
     </div>

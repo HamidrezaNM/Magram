@@ -18,18 +18,23 @@ const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autopl
             if (fromFrame) data.current.ip = fromFrame
             if (toFrame) data.current.op = toFrame
 
+            const dpr = window.devicePixelRatio;
+
             const options = {
                 container: player.current,
                 loop,
                 autoplay,
                 stringData: JSON.stringify(data.current),
                 fileId: fileId ?? sticker,
-                width,
-                height
+                width: width * dpr,
+                height: height * dpr
             };
             window.RLottie.loadAnimation(options, _anim => {
                 console.log('play animation', fromFrame, toFrame)
                 anim.current = _anim
+
+                player.current.querySelector('canvas').style.maxWidth = width + 'px'
+                player.current.querySelector('canvas').style.maxHeight = height + 'px'
             });
         }
     }))
@@ -53,17 +58,22 @@ const RLottie = forwardRef(({ sticker, fileId, width = 160, height = 160, autopl
 
             // player.load("https://lottie.host/6d7dd6e2-ab92-4e98-826a-2f8430768886/NGnHQ6brWA.json")
 
+            const dpr = window.devicePixelRatio;
+
             const options = {
                 container: player.current,
                 loop,
                 autoplay,
                 stringData: JSON.stringify(data.current),
                 fileId: fileId ?? sticker,
-                width,
-                height
+                width: width * dpr,
+                height: height * dpr
             };
             window.RLottie.loadAnimation(options, _anim => {
                 anim.current = _anim
+
+                player.current.querySelector('canvas').style.maxWidth = width + 'px'
+                player.current.querySelector('canvas').style.maxHeight = height + 'px'
             });
             return () => {
                 window.RLottie.destroy(anim.current)
