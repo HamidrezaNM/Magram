@@ -133,6 +133,22 @@ export function getParticipantRights(entity) {
     if (entity.adminRights) return entity.adminRights
 }
 
+export function canSendMessages(dialog) {
+    const type = getChatType(dialog?.entity)
+
+    if (type === 'User' || type === 'Bot') return true
+    if (type === 'Group' || type === 'Channel')
+        if ((type === 'Group' &&
+            !dialog?.entity?.defaultBannedRights?.sendMessages &&
+            !dialog?.entity?.defaultBannedRights?.sendPlain) ||
+            dialog?.entity?.adminRights ||
+            dialog?.entity?.creator ||
+            dialog?.participants?.find(item => item.participant?.adminRights))
+            return true;
+
+    return false
+}
+
 export const getDeleteChatText = (chat) => {
     switch (getChatType(chat)) {
         case 'Group':

@@ -4,6 +4,7 @@ import { PageClose, PageHandle, PageHeader } from "../Page";
 import ChatList from "../ChatList";
 import { BackArrow } from "../common";
 import { handleForwardMessage, handleForwardMessageChat } from "../../Stores/UI";
+import { canSendMessages, getChatType } from "../../Helpers/chats";
 
 export default function Forward() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -28,7 +29,7 @@ export default function Forward() {
             <div className="Meta"></div>
         </PageHeader>
         <div className="Chats scrollable">
-            <ChatList onClick={handleForward} />
+            <ChatList onClick={handleForward} filter={canSendMessages} />
         </div>
     </div>
 }

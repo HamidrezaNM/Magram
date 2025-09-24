@@ -13,8 +13,8 @@ const Menu = forwardRef(({ icon, animateWidth = true, animateHeight = true, minH
     const dispatch = useDispatch()
 
     useEffect(() => {
-        menu.current.querySelector('.icon').style.zIndex = isActive ? 5 : null
-        menu.current.style.zIndex = isActive ? 5 : null
+        menu.current.querySelector('.icon').style.zIndex = isActive ? 12 : null
+        menu.current.style.zIndex = isActive ? 12 : null
         if (!isActive) return
         // setTimeout(() => {
         //     bg.current.classList.remove('animate')

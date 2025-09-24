@@ -681,7 +681,7 @@
   position: absolute;
   min-width: 13.5rem;
   border-radius: 10px;
-  z-index: 4;
+  z-index: 30;
   margin: 4px;
   gap: 4px;
   padding: 4px;

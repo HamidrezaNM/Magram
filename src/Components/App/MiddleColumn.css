@@ -568,7 +568,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 3;
+    z-index: 11;
     opacity: 1;
     background-color: #00000010;
     transition: opacity .3s ease;

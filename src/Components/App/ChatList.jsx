@@ -14,7 +14,7 @@ import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
 import { Icon } from "./common";
 
-function ChatList({ onClick }) {
+function ChatList({ onClick, filter = () => true }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
@@ -30,7 +30,7 @@ function ChatList({ onClick }) {
     const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
     const allChats = useMemo(() => {
-        return Object.values(chats).sort((a, b) => {
+        return Object.values(chats).filter(filter).sort((a, b) => {
             if (a.message?.date > b.message?.date) {
                 return -1;
             }
