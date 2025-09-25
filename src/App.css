@@ -909,14 +909,18 @@
 }
 
 .ContextMenu .Reactions .Reaction {
-  width: 32px;
+  min-width: 32px;
   font-size: 24px;
   cursor: pointer;
-  transition: all .3s ease;
+  transition: transform .2s ease;
 }
 
 .ContextMenu .Reactions .Reaction:hover {
   transform: scale(1.2);
+}
+
+.ContextMenu.animate .Reactions .Reaction {
+  transform: translateX(32px);
 }
 
 .highlight {

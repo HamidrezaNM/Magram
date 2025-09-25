@@ -28,8 +28,6 @@ export default function Password() {
                 }
             );
 
-            await client.sendMessage('me', { message: "You're successfully logged in!" });
-
             const session = client.session.save()
 
             AuthComplete(Auth, session)

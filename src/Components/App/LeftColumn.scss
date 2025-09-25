@@ -1,4 +1,5 @@
-.LeftColumn .TopBar>div {
+.LeftColumn .TopBar>div,
+.Modal .TopBar {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -7,16 +8,20 @@
     user-select: none;
 }
 
-.LeftColumn .TopBar>div>div>.icon {
+.LeftColumn .TopBar>div>div>.icon,
+.Modal .TopBar>div>.icon {
     margin: 0 16px;
 }
 
 .LeftColumn .TopBar .Meta>.icon,
-.LeftColumn .TopBar .Meta .Menu>.icon {
+.LeftColumn .TopBar .Meta .Menu>.icon,
+.Modal .TopBar .Meta>.icon,
+.Modal .TopBar .Meta .Menu>.icon {
     margin: 0;
 }
 
-.LeftColumn .TopBar .Meta {
+.LeftColumn .TopBar .Meta,
+.Modal .TopBar .Meta {
     display: flex;
     margin: 0 16px;
     min-width: 36px;
@@ -48,12 +53,13 @@
     cursor: pointer;
 }
 
-.LeftColumn .TopBar button.disabled {
+.LeftColumn .TopBar button.disable {
     background-color: var(--primary-container) !important;
     color: var(--dyn-text-color) !important;
 }
 
-.LeftColumn .TopBar .Content {
+.LeftColumn .TopBar .Content,
+.Modal .TopBar .Content {
     font-weight: 500;
     display: flex;
     align-items: center;

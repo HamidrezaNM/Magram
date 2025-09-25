@@ -177,7 +177,7 @@
     }
 
     .Home:has(.MediaPreview.zoom) .MiddleColumn.focused {
-        /* transform: scale(1.1); */
+        transform: scale(1.1);
     }
 
     .Home .MiddleColumn .bottom {

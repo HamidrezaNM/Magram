@@ -9,14 +9,14 @@ import { setActiveChat } from "../Stores/UI";
 import buildClassName from "../Util/buildClassName";
 import Tabs from "../UI/Tabs";
 import { Api } from "telegram";
-import { getPeerId } from "../Helpers/chats";
+import { generateChatWithPeer, getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
-import { Icon } from "./common";
+import { Icon, Profile } from "./common";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import RLottie from "../common/RLottie";
 
-function ChatList({ onClick, filter = () => true }) {
+function ChatList({ onClick, filter = () => true, pinSavedMessages = false }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
@@ -54,6 +54,8 @@ function ChatList({ onClick, filter = () => true }) {
     useEffect(() => {
         (async () => {
             try {
+                if (Object.keys(chats).length !== 0) return;
+
                 const getFolders = await client.invoke(new Api.messages.GetDialogFilters())
                 setFolders(getFolders.filters)
 
@@ -83,6 +85,10 @@ function ChatList({ onClick, filter = () => true }) {
             }
         }
     }, [chats, showArchives])
+
+    const handleSavedMessages = useCallback(() => {
+        viewChat(generateChatWithPeer(User), dispatch)
+    }, [User])
 
     const handleLoadMoreChats = async () => {
         if (allChats?.length > 20) {
@@ -186,6 +192,23 @@ function ChatList({ onClick, filter = () => true }) {
                     </div>
                 </div>}
                 <div className="Pinned">
+                    {pinSavedMessages &&
+                        <div
+                            key="saved-messages"
+                            className="Chat showAnim"
+                            onClick={() => { handleSavedMessages(); onClick(generateChatWithPeer(User)) }}>
+                            <div className="meta"><Profile isSavedMessages /></div>
+                            <div className="body">
+                                <div className="info">
+                                    <div className="title">Saved Messages</div>
+                                </div>
+                                <div className="subtitle">
+                                    <div className="last-message">
+                                        Forward here to save
+                                    </div>
+                                </div>
+                            </div>
+                        </div>}
                     {allChats.filter(chat => chat.dialog?.pinned).map((item) => (
                         !item.entity?.migratedTo &&
                         <Chat
