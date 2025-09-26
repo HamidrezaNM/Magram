@@ -655,6 +655,7 @@
 .LeftColumn .TopBar.absolute {
     position: absolute;
     z-index: 20;
+    background-color: transparent !important;
 }
 
 .LeftColumn .TopBar.floating {
@@ -1068,13 +1069,13 @@
     }
 
     .App.hasModal {
-        background-color: var(--theme);
+        background-color: var(--modal-background);
 
         .Home {
             transform: scale(.9) translateY(12px);
             transform-origin: top;
             border-radius: 10px;
-            background-color: var(--background);
+            background-color: var(--secondary);
 
             .MiddleColumn,
             .LeftColumn {
@@ -1158,7 +1159,7 @@
         }
 
         .bg {
-            background-color: #0002;
+            background-color: transparent;
             width: 100%;
             height: 100%;
             position: fixed;
@@ -1179,5 +1180,9 @@
                 height: calc(100% - 16px);
             }
         }
+    }
+
+    .bg.modal-bg {
+        background-color: transparent;
     }
 }

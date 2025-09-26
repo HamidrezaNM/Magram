@@ -36,7 +36,18 @@
     }
 
     .ChatList .Chat.active {
+        color: var(--dyn-text-color);
         background-color: transparent !important;
+    }
+
+    .ChatList .Chat.active .info .message-details,
+    .Chat.active .body .last-message {
+        color: var(--secondary-text) !important;
+    }
+
+    .ChatList .Archives .Chat.active {
+        background-color: var(--primary-active) !important;
+        color: var(--text-color);
     }
 
     /* .MiddleColumn {
@@ -202,7 +213,7 @@
         height: 256px;
         overflow: hidden;
         transition: all .3s ease;
-        /* transition: none !important; */
+        transition: none !important;
     }
 
     .MiddleColumn .bottom .EmojiPicker.animate {

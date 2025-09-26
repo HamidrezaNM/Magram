@@ -102,7 +102,7 @@ function Modal({ open, onClose, title, children }) {
 
     return portal && createPortal(<Transition state={open} eachElement action={() => setPortal(false)} activeAction={handleDragModal}>
         {/* <div className="Dragger" ref={dragger} onTouchEnd={handleScrollDebounce}> */}
-        <div className="bg animate" onClick={handleClose}></div>
+        <div className="bg modal-bg animate" onClick={handleClose}></div>
         <div className="Modal animate" ref={ref}>
             <div className="TopBar">
                 <div><button onClick={handleClose}>Cancel</button></div>
