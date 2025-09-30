@@ -273,7 +273,7 @@ export const StoryButton = memo(({ story, stories, index, dispatch, disabled = f
 
     return <div className="Story" style={{ zIndex: Math.max(3 - index, 0) }} onClick={() => {
         if (disabled) return;
-        if (story.entity.self) {
+        if (story.entity?.self) {
             dispatch(handleToast({ icon: 'error', title: 'You can cry about it' }))
 
             return;
@@ -285,7 +285,7 @@ export const StoryButton = memo(({ story, stories, index, dispatch, disabled = f
             <div className="StorySimple"></div>
             <Profile entity={story.entity} id={story.entity?.id} name={story.entity?.title || story.entity?.firstName} />
         </div>
-        <div className="title">{story.entity.self ? 'My Story' : <FullNameTitle chat={story.entity} hideEmojiStatus />}</div>
+        <div className="title">{story.entity?.self ? 'My Story' : <FullNameTitle chat={story.entity} hideEmojiStatus />}</div>
     </div>
 })
 
