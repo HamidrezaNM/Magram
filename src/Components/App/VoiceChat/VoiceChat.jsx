@@ -20,6 +20,7 @@ import VideoParticipant from "./VideoParticipant"
 import './VoiceChat.css'
 import PositionTransition from "../../common/PositionTransition"
 import MenuItem from "../../UI/MenuItem"
+import { handleCoolDown } from "../../Util/coolDown"
 
 function VoiceChat({ }) {
     const [mute, setMute] = useState(true)
@@ -236,18 +237,20 @@ function VoiceChat({ }) {
                 if (audioTrack) {
                     audioTrack.enabled = !mute
 
-                    const toggleMute = await client.invoke(new Api.phone.EditGroupCallParticipant({
-                        call: new Api.InputGroupCall({
-                            id: groupCall.call.id,
-                            accessHash: groupCall.call.accessHash
-                        }),
-                        participant: new Api.InputPeerSelf(),
-                        muted: mute,
-                        videoPaused: !screenCast,
-                        videoStopped: !screenCast,
-                    }))
+                    handleCoolDown(async () => {
+                        const toggleMute = await client.invoke(new Api.phone.EditGroupCallParticipant({
+                            call: new Api.InputGroupCall({
+                                id: groupCall.call.id,
+                                accessHash: groupCall.call.accessHash
+                            }),
+                            participant: new Api.InputPeerSelf(),
+                            muted: mute,
+                            videoPaused: !screenCast,
+                            videoStopped: !screenCast,
+                        }))
 
-                    console.log(toggleMute)
+                        console.log(toggleMute)
+                    }, 200)
                 }
             })()
         }
@@ -366,8 +369,8 @@ function VoiceChat({ }) {
                         <Icon name="call_end" size={32} />
                         <div className="title">Leave</div>
                     </div>
-                    <button onClick={() => setCount(count + 1)}>Count +</button>
-                    <button onClick={() => setCount(count - 1)}>Count -</button>
+                    {/* <button onClick={() => setCount(count + 1)}>Count +</button>
+                    <button onClick={() => setCount(count - 1)}>Count -</button> */}
                 </div>
             </div>
             {maximized && <div ref={containerRef}

@@ -6,7 +6,7 @@ import { Api } from "telegram";
 import { Profile } from "../common";
 import { getPeerId } from "../../Helpers/chats";
 import Transition from "../Transition";
-import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleUserMediaStream } from "../../Stores/UI";
+import { handleGroupCall, handleGroupCallJoined, handleGroupCallParticipants, handleToast, handleUserMediaStream } from "../../Stores/UI";
 import { UserContext } from "../../Auth/Auth";
 import { black } from "../../Util/Calls/voiceChat";
 
@@ -25,39 +25,43 @@ function VoiceChatInfo({ }) {
     const joinVoiceChat = async (payload) => {
         let params;
 
-        console.log('joining voice chat')
+        try {
+            console.log('joining voice chat')
 
-        const { updates } = await client.invoke(
-            new Api.phone.JoinGroupCall({
-                call: fullChat?.call,
-                params: new Api.DataJSON({
-                    data: JSON.stringify({
-                        ufrag: payload.ufrag,
-                        pwd: payload.pwd,
-                        fingerprints: [
-                            {
-                                hash: payload.hash,
-                                setup: payload.setup,
-                                fingerprint: payload.fingerprint,
-                            },
-                        ],
-                        ssrc: payload.source,
-                        'ssrc-groups': payload.sourceGroup,
+            const { updates } = await client.invoke(
+                new Api.phone.JoinGroupCall({
+                    call: fullChat?.call,
+                    params: new Api.DataJSON({
+                        data: JSON.stringify({
+                            ufrag: payload.ufrag,
+                            pwd: payload.pwd,
+                            fingerprints: [
+                                {
+                                    hash: payload.hash,
+                                    setup: payload.setup,
+                                    fingerprint: payload.fingerprint,
+                                },
+                            ],
+                            ssrc: payload.source,
+                            'ssrc-groups': payload.sourceGroup,
+                        }),
                     }),
+                    joinAs: params?.joinAs || 'me',
+                    muted: params?.muted || true,
+                    videoStopped: params?.videoStopped || true,
+                    inviteHash: params?.inviteHash,
                 }),
-                joinAs: params?.joinAs || 'me',
-                muted: params?.muted || true,
-                videoStopped: params?.videoStopped || true,
-                inviteHash: params?.inviteHash,
-            }),
-        );
+            );
 
-        console.log('join voice chat finished')
+            console.log('join voice chat finished')
 
-        for (const update of updates) {
-            if (update instanceof Api.UpdateGroupCallConnection) {
-                return JSON.parse(update.params.data);
+            for (const update of updates) {
+                if (update instanceof Api.UpdateGroupCallConnection) {
+                    return JSON.parse(update.params.data);
+                }
             }
+        } catch (err) {
+            dispatch(handleToast({ icon: 'error', title: 'Failed to Join Voice Chat ' + err.errorMessage }))
         }
 
         throw new Error('Could not get transport');

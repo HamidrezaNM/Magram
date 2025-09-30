@@ -4,6 +4,7 @@ import { PageClose, PageHandle, PageHeader } from "../Page";
 import ChatList from "../ChatList";
 import { BackArrow } from "../common";
 import { handleForwardMessage, handleForwardMessageChat } from "../../Stores/UI";
+import { canSendMessages, getChatType } from "../../Helpers/chats";
 
 export default function Forward() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -22,18 +23,12 @@ export default function Forward() {
     }
 
     return <div className={"Forward" + (!isLoaded ? ' fadeThrough' : '')}>
-        <PageHeader>
-            <div><BackArrow index={0} onClick={() => PageClose(dispatch)} isiOS={centerTopBar} /></div>
-            <div className="Content"><span>Forward to...</span></div>
-            <div className="Meta"></div>
-        </PageHeader>
         <div className="Chats scrollable">
-            <ChatList onClick={handleForward} />
+            <ChatList onClick={handleForward} filter={canSendMessages} pinSavedMessages />
         </div>
     </div>
 }
 
 export const showForwardMessage = (message, dispatch) => {
     dispatch(handleForwardMessage({ message }))
-    PageHandle(dispatch, 'Forward', '')
 }

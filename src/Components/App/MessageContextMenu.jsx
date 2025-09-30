@@ -54,20 +54,22 @@ export default function MessageContextMenu({
 
     return <>
         {canReaction && <Reactions onReaction={onReaction} />}
-        {canReply && <MenuItem icon="reply" title="Reply" onClick={onReply} />}
-        {canCopy && <MenuItem icon="content_copy" title="Copy" onClick={onCopy} />}
-        {canCopyLink && <MenuItem icon="link" title="Copy Link" onClick={onCopyLink} />}
-        {isPhoto && <MenuItem icon="download" title="Save1 Photo" onClick={onSavePhoto} />}
-        {canPin && <MenuItem icon="keep" title="Pin" onClick={onPin} />}
-        {canUnpin && <MenuItem icon="keep" title="Unpin" onClick={onPin} />}
-        {canEdit && <MenuItem icon="edit" title="Edit" onClick={onEdit} />}
-        {canRetractVote && <MenuItem icon="remove_done" title="Retract Vote" onClick={onRetractVote} />}
-        {canSaveGif && <MenuItem icon="gif_box" title="Add to GIFs" onClick={onSaveGif} />}
-        {canForward && <MenuItem icon="forward" title="Forward" onClick={onForward} />}
-        {canDelete && <MenuItem icon="delete" className="danger" title="Delete" onClick={onDelete} />}
-        {(canReadParticipants || canReadDate) && <hr />}
-        {canReadParticipants && <MessageReadParticipants readParticipants={readParticipants} />}
-        {canReadDate && <MessageReadDate readDate={readDate} />}
+        <div className="Content">
+            {canReply && <MenuItem icon="reply" title="Reply" onClick={onReply} />}
+            {canCopy && <MenuItem icon="content_copy" title="Copy" onClick={onCopy} />}
+            {canCopyLink && <MenuItem icon="link" title="Copy Link" onClick={onCopyLink} />}
+            {isPhoto && <MenuItem icon="download" title="Save1 Photo" onClick={onSavePhoto} />}
+            {canPin && <MenuItem icon="keep" title="Pin" onClick={onPin} />}
+            {canUnpin && <MenuItem icon="keep" title="Unpin" onClick={onPin} />}
+            {canEdit && <MenuItem icon="edit" title="Edit" onClick={onEdit} />}
+            {canRetractVote && <MenuItem icon="remove_done" title="Retract Vote" onClick={onRetractVote} />}
+            {canSaveGif && <MenuItem icon="gif_box" title="Add to GIFs" onClick={onSaveGif} />}
+            {canForward && <MenuItem icon="forward" title="Forward" onClick={onForward} />}
+            {canDelete && <MenuItem icon="delete" className="danger" title="Delete" onClick={onDelete} />}
+            {(canReadParticipants || canReadDate) && <hr />}
+            {canReadParticipants && <MessageReadParticipants readParticipants={readParticipants} />}
+            {canReadDate && <MessageReadDate readDate={readDate} />}
+        </div>
     </>
 }
 

@@ -63,7 +63,7 @@ export default function Transition({ state, alwaysShow = false, onDeactivate, ac
                 }
             })
         } else {
-            if (action)
+            if (action && !state)
                 action()
         }
     }, [isActive])

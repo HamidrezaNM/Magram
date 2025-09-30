@@ -22,7 +22,8 @@ import { formatTime } from "../Util/dateFormat";
 import { viewChat } from "./ChatList";
 import { calculateAlbumLayout } from "../Helpers/calculateAlbumLayout";
 import Transition from "./Transition";
-import { showForwardMessage } from "./Pages/Forward";
+import Forward, { showForwardMessage } from "./Pages/Forward";
+import Modal from "../UI/Modal";
 
 function Message({
     data,
@@ -37,6 +38,7 @@ function Message({
     unreadFrom
 }) {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [forwardModal, setForwardModal] = useState(false)
     const [quickReply, setQuickReply] = useState(false)
 
     const [replyToMessage, setReplyToMessage] = useState()
@@ -293,6 +295,7 @@ function Message({
 
     const handleForward = useCallback(() => {
         showForwardMessage(data, dispatch); handleContextMenuClose()
+        setForwardModal(true)
     }, [data])
 
     const handleDelete = useCallback(() => {
@@ -860,6 +863,9 @@ function Message({
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Modal title="Forward to..." open={forwardModal} onClose={() => setForwardModal(false)}>
+                <Forward />
+            </Modal>
         </div>
         {unreadFrom &&
             <div className="UnreadMessages">Unread Messages</div>}

@@ -1,4 +1,4 @@
-.MiddleColumn .Content {
+.MiddleColumn>.Content {
     display: contents;
 }
 
@@ -459,8 +459,9 @@
 }
 
 .MiddleColumn .bottom .PreviewMessage.animate {
-    height: 0;
-    transform: scale(0.95);
+    /* height: 0; */
+    transform-origin: bottom;
+    transform: scale(0.95) rotateX(90deg);
 }
 
 .MiddleColumn .bottom .PreviewMessage .body {
@@ -568,7 +569,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 3;
+    z-index: 11;
     opacity: 1;
     background-color: #00000010;
     transition: opacity .3s ease;

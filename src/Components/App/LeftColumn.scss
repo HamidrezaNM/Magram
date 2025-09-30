@@ -1,4 +1,5 @@
-.LeftColumn .TopBar>div {
+.LeftColumn .TopBar>div,
+.Modal .TopBar {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -7,16 +8,20 @@
     user-select: none;
 }
 
-.LeftColumn .TopBar>div>div>.icon {
+.LeftColumn .TopBar>div>div>.icon,
+.Modal .TopBar>div>.icon {
     margin: 0 16px;
 }
 
 .LeftColumn .TopBar .Meta>.icon,
-.LeftColumn .TopBar .Meta .Menu>.icon {
+.LeftColumn .TopBar .Meta .Menu>.icon,
+.Modal .TopBar .Meta>.icon,
+.Modal .TopBar .Meta .Menu>.icon {
     margin: 0;
 }
 
-.LeftColumn .TopBar .Meta {
+.LeftColumn .TopBar .Meta,
+.Modal .TopBar .Meta {
     display: flex;
     margin: 0 16px;
     min-width: 36px;
@@ -48,12 +53,13 @@
     cursor: pointer;
 }
 
-.LeftColumn .TopBar button.disabled {
+.LeftColumn .TopBar button.disable {
     background-color: var(--primary-container) !important;
     color: var(--dyn-text-color) !important;
 }
 
-.LeftColumn .TopBar .Content {
+.LeftColumn .TopBar .Content,
+.Modal .TopBar .Content {
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -204,7 +210,8 @@
     line-height: 1.4;
 }
 
-.ChatList .Pinned {
+.ChatList .Pinned,
+.ChatList .Archives {
     background-color: var(--secondary);
 }
 
@@ -259,6 +266,19 @@
     }
 }
 
+.NoChats {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
 .backBtn {
     animation: 0.15s ease-out 0s 1 normal none running menuToBack2;
 }
@@ -269,18 +289,20 @@
 
 .Search .topPeers {
     display: grid;
-    padding: 4px;
+    padding: 4px 8px;
     overflow-x: overlay;
     grid-template-columns: repeat(5, 1fr);
 }
 
-.Search .topPeers .Item {
+.Page .Search .topPeers .Item {
     display: flex;
     flex-direction: column;
     height: auto !important;
     font-size: 14px;
+    border-bottom: none;
+    border-radius: 10px;
     gap: 6px;
-    padding: 8px 0;
+    padding: 4px;
     width: auto;
     overflow: hidden;
 }

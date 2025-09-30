@@ -28,6 +28,7 @@
   --surface-color: #ffffff10;
   --on-surface: #ffffff20;
   --surface-hover: #0009;
+  --modal-background: #000;
   --border-color: #1e1e1e;
   --hr-color: #121212;
   --icon-hover: #ffffff20;
@@ -71,6 +72,7 @@
   --surface-color: #fffb;
   --on-surface: #00000020;
   --surface-hover: #ffffff;
+  --modal-background: var(--primary-container);
   --border-color: #f1f1f1;
   --hr-color: #00000010;
   --icon-hover: #0000000a;
@@ -681,7 +683,7 @@
   position: absolute;
   min-width: 13.5rem;
   border-radius: 10px;
-  z-index: 4;
+  z-index: 30;
   margin: 4px;
   gap: 4px;
   padding: 4px;
@@ -689,6 +691,7 @@
   backdrop-filter: var(--blur-filter);
   user-select: none;
   transform-origin: top left !important;
+  transform-origin: var(--origin, top left) !important;
   overflow: hidden;
   box-shadow: 0px 0px 10px -4px #000000aa;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -704,6 +707,10 @@
   min-width: 10rem;
   max-width: 16rem;
   position: fixed;
+}
+
+.ContextMenu .Content {
+  width: 100%;
 }
 
 .DropdownMenu.animate,
@@ -896,7 +903,7 @@
   padding: 0 4px;
   line-height: 1;
   overflow: hidden;
-  transition: all .3s ease;
+  transition: max-width .3s ease, opacity .3s ease;
 }
 
 .ContextMenu.animate .Reactions {
@@ -908,14 +915,18 @@
 }
 
 .ContextMenu .Reactions .Reaction {
-  width: 32px;
+  min-width: 32px;
   font-size: 24px;
   cursor: pointer;
-  transition: all .3s ease;
+  transition: transform .2s ease;
 }
 
 .ContextMenu .Reactions .Reaction:hover {
   transform: scale(1.2);
+}
+
+.ContextMenu.animate .Reactions .Reaction {
+  transform: translateX(32px);
 }
 
 .highlight {
@@ -1111,7 +1122,7 @@
 
 .Tab {
   background-color: transparent;
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   font-weight: 500;
   transition: all .3s ease;
@@ -1530,6 +1541,7 @@ a:hover {
 .Toast {
   background-color: #000d;
   color: var(--text-color);
+  backdrop-filter: blur(10px);
   width: fit-content;
   padding: 16px;
   display: flex;
@@ -1726,7 +1738,7 @@ a:hover {
   justify-content: space-between;
   margin-left: 12px;
   border-radius: 20px 0 0 20px;
-  z-index: 3;
+  z-index: 40;
   overflow: hidden;
   transition: all .5s ease;
 }
@@ -2261,6 +2273,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* min-width: 12rem; */
   /* min-height: 1.2rem; */
 }
 
@@ -2269,6 +2282,18 @@ a:hover {
   top: 0px;
   opacity: 1;
   transition: all .3s ease;
+}
+
+.TextTransition .Transition.hidden {
+  visibility: visible;
+}
+
+.TextTransition .Transition.hidden span {
+  visibility: hidden;
+}
+
+.TextTransition .Transition.hidden .prev {
+  visibility: visible !important;
 }
 
 .TextTransition span.showAnim {

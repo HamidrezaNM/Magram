@@ -232,11 +232,7 @@ const Document = forwardRef(({ children, media, details, setProgress, isLoaded, 
             abortDownload(media.document?.id?.value)
         },
         onSave() {
-            var link = document.createElement("a");
-            link.download = details.name && extractFileName(details.name);
-            link.href = file;
-            link.target = '_blank'
-            link.click();
+            onSave()
         },
         onDownload() {
             (async () => {
@@ -251,7 +247,16 @@ const Document = forwardRef(({ children, media, details, setProgress, isLoaded, 
         }
     }))
 
-    return <div className="Document">
+    const onSave = () => {
+        console.log('download file', details.name && extractFileName(details.name))
+        var link = document.createElement("a");
+        link.download = details.name;
+        link.href = file.current;
+        link.target = '_blank'
+        link.click();
+    }
+
+    return <div className="Document" onClick={() => isLoaded && onSave()}>
         {children}
         <div className="details">
             <div className="title">{details.name && (details.name)}</div>

@@ -9,7 +9,14 @@ import { resolveUsername } from "./username";
 export async function openUrl(url, dispatch) {
     const deepLink = parseDeepLink(url)
 
-    if (!deepLink) return window.open(url, '_blank', 'noopener');
+    if (!deepLink) {
+        let finalUrl = url
+
+        if (!url.startsWith('http://') && !url.startsWith('https://'))
+            finalUrl = 'https://' + url
+
+        return window.open(finalUrl, '_blank', 'noopener');
+    }
 
     switch (deepLink?.type) {
         case 'publicUsernameOrBotLink':

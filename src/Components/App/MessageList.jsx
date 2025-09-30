@@ -371,6 +371,8 @@ const MessageList = forwardRef(({ MessageListRef, gradientRenderer }, ref) => {
         else if (chatType === 'User' && businessIntro?.title)
             return <div className="FlexColumn">
                 <AnimatedSticker
+                    width={128}
+                    height={128}
                     media={new Api.MessageMediaDocument({ document: businessIntro.sticker })}
                     autoPlay={true}
                 />

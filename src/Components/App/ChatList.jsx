@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AuthContext, UserContext } from "../Auth/Auth";
 import { toDoubleDigit } from "./Home";
 import { client } from "../../App";
@@ -9,15 +9,19 @@ import { setActiveChat } from "../Stores/UI";
 import buildClassName from "../Util/buildClassName";
 import Tabs from "../UI/Tabs";
 import { Api } from "telegram";
-import { getPeerId } from "../Helpers/chats";
+import { generateChatWithPeer, getPeerId } from "../Helpers/chats";
 import TabContent from "../UI/TabContent";
 import ContextMenu from "./MiddleColumn/ContextMenu";
-import { Icon } from "./common";
+import { Icon, Profile } from "./common";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
+import RLottie from "../common/RLottie";
 
-function ChatList({ onClick }) {
+function ChatList({ onClick, filter = () => true, pinSavedMessages = false }) {
     const [showArchives, setShowArchives] = useState(false)
     const [folderTabIndex, setFolderTabIndex] = useState(0)
     const [folders, setFolders] = useState([])
+    const [chatsRenderCount, setChatsRenderCount] = useState(20)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     const ChatListRef = useRef()
 
@@ -25,12 +29,14 @@ function ChatList({ onClick }) {
 
     const dispatch = useDispatch()
 
+    const loadMoreObserver = useIntersectionObserver({ threshold: 0 })
+
     const chats = useSelector((state) => state.chats.value)
 
     const activeChatId = useSelector((state) => state.ui.activeChat?.id)
 
     const allChats = useMemo(() => {
-        return Object.values(chats).sort((a, b) => {
+        return Object.values(chats).filter(filter).sort((a, b) => {
             if (a.message?.date > b.message?.date) {
                 return -1;
             }
@@ -48,11 +54,14 @@ function ChatList({ onClick }) {
     useEffect(() => {
         (async () => {
             try {
+                if (Object.keys(chats).length !== 0) return;
+
                 const getFolders = await client.invoke(new Api.messages.GetDialogFilters())
                 setFolders(getFolders.filters)
 
                 const getChats = await client.getDialogs()
                 ChatListRef.current.classList.add('Animating')
+                setIsLoaded(true)
                 dispatch(setChats(getChats))
             } catch (error) {
                 console.log(error)
@@ -76,6 +85,32 @@ function ChatList({ onClick }) {
             }
         }
     }, [chats, showArchives])
+
+    const handleSavedMessages = useCallback(() => {
+        viewChat(generateChatWithPeer(User), dispatch)
+    }, [User])
+
+    const handleLoadMoreChats = async () => {
+        if (allChats?.length > 20) {
+            setChatsRenderCount(allChats?.length < chatsRenderCount * 2 ? allChats?.length : chatsRenderCount * 2)
+        }
+    }
+
+    const handleIntersect = useCallback((entry) => {
+        console.log('handle load more chats')
+        if (entry.isIntersecting && allChats?.length) {
+            handleLoadMoreChats()
+        }
+    }, [allChats?.length, chatsRenderCount]);
+
+    useEffect(() => {
+        loadMoreObserver.addCallback(handleIntersect);
+        console.log('handleIntersect')
+
+        return () => {
+            loadMoreObserver.removeCallback(handleIntersect);
+        };
+    }, [loadMoreObserver]);
 
     const renderFolderChats = (index) => {
         const folder = folders[index]
@@ -120,6 +155,18 @@ function ChatList({ onClick }) {
             : null
     }
 
+    const renderNoChats = () => {
+        return <div className="NoChats">
+            <RLottie
+                sticker="NoChats"
+                fileId="no_chats"
+                width={128}
+                height={128}
+                autoplay={true} />
+            <div className="title">You have no conversations yet.</div>
+        </div>
+    }
+
     return <div className="ChatList" ref={ChatListRef}>
         <Tabs index={folderTabIndex} setIndex={setFolderTabIndex} tabs={<>
             {folders.map((folder, index) =>
@@ -145,6 +192,23 @@ function ChatList({ onClick }) {
                     </div>
                 </div>}
                 <div className="Pinned">
+                    {pinSavedMessages &&
+                        <div
+                            key="saved-messages"
+                            className="Chat showAnim"
+                            onClick={() => { handleSavedMessages(); onClick(generateChatWithPeer(User)) }}>
+                            <div className="meta"><Profile isSavedMessages /></div>
+                            <div className="body">
+                                <div className="info">
+                                    <div className="title">Saved Messages</div>
+                                </div>
+                                <div className="subtitle">
+                                    <div className="last-message">
+                                        Forward here to save
+                                    </div>
+                                </div>
+                            </div>
+                        </div>}
                     {allChats.filter(chat => chat.dialog?.pinned).map((item) => (
                         !item.entity?.migratedTo &&
                         <Chat
@@ -155,18 +219,20 @@ function ChatList({ onClick }) {
                         />
                     ))}
                 </div>
-                {allChats.filter(chat => !!chat.archived === showArchives && !chat.dialog?.pinned).map((item) => (
-                    !item.entity?.migratedTo &&
-                    <Chat
-                        key={item.id?.value}
-                        info={item}
-                        isActive={Number(activeChatId) == item.id.value}
-                        onClick={onClick}
-                    />
-                ))}
+                {allChats.filter(chat => !!chat.archived === showArchives && !chat.dialog?.pinned)
+                    .slice(0, chatsRenderCount)
+                    .map((item) => (
+                        !item.entity?.migratedTo &&
+                        <Chat
+                            key={item.id?.value}
+                            info={item}
+                            isActive={Number(activeChatId) == item.id.value}
+                            onClick={onClick}
+                        />
+                    ))}
                 {Object.keys(chats).length === 0 &&
-                    <ChatsLoading />
-                }
+                    !isLoaded &&
+                    <ChatsLoading />}
             </TabContent>
             {folders.map((folder, index) =>
                 index !== 0 &&
@@ -178,6 +244,10 @@ function ChatList({ onClick }) {
                 </TabContent>
             )}
         </Tabs>
+        {Object.keys(chats).length === 0 &&
+            isLoaded &&
+            renderNoChats()}
+        <div className="loadMore" style={{ height: 20 }} ref={(el) => loadMoreObserver.observe(el)}></div>
         <ContextMenu type="chat" />
     </div>
 }
