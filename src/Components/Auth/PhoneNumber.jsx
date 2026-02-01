@@ -1,7 +1,7 @@
 import { useState, useContext, useCallback, useRef } from "react";
 import { AuthContext } from "./Auth";
 import { API_HASH, API_ID, client } from "../../App";
-import { Api } from "telegram";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 export default function PhoneNumber() {
     const [countryCode, setCountryCode] = useState("98");
@@ -16,29 +16,11 @@ export default function PhoneNumber() {
     const phoneNumberHandler = (e) => {
         var value = e.target.value;
 
-        var matches = value
-            .replace(/[^+\d]/g, "")
-            .match(/(\+?)(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})/);
+        const result = parsePhoneNumberFromString(value);
 
-        var _format = "";
-
-        for (let i = 1; i < matches.length; i++) {
-            const match = matches[i];
-
-            i === 1
-                ? (_format = "+")
-                : match !== "" && (_format = _format + (i > 2 ? " " : "") + match);
-        }
-        setFormattedPhoneNumber(_format);
-        setPhoneNumber(
-            value
-                .replace(/\D+/g, "")
-                .replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$2$3$4")
-        );
-        setCountryCode(
-            value
-                .replace(/\D+/g, "")
-                .replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1"))
+        setFormattedPhoneNumber(result?.formatInternational() || value);
+        setPhoneNumber(result?.nationalNumber || "");
+        setCountryCode(result?.countryCallingCode || "")
     }
 
     const Validate = async e => {

@@ -15,6 +15,7 @@
     "emoji-js": "^3.8.0",
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
+    "libphonenumber-js": "^1.12.36",
     "md5": "^2.3.0",
     "mongodb": "^6.2.0",
     "pako": "^2.1.0",

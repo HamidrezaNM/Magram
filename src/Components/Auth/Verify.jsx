@@ -248,7 +248,8 @@ export const GetDeviceData = () => {
 
         case 'iOS':
             osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer);
-            osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
+            if(osVersion !== null)
+                osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
             break;
     }
 
